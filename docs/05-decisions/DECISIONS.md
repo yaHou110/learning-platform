@@ -11,6 +11,10 @@
 | --- | --- | --- | --- |
 | [ADR-0001](./ADR-0001-no-wordpress.md) | No WordPress — use a custom or framework-native stack | Accepted | 2026-07-10 |
 | [ADR-0002](./ADR-0002-ai-project-os.md) | Documentation is AI-native, agent-portable | Accepted | 2026-07-10 |
+| [ADR-0003](./ADR-0003-web-framework.md) | Web framework — Next.js 15 (App Router) on Node.js 20 LTS | Accepted | 2026-07-11 |
+| [ADR-0004](./ADR-0004-database.md) | Database — PostgreSQL 16 + Drizzle ORM (no vector DB in v1) | Accepted | 2026-07-11 |
+| [ADR-0005](./ADR-0005-auth.md) | Auth — Auth.js v5 Credentials + bcrypt + server-side sessions in Postgres | Accepted | 2026-07-11 |
+| [ADR-0006](./ADR-0006-plugin-architecture.md) | Plugin architecture — pnpm monorepo + compile-time typed manifest | Accepted | 2026-07-11 |
 
 ---
 
@@ -18,14 +22,11 @@
 
 | # | Title | Status | Target |
 | --- | --- | --- | --- |
-| ADR-0003 | Web framework choice | Proposed | M1 |
-| ADR-0004 | Database + (optional) vector DB | Proposed | M1 |
-| ADR-0005 | Auth model | Proposed | M1 |
-| ADR-0006 | Plugin architecture pattern | Proposed | M1 |
 | ADR-0007 | Hosting & deployment model | Proposed | before M7 |
-| ADR-0008 | Multi-tenant data isolation enforcement | Proposed | before M3 |
-| ADR-0009 | i18n & date library choice | Proposed | before M3 |
+| ADR-0008 | Multi-tenant data isolation enforcement (subdomain vs tenant column vs schema) | Proposed | before schema freeze |
+| ADR-0009 | i18n & Shamsi date library | Proposed | before M3 (will likely fold into ADR-0003 follow-up since derived from stack) |
 | ADR-0010 | Media storage provider (S3-compatible) | Proposed | before M3 |
+| ADR-0011 | Background job runner (tentative: pg-boss) | Proposed | when first async job is needed |
 
 ---
 

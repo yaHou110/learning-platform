@@ -9,53 +9,80 @@
 
 | Field | Value |
 | --- | --- |
-| Session # | 002 |
-| Date opened | 2026-07-10 |
-| Agent | (fill in: human / ChatGPT / Claude / Codex / …) |
-| Goal | **Write the four foundation documents, then review before any ADR.** |
+| Session # | 006 |
+| Date opened | 2026-07-11 |
+| Agent | orchestrator (Mavis) |
+| Goal | **Fix critical bugs (migration ordering, connection leak, missing layout/Tailwind) and make the app compilable.** |
 
 ---
+
+## Context
+
+Session 005 left the codebase with source code already written for the Identity & Access bounded context (schema, auth, login page, health API, plugin registry, 5 plugin manifests). However, the app was not in a runnable state due to:
+
+1. Migration SQL creates `citext` extension AFTER the table that uses it (will fail at runtime)
+2. `getTenantDb()` leaks a pooled connection on every call (never releases the client)
+3. Missing root `layout.tsx` (Next.js 15 App Router requirement)
+4. Missing Tailwind CSS setup (`globals.css`, `tailwind.config.ts`, `postcss.config.mjs`)
+5. Plugin Vitest configs lack resolve aliases (tests fail with "Failed to load url @hawza/core/plugins")
+
+All of these were fixed in Session 005 (run by a code-review agent). The app compiles, typechecks pass, lint passes, and all tests pass.
+
+The smoke test (docker compose, migrate, seed, curl) could not be executed because Docker is not available on the development machine. This is the first task for Session 006.
 
 ## Task
 
-Produce the v1 foundation layer. **No implementation choices are made here.**
+### 1. Run the smoke test (requires Docker + Postgres)
 
-1. `docs/01-product/MVP_SCOPE.md` — product scope: problem, target users, goals, in/out scope, success criteria (product outcomes only).
-2. `docs/02-architecture/BOUNDED_CONTEXTS.md` — domain boundaries, responsibilities, domain events.
-3. `docs/00-bootstrap/PROJECT_PRINCIPLES.md` — binding long-term principles.
-4. `docs/02-architecture/ARCHITECTURE_CONSTRAINTS.md` — hard constraints, SLOs, API-contract rule.
+- `docker compose up -d` — Postgres 16 + Adminer
+- `pnpm --filter @hawza/core db:migrate` — apply the first migration
+- `pnpm --filter @hawza/core db:seed:dev` — seed demo tenant + admin user
+- `pnpm --filter web dev` — start Next.js dev server
+- `curl http://localhost:3000/api/health` — expect `{"status":"ok","db":true,...}`
+- `curl -i http://localhost:3000/login` — expect 200 with Persian login form
+- Log in via `hawza-demo` / `admin@hawza.local` / `changeme`
 
-Each new doc opens with its **responsibility** and **references** existing docs instead of repeating them (single source of truth). No duplication.
+### 2. Implement the first plugin API routes
 
-**After the four docs exist: STOP and review with the founder. Do NOT write `ADR-0003`–`ADR-0006` yet.**
+Pick one plugin (e.g. `plugin-auth`) and implement the API routes declared in its manifest:
+- `GET /api/users` — list users for the current tenant
+- These routes should use `@hawza/core/api` (identity CRUD) behind Auth.js middleware
 
-Only after review, **propose ADR candidates** (framework, DB, auth, plugin model), each justified against `MVP_SCOPE` + `BOUNDED_CONTEXTS` + `PROJECT_PRINCIPLES` + `ARCHITECTURE_CONSTRAINTS`. The founder picks; then write the ADRs.
+### 3. Add middleware for route protection
 
----
+- `apps/web/src/middleware.ts` — check session, redirect unauthenticated users to `/login`
+
+### 4. (Stretch) Dashboard placeholder
+
+- Replace the homepage placeholder with a simple dashboard showing the user's name, role, and tenant slug.
 
 ## Out of scope (do NOT do in this session)
 
-- Writing `ADR-0003`–`ADR-0006` or any technology decision.
-- Any source code.
-- Deployment config.
-- Rewriting existing ADRs or docs (`ADR-0001`/`0002`, `SYSTEM_ARCHITECTURE`, `DATA_MODEL`, `PLUGIN_MATRIX`, `PERMISSION_MATRIX`).
-
----
+- Other bounded contexts (Catalog, Learning, Credentials, Localization) — deferred to dedicated sessions
+- Event bus implementation
+- Hosting / deployment
+- Object storage, email, background jobs
+- UI beyond Tailwind defaults (no component library)
 
 ## Done-when checklist
 
-- [x] Four foundation docs created and indexed.
-- [x] `PROJECT_STATE.md` open-questions 1–4 marked pending (foundation written).
-- [x] `MASTER_HANDOFF.md` has a Session 002 entry.
-- [x] `CHANGELOG.md` has an `[Unreleased]` entry.
-- [ ] Founder reviews the foundation docs.
-- [ ] Commit (after review/approval).
-- [ ] `NEXT_SESSION.md` updated to Session 003 (ADR candidates) after review.
+- [ ] `docker compose up -d` starts Postgres + Adminer without errors
+- [ ] `pnpm --filter @hawza/core db:migrate` succeeds and is idempotent
+- [ ] `pnpm --filter @hawza/core db:seed:dev` creates demo tenant + admin
+- [ ] `pnpm --filter web dev` starts without errors
+- [ ] `/api/health` returns 200 with `db: true`
+- [ ] `/login` renders the Persian form
+- [ ] Login with seeded super_admin succeeds; session cookie has correct flags
+- [ ] Vitest suite passes: `pnpm -r test`
+- [ ] Lint passes: `pnpm -r lint`
+- [ ] Typecheck passes: `pnpm -r typecheck`
+- [ ] `MASTER_HANDOFF.md` has the Session 006 entry
+- [ ] `CHANGELOG.md` `[Unreleased]` is updated
 
----
+## Notes for the next agent
 
-## Notes for the agent
-
-- Requirements drive technology, not the reverse (`PROJECT_PRINCIPLES.md`).
-- Keep docs cohesive: reference, don't repeat.
-- Known inconsistencies to resolve during ADRs: `SYSTEM_ARCHITECTURE.md` "Next.js" diagram; `PLUGIN_MATRIX.md` "monorepo package / plugin.json" wording vs the compile-time-only principle.
+- Docker is required for the smoke test. If unavailable, use a local Postgres install or skip to code tasks.
+- The `getTenantDb` connection leak was fixed by removing the per-connection pattern entirely. All queries now use the pooled `getDb()` with explicit WHERE tenant_id clauses. The `withTenantDb()` helper remains available for future per-connection RLS enforcement.
+- Tailwind CSS v3 is used (not v4). Config is in `tailwind.config.ts` + `postcss.config.mjs`.
+- The root layout at `apps/web/src/app/layout.tsx` sets `html lang="fa" dir="rtl"` and imports `globals.css`.
+- Plugin vitest configs now include resolve aliases for `@hawza/core` and `@hawza/contracts` to match tsconfig paths.

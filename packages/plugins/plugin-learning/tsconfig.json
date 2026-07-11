@@ -1,0 +1,13 @@
+{
+  "extends": "../../../tsconfig.base.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@hawza/core/*": ["../../core/src/*"],
+      "@hawza/contracts": ["../../contracts/src/index.ts"],
+      "@hawza/contracts/*": ["../../contracts/src/*"]
+    }
+  },
+  "include": ["src/**/*", "../../core/src/**/*.ts", "../../contracts/src/**/*.ts"],
+  "exclude": ["node_modules", "dist"]
+}

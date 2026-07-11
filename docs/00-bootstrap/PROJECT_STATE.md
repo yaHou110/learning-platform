@@ -44,13 +44,13 @@
 
 | # | Question | Owner | Target date | Status |
 | --- | --- | --- | --- | --- |
-| 1 | Web framework | founder | before code starts | Pending — foundation written; ADR candidate after review |
-| 2 | Database (+ optional vector) | founder | before code starts | Pending — foundation written; ADR candidate after review |
-| 3 | Auth model | founder | before code starts | Pending — foundation written; ADR candidate after review |
-| 4 | Plugin architecture pattern | founder | before code starts | Pending — foundation written; ADR candidate after review |
-| 5 | Hosting: Vercel / self-hosted / VPS / Iranian host? | founder | before deployment |
-| 6 | Multi-tenant: per-Hawza subdomain, or single instance + tenant column? | founder | before schema freeze |
-| 7 | Offline / PWA support? | founder | before MVP |
+| 1 | Web framework | founder | before code starts | ✅ Decided — ADR-0003 (Next.js 15 + Node 20 + TS strict) |
+| 2 | Database (+ optional vector) | founder | before code starts | ✅ Decided — ADR-0004 (Postgres 16 + Drizzle; no vector DB in v1) |
+| 3 | Auth model | founder | before code starts | ✅ Decided — ADR-0005 (Auth.js Credentials + bcrypt + server sessions) |
+| 4 | Plugin architecture pattern | founder | before code starts | ✅ Decided — ADR-0006 (pnpm monorepo + typed compile-time manifest) |
+| 5 | Hosting: Vercel / self-hosted / VPS / Iranian host? | founder | before deployment | Pending — Q5 |
+| 6 | Multi-tenant: per-Hawza subdomain, or single instance + tenant column? | founder | before schema freeze | Pending — Q6 |
+| 7 | Offline / PWA support? | founder | before MVP | Pending — Q7 |
 
 These are tracked more fully in `docs/05-decisions/DECISIONS.md`.
 

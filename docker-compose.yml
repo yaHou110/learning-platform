@@ -1,0 +1,41 @@
+# Local dev infrastructure.
+#
+# Brings up Postgres 16 and Adminer on a private network.
+# Run: `docker compose up -d`
+#
+# Connection string (matches apps/web/.env.example):
+#   postgres://hawza:hawza@localhost:5432/hawza
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: hawza-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: hawza
+      POSTGRES_PASSWORD: hawza
+      POSTGRES_DB: hawza
+    ports:
+      - "5432:5432"
+    volumes:
+      - hawza_pg_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U hawza -d hawza"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  adminer:
+    image: adminer:4.8.1
+    container_name: hawza-adminer
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    ports:
+      - "8080:8080"
+    environment:
+      ADMINER_DEFAULT_SERVER: postgres
+
+volumes:
+  hawza_pg_data:
+    name: hawza_pg_data

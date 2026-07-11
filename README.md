@@ -83,8 +83,8 @@ If you are an AI agent, **start here**: [`AGENTS.md`](./AGENTS.md) (it is intent
 
 - **Problem**: Hawza families need a structured learning platform. WordPress is a poor fit long-term.
 - **Solution**: A modular, plugin-based, AI-native learning platform with a Persian-first UX.
-- **Stack** (decisions pending — see [TECH_STACK.md](./docs/03-development/TECH_STACK.md)): TypeScript, Next.js or similar, Postgres, plugin architecture.
-- **Status**: v1.0 — repository skeleton, product bible, and decision log established. Implementation phase has not started.
+- **Stack** (locked in [TECH_STACK.md](./docs/03-development/TECH_STACK.md), backed by ADR-0003..0006): Next.js 15 + TypeScript strict + PostgreSQL 16 + Drizzle ORM + Auth.js v5 + pnpm monorepo + internal compile-time plugins.
+- **Status**: v1.1 — documentation OS + first ADR batch + monorepo scaffold (no production deployment yet).
 - **Owner**: single founder, multi-agent team.
 
 For the full story, read [`docs/01-product/PRODUCT_BIBLE.md`](./docs/01-product/PRODUCT_BIBLE.md).
@@ -112,9 +112,12 @@ When you finish a session, **update `NEXT_SESSION.md` and append to `MASTER_HAND
 | Repository structure | ✅ v1.0 |
 | Product documentation | ✅ v1.0 (skeleton) |
 | Architecture documentation | ✅ v1.0 (skeleton) |
-| Development conventions | ⏳ TBD |
-| Code | ❌ not started |
-| Deployment | ❌ not started |
+| Foundation documents (MVP_SCOPE, BOUNDED_CONTEXTS, PROJECT_PRINCIPLES, ARCHITECTURE_CONSTRAINTS) | ✅ v1.1 |
+| Core stack ADRs (framework, DB, auth, plugins) | ✅ v1.1 (ADR-0003..0006 Accepted) |
+| Monorepo scaffold (pnpm + apps/web + packages/core + 5 plugins) | ✅ v1.1 |
+| First bounded context wired (Identity & Access) | ⏳ next session |
+| Code (UI, course/lesson content) | ❌ not started |
+| Deployment | ❌ not started (hosting ADR pending) |
 
 See [`docs/00-bootstrap/PROJECT_STATE.md`](./docs/00-bootstrap/PROJECT_STATE.md) for details.
 
@@ -129,6 +132,28 @@ This project is currently single-founder. Until v1.0 ships, the process is:
 3. Make changes.
 4. Update NEXT_SESSION.md.
 5. Open a PR or self-merge with a clear commit message.
+
+## Local dev (after `pnpm install` at the repo root)
+
+```bash
+# 1. Start Postgres + Adminer
+docker compose up -d
+
+# 2. Apply migrations
+pnpm db:migrate
+
+# 3. Seed a dev tenant + super admin (idempotent)
+pnpm db:seed:dev
+
+# 4. Start the web app
+pnpm dev
+# → http://localhost:3000   (web)
+# → http://localhost:8080   (Adminer — login: System=PostgreSQL, Server=postgres,
+#                            Username=hawza, Password=hawza, Database=hawza)
+```
+
+Default seeded credentials: tenant `hawza-demo`, email `admin@hawza.local`,
+password `changeme`. **Change in production.**
 
 ---
 

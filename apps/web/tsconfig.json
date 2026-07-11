@@ -1,0 +1,30 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "jsx": "preserve",
+    "allowJs": true,
+    "noEmit": true,
+    "incremental": true,
+    "plugins": [{ "name": "next" }],
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"],
+      "@hawza/core": ["../../packages/core/src/index.ts"],
+      "@hawza/core/*": ["../../packages/core/src/*"],
+      "@hawza/contracts": ["../../packages/contracts/src/index.ts"],
+      "@hawza/contracts/*": ["../../packages/contracts/src/*"],
+      "@hawza/plugin-auth": ["../../packages/plugins/plugin-auth/src/index.ts"],
+      "@hawza/plugin-catalog": ["../../packages/plugins/plugin-catalog/src/index.ts"],
+      "@hawza/plugin-learning": ["../../packages/plugins/plugin-learning/src/index.ts"],
+      "@hawza/plugin-credentials": ["../../packages/plugins/plugin-credentials/src/index.ts"],
+      "@hawza/plugin-localization": ["../../packages/plugins/plugin-localization/src/index.ts"]
+    }
+  },
+  "include": [
+    "next-env.d.ts",
+    "src/**/*",
+    "tests/**/*",
+    ".next/types/**/*.ts"
+  ],
+  "exclude": ["node_modules", ".next"]
+}
