@@ -10,6 +10,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [Unreleased]
+
+### Added
+- Foundation documents for v1 (no implementation choices):
+  - `docs/01-product/MVP_SCOPE.md` — product scope and outcomes.
+  - `docs/02-architecture/BOUNDED_CONTEXTS.md` — domain boundaries and events.
+  - `docs/00-bootstrap/PROJECT_PRINCIPLES.md` — binding long-term principles.
+  - `docs/02-architecture/ARCHITECTURE_CONSTRAINTS.md` — hard constraints, SLOs, API-contract rule.
+
+---
+
 ## [1.0.0] — 2026-07-10
 
 ### Added

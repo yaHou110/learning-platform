@@ -1,6 +1,6 @@
 # NEXT_SESSION.md
 
-> **The single task for the current session.** Read this **second** (after `PROJECT_STATE.md`).
+> **The single task for the current session. Read this second (after `PROJECT_STATE.md`).**
 > Update this file at the end of every session, even if "no progress."
 
 ---
@@ -9,61 +9,53 @@
 
 | Field | Value |
 | --- | --- |
-| Session # | 001 |
+| Session # | 002 |
 | Date opened | 2026-07-10 |
 | Agent | (fill in: human / ChatGPT / Claude / Codex / …) |
-| Goal | **Lock the technology stack (decisions 1–4 in `PROJECT_STATE.md`).** |
+| Goal | **Write the four foundation documents, then review before any ADR.** |
 
 ---
 
 ## Task
 
-Make binding decisions on the four "before code starts" questions in `PROJECT_STATE.md`:
+Produce the v1 foundation layer. **No implementation choices are made here.**
 
-1. Web framework
-2. Database (and whether we need a vector DB)
-3. Auth model
-4. Plugin architecture pattern
+1. `docs/01-product/MVP_SCOPE.md` — product scope: problem, target users, goals, in/out scope, success criteria (product outcomes only).
+2. `docs/02-architecture/BOUNDED_CONTEXTS.md` — domain boundaries, responsibilities, domain events.
+3. `docs/00-bootstrap/PROJECT_PRINCIPLES.md` — binding long-term principles.
+4. `docs/02-architecture/ARCHITECTURE_CONSTRAINTS.md` — hard constraints, SLOs, API-contract rule.
 
-For each, produce:
-- A short rationale (3–5 lines).
-- A one-paragraph comparison of the leading 2–3 options.
-- A final choice.
-- Migration cost: what does it cost to change this in 6 months?
+Each new doc opens with its **responsibility** and **references** existing docs instead of repeating them (single source of truth). No duplication.
 
-Save each as a new ADR: `ADR-0003-web-framework.md`, `ADR-0004-database.md`, `ADR-0005-auth.md`, `ADR-0006-plugin-architecture.md`.
+**After the four docs exist: STOP and review with the founder. Do NOT write `ADR-0003`–`ADR-0006` yet.**
 
-After producing the ADRs:
-- Update `docs/03-development/TECH_STACK.md` with the chosen stack.
-- Update `PROJECT_STATE.md` to mark items 1–4 as resolved.
-- Append a handoff to `MASTER_HANDOFF.md`.
+Only after review, **propose ADR candidates** (framework, DB, auth, plugin model), each justified against `MVP_SCOPE` + `BOUNDED_CONTEXTS` + `PROJECT_PRINCIPLES` + `ARCHITECTURE_CONSTRAINTS`. The founder picks; then write the ADRs.
 
 ---
 
 ## Out of scope (do NOT do in this session)
 
-- Writing any source code.
-- Writing any deployment config.
-- Modifying product vision or feature catalog.
-- Translating docs to Farsi (separate task).
+- Writing `ADR-0003`–`ADR-0006` or any technology decision.
+- Any source code.
+- Deployment config.
+- Rewriting existing ADRs or docs (`ADR-0001`/`0002`, `SYSTEM_ARCHITECTURE`, `DATA_MODEL`, `PLUGIN_MATRIX`, `PERMISSION_MATRIX`).
 
 ---
 
 ## Done-when checklist
 
-- [ ] Four new ADRs created and indexed in `DECISIONS.md`.
-- [ ] `TECH_STACK.md` reflects the choices.
-- [ ] `PROJECT_STATE.md` open-questions list updated.
-- [ ] `MASTER_HANDOFF.md` has a new entry for this session.
-- [ ] `CHANGELOG.md` has a new entry under `## [Unreleased]`.
-- [ ] All changes committed to git with a clear message.
-- [ ] `NEXT_SESSION.md` updated to point at session #002.
+- [x] Four foundation docs created and indexed.
+- [x] `PROJECT_STATE.md` open-questions 1–4 marked pending (foundation written).
+- [x] `MASTER_HANDOFF.md` has a Session 002 entry.
+- [x] `CHANGELOG.md` has an `[Unreleased]` entry.
+- [ ] Founder reviews the foundation docs.
+- [ ] Commit (after review/approval).
+- [ ] `NEXT_SESSION.md` updated to Session 003 (ADR candidates) after review.
 
 ---
 
 ## Notes for the agent
 
-- Do not over-research. A 30-min scan of official docs + 1 community thread per option is enough.
-- Prefer boring, well-documented choices over novel ones.
-- The user is a single founder. Optimize for **solo velocity**, not for team-scale.
-- If you find a fifth question that needs a decision, stop and ask the user. Do not silently add ADRs.
+- Requirements drive technology, not the reverse (`PROJECT_PRINCIPLES.md`).
+- Keep docs cohesive: reference, don't repeat.
+- Known inconsistencies to resolve during ADRs: `SYSTEM_ARCHITECTURE.md` "Next.js" diagram; `PLUGIN_MATRIX.md` "monorepo package / plugin.json" wording vs the compile-time-only principle.

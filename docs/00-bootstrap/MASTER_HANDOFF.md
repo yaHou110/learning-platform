@@ -45,3 +45,22 @@ Each entry has:
 **Next session:** Lock the technology stack (ADR-0003 → ADR-0006). See `NEXT_SESSION.md` session 002.
 
 ---
+
+## Session 002 — 2026-07-10 — lead architect (foundation)
+
+**Goal:** Write the four v1 foundation documents before any technology ADR.
+
+**Done:**
+- Created `docs/01-product/MVP_SCOPE.md` (product scope, outcomes only).
+- Created `docs/02-architecture/BOUNDED_CONTEXTS.md` (domain boundaries + events).
+- Created `docs/00-bootstrap/PROJECT_PRINCIPLES.md` (binding principles).
+- Created `docs/02-architecture/ARCHITECTURE_CONSTRAINTS.md` (hard constraints + SLOs + API-contract rule).
+- Updated `PROJECT_STATE.md` (foundation phase + open-questions 1–4 pending) and `NEXT_SESSION.md` (Session 002).
+
+**Decisions:** none (ADRs deferred by design — requirements drive technology).
+
+**Open questions:** framework, DB, auth, plugin model — now to be proposed as ADR candidates after the founder reviews the foundation docs.
+
+**Next session:** Founder reviews foundation docs; then propose ADR-0003–0006 candidates justified by the foundation. See `NEXT_SESSION.md` session 002.
+
+---

@@ -20,6 +20,7 @@
 | 1. Repository skeleton | ✅ done | This file, AGENTS.md, README, etc. |
 | 2. Product documentation | ✅ done (skeleton) | Bible, requirements, features, personas, roadmap. |
 | 3. Architecture documentation | ✅ done (skeleton) | System arch, data model, plugin & permission matrices. |
+| 3b. Foundation docs | ✅ done | `MVP_SCOPE`, `BOUNDED_CONTEXTS`, `PROJECT_PRINCIPLES`, `ARCHITECTURE_CONSTRAINTS`. |
 | 4. Development conventions | ⏳ partial | `TECH_STACK.md` exists but is a stub. |
 | 5. Source code (LPC + Hawza) | ❌ not started | Awaiting phase 4. |
 | 6. Deployment & CI/CD | ❌ not started | Blocked on stack choice. |
@@ -41,12 +42,12 @@
 
 ## What's still open (decisions needed)
 
-| # | Question | Owner | Target date |
-| --- | --- | --- | --- |
-| 1 | Web framework: Next.js / Remix / Nuxt / SvelteKit? | founder | before code starts |
-| 2 | Database: Postgres only, or Postgres + a vector DB (for AI features)? | founder | before code starts |
-| 3 | Auth model: own / Auth.js / Clerk / custom? | founder | before code starts |
-| 4 | Plugin architecture: monorepo + packages, or in-repo modules with a manifest? | founder | before code starts |
+| # | Question | Owner | Target date | Status |
+| --- | --- | --- | --- | --- |
+| 1 | Web framework | founder | before code starts | Pending — foundation written; ADR candidate after review |
+| 2 | Database (+ optional vector) | founder | before code starts | Pending — foundation written; ADR candidate after review |
+| 3 | Auth model | founder | before code starts | Pending — foundation written; ADR candidate after review |
+| 4 | Plugin architecture pattern | founder | before code starts | Pending — foundation written; ADR candidate after review |
 | 5 | Hosting: Vercel / self-hosted / VPS / Iranian host? | founder | before deployment |
 | 6 | Multi-tenant: per-Hawza subdomain, or single instance + tenant column? | founder | before schema freeze |
 | 7 | Offline / PWA support? | founder | before MVP |
