@@ -91,6 +91,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Mitigation spec drafted:** `evidence/M4-security/M4-1-dependency-upgrade.md` — bump `next` to `15.5.16+`, `next-auth` to `5.0.0-beta.30+`. **Risk: CRITICAL → HIGH after fix. Founder approval required per ADR-0013 §41.**
 - **M3 evidence gap closed:** `evidence/M3-ci/{notes.md,checklist.md,commands.txt}` (governance CI workflow, validator script, PR + issue templates, agent sync).
 
+### Security (M4.1 dependency upgrade, 2026-07-12)
+- **Bumped `next`: `15.0.3` → `15.5.20`** (latest 15.x backport; resolves 24 advisories: 1C/7H/13M/3L).
+- **Bumped `next-auth`: `5.0.0-beta.25` → `5.0.0-beta.31`** (latest beta; resolves Email misdelivery advisory).
+- **Aligned `eslint-config-next` with `next` version.**
+- **Audit delta: 28 → 2 advisories (93 % reduction).** 0 critical, 1 high (`drizzle-orm<0.45.2`), 1 moderate (`postcss<8.5.10` transitive via `next@15.5.20`).
+- `pnpm verify` clean on the upgrade branch (`fix/m4-dependency-upgrade`): lint ✓, typecheck ✓, test ✓ (18/18), build ✓ (7 routes, Middleware 46 kB, First Load JS 102 kB).
+- **Residual follow-ups** (deliberately excluded from this PR per founder directive "no mixed changes"):
+  - Bump `drizzle-orm` to `>=0.45.2` — needs schema regression check.
+  - Track Next.js internal `postcss` for a 15.5.21+ bump (or add `pnpm.overrides`).
+
 ---
 
 ## [1.1.0] — 2026-07-11
