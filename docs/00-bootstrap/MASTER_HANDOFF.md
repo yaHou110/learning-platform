@@ -257,3 +257,49 @@ Each entry has:
 - `apps/web/src/app/api/auth/signout/route.ts` — **NEW** sign-out endpoint
 - `docs/00-bootstrap/MASTER_HANDOFF.md` — appended Session 007 entry
 - `docs/00-bootstrap/NEXT_SESSION.md` — rotated to Session 008
+
+---
+
+## Session 008 — 2026-07-11 — orchestrator (SPRINT-001 / M1 — Baseline Verification)
+
+**Goal:** Kick off the Production Foundation Sprint (founder directive 2026-07-11) and complete M1: freeze the current state, verify all five quality gates (install, lint, typecheck, test, build) with full evidence, and fix the real issues that surfaced.
+
+**Done:**
+- Created `docs/06-sprints/SPRINT-001-production-foundation/` with the sprint plan (7 milestones, hard gate against feature work) and per-milestone evidence directories.
+- Updated `PROJECT_STATE.md` to v1.2, marked Sprint 001 in progress, M1 next.
+- Rotated `NEXT_SESSION.md` to the M1 task definition.
+- Froze 12 uncommitted files from sessions 005–007 as the baseline (commit `c480da7`).
+- Ran all five quality gates and saved outputs to `evidence/M1-baseline/output-*.txt`.
+- Fixed five real issues surfaced by the build pipeline (see `notes.md`):
+  1. `next/no-page-custom-font` warning → converted to `next/font/google`.
+  2. Broken root `pnpm build` filter → simplified to `pnpm --filter web build`.
+  3. `@hawza/core` exports pointed to `dist/...js` → aligned to source (`./src/...ts`).
+  4. Webpack `.js` → `.ts` alias missing → added `extensionAlias` to `next.config.mjs`.
+  5. Native `bcrypt` unbundlable in Next.js → switched `@hawza/core` to pure-JS `bcryptjs`.
+- Re-ran lint, typecheck, test, build after each fix to confirm each step was clean.
+- Wrote `commands.txt`, `checklist.md`, `notes.md` under `evidence/M1-baseline/`.
+- Updated `CHANGELOG.md` `[Unreleased]` with the full M1 delta.
+
+**Decisions:**
+- All five fixes above were necessary for the build to pass. The first four are pure code-quality wins; the fifth (`bcrypt` → `bcryptjs`) is an operational trade-off documented in code. No ADR was written because the change is a tooling detail, not a binding architectural choice. If the perf cost ever becomes a problem, an ADR for native `bcrypt` would be the right path.
+- Per-founder directive, **all future sessions in this sprint must follow the Plan → Implement → Verify → Update → Commit → Review cycle** with explicit per-milestone evidence.
+
+**Open questions:**
+- Hosting (Q5) — to be resolved before M6; candidate Iranian VPS in mind.
+- Multi-tenant isolation (Q6) — still parked, affects schema evolution.
+- PWA / offline (Q7) — still parked.
+
+**Next session:** Session 009 — SPRINT-001 / M2 — Production Build Validation: `next start` against the production build, smoke test on prod mode (login, `/api/health`, `/api/users`, `/api/auth/session`, sign-out). See `NEXT_SESSION.md` for the M2 task definition.
+
+**Files changed (M1):**
+- `package.json` (root) — `build` script simplified.
+- `apps/web/src/app/layout.tsx` — `next/font/google` for Vazirmatn.
+- `apps/web/next.config.mjs` — `extensionAlias` for `.js`/`.mjs` → `.ts`/`.tsx`/`.mts`.
+- `packages/core/package.json` — exports → source; dep swap.
+- `packages/core/src/auth/credentials.ts` — `bcryptjs` import + JSDoc.
+- `pnpm-lock.yaml` — reflects `bcryptjs` swap.
+- `docs/06-sprints/SPRINT-001-production-foundation/SPRINT-001-production-foundation.md` — **NEW** sprint plan.
+- `docs/06-sprints/SPRINT-001-production-foundation/evidence/M1-baseline/*` — **NEW** evidence (commands, output files, notes, checklist).
+- `docs/00-bootstrap/PROJECT_STATE.md` — v1.2, sprint + M1 row.
+- `docs/00-bootstrap/NEXT_SESSION.md` — M1 task.
+- `CHANGELOG.md` `[Unreleased]` — M1 entry.

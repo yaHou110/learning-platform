@@ -3,15 +3,15 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "main": "./dist/index.js",
-  "types": "./dist/index.d.ts",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
   "exports": {
-    ".": "./dist/index.js",
-    "./db": "./dist/db/index.js",
-    "./db/schema": "./dist/db/schema/index.js",
-    "./auth": "./dist/auth/index.js",
-    "./plugins": "./dist/plugins/index.js",
-    "./api": "./dist/api/index.js"
+    ".": "./src/index.ts",
+    "./db": "./src/db/index.ts",
+    "./db/schema": "./src/db/schema/index.ts",
+    "./auth": "./src/auth/index.ts",
+    "./plugins": "./src/plugins/index.ts",
+    "./api": "./src/api/index.ts"
   },
   "scripts": {
     "lint": "eslint . --ext .ts",
@@ -24,14 +24,14 @@
   },
   "dependencies": {
     "@auth/drizzle-adapter": "^1.7.2",
-    "bcrypt": "^5.1.1",
+    "bcryptjs": "^2.4.3",
     "drizzle-orm": "^0.36.0",
     "next-auth": "5.0.0-beta.25",
     "pg": "^8.13.0",
     "zod": "^3.23.8"
   },
   "devDependencies": {
-    "@types/bcrypt": "^5.0.2",
+    "@types/bcryptjs": "^2.4.6",
     "@types/pg": "^8.11.10",
     "drizzle-kit": "^0.28.0",
     "eslint": "^8.57.0",

@@ -9,98 +9,111 @@
 
 | Field | Value |
 | --- | --- |
-| Session # | 008 |
+| Session # | 009 |
 | Date opened | 2026-07-11 |
 | Agent | orchestrator (Mavis) |
 | Sprint | SPRINT-001 — Production Foundation |
-| Goal | **M1 — Baseline Verification.** Freeze the current state, take a clean commit, run `pnpm install` → `lint` → `typecheck` → `test` → `build` from a clean state and capture every output. |
+| Goal | **M2 — Production Build Validation.** `next build` artifact is already in `apps/web/.next/` from M1. Run `next start` against it on a non-dev port, smoke-test the production server (login, `/api/health`, `/api/users`, `/api/auth/session`, sign-out, RTL page render), and capture every response. |
 | Status | 🔵 in progress |
 
 ---
 
 ## Context
 
-Sessions 005–007 produced a working Identity & Access stack (Postgres + Drizzle + Auth.js v5 + Edge middleware + login/dashboard + 2 API routes). Dev-mode smoke test passed locally.
+Session 008 closed **M1 (Baseline Verification)** with all five quality gates green. M1 also fixed five real issues in the build pipeline (see `MASTER_HANDOFF.md` Session 008 and `evidence/M1-baseline/notes.md`).
 
-Session 008 *originally* planned Catalog API/UI work. **That plan is suspended.** Per founder directive (2026-07-11 chat), we run a Production Foundation Sprint first and gate feature work behind M7 sign-off.
-
-12 files from sessions 005–007 are still uncommitted in the working tree. M1 freezes those as a baseline.
+`pnpm build` produced `apps/web/.next/` (server build, static, and middleware bundle). M2 starts that production server and validates that the **production-mode runtime behavior** matches what we saw in dev mode in session 007.
 
 ## Active sprint
 
 - Plan: [`../06-sprints/SPRINT-001-production-foundation/SPRINT-001-production-foundation.md`](../06-sprints/SPRINT-001-production-foundation/SPRINT-001-production-foundation.md)
-- Evidence dir: `../06-sprints/SPRINT-001-production-foundation/evidence/M1-baseline/`
+- Evidence dir: `../06-sprints/SPRINT-001-production-foundation/evidence/M2-prod-build/`
 
-## M1 — Baseline Verification — task
+## M2 — Production Build Validation — task
 
-### 1.1 Freeze current state
-- `git status` must show only intended changes
-- Commit all 12 uncommitted files as `chore: freeze session 005-007 work as sprint baseline`
-- `git status` clean afterward
+### 2.1 Pre-flight
+- Verify `apps/web/.next/` exists from M1 build
+- Check `apps/web/.next/BUILD_ID` exists
+- Read `apps/web/.next/required-server-files.json` (or the App-Router equivalent) to confirm the build is complete
+- Confirm a Postgres instance is reachable (use the docker-compose one if available; otherwise start it)
 
-### 1.2 pnpm install (clean)
-- `pnpm install --frozen-lockfile`
-- Capture: exit code, install summary, any warnings
+### 2.2 Start production server
+- Set required env vars: `AUTH_SECRET`, `DATABASE_URL`
+- Run `pnpm --filter web start` (which is `next start`) on port 3000 (or a dedicated port 3100 to avoid conflicts with `next dev`)
+- Wait until the server is ready (poll `/api/health` until 200)
+- Save PID for clean shutdown
 
-### 1.3 Lint
-- `pnpm -r lint`
-- Capture: exit code, full output (must be zero warnings)
+### 2.3 Smoke test — protected routes
+- `curl -i http://localhost:<port>/api/health` → expect 200 with `{"status":"ok","db":true,...}`
+- `curl -i http://localhost:<port>/` (no cookie) → expect 307 redirect to `/login?callbackUrl=%2F`
+- `curl -i http://localhost:<port>/api/users` (no cookie) → expect 307 redirect (middleware)
 
-### 1.4 Typecheck
-- `pnpm -r typecheck`
-- Capture: exit code, full output (must be clean)
+### 2.4 Smoke test — login + protected API
+- POST credentials to `/api/auth/callback/credentials` (Auth.js's built-in endpoint) with a seeded super_admin (`admin@hawza.local` / `changeme`) on tenant `hawza-demo`
+- Capture the session cookie from the response (`Set-Cookie: authjs.session-token=...`)
+- With the cookie:
+  - `GET /api/auth/session` → expect 200 with `user.id`, `user.email`, `user.role`, `user.tenantId`
+  - `GET /api/users` → expect 200 with the user list
+  - `GET /` → expect 200 with the dashboard HTML (Persian, RTL)
 
-### 1.5 Test
-- `pnpm -r test`
-- Capture: exit code, summary (X tests passed across Y packages)
+### 2.5 Sign-out + negative tests
+- `POST /api/auth/signout` with the cookie → expect 200/302 and the session cookie cleared
+- After sign-out: `GET /api/users` → expect 307 redirect to `/login`
+- Send an invalid cookie: `GET /api/users` → expect 307 redirect to `/login`
 
-### 1.6 Build
-- `pnpm build` (root script — runs `packages/*` build then `apps/web` build)
-- Capture: exit code, Next.js build summary (route table)
+### 2.6 Static asset check
+- `GET /_next/static/...` for a known chunk (from M1 build output) → expect 200 with `Content-Type: application/javascript`
+- This proves the Edge runtime can serve the prebuilt bundle.
 
-### 1.7 Evidence file
-Write `evidence/M1-baseline/`:
+### 2.7 Shutdown
+- Stop the `next start` process cleanly (SIGTERM, not SIGKILL)
+- Verify exit code 0
+
+### 2.8 Evidence file
+Write `evidence/M2-prod-build/`:
 - `commands.txt` — exact commands run
-- `output-install.txt`, `output-lint.txt`, `output-typecheck.txt`, `output-test.txt`, `output-build.txt`
+- `output-start.txt` — `next start` startup log
+- `output-smoke-*.txt` — curl outputs for each smoke test
 - `checklist.md` — milestone done-when with ticks
 - `notes.md` — observations, deviations, decisions
 
-### 1.8 Documentation updates
-- `CHANGELOG.md` `[Unreleased]` — entry
-- `MASTER_HANDOFF.md` — append Session 008 entry
-- `NEXT_SESSION.md` — rotate to M2
-- `PROJECT_STATE.md` — mark M1 complete, M2 in progress
-- Update SPRINT-001 milestone table to ✅ for M1
+### 2.9 Documentation updates
+- `CHANGELOG.md` `[Unreleased]` — M2 entry
+- `MASTER_HANDOFF.md` — append Session 009 entry
+- `NEXT_SESSION.md` — rotate to M3
+- `PROJECT_STATE.md` — mark M2 complete, M3 in progress
+- Update SPRINT-001 milestone table to ✅ for M2
 
-### 1.9 Commit
-- One commit per milestone, Conventional Commits message
+### 2.10 Commit
+- One commit, Conventional Commits
 
-## Done-when checklist (M1)
+## Done-when checklist (M2)
 
-- [ ] Working tree clean, all 12 uncommitted files committed as baseline
-- [ ] `pnpm install --frozen-lockfile` exit 0
-- [ ] `pnpm -r lint` exit 0, zero warnings
-- [ ] `pnpm -r typecheck` exit 0
-- [ ] `pnpm -r test` exit 0, all tests pass
-- [ ] `pnpm build` exit 0
-- [ ] All 5 output files in `evidence/M1-baseline/`
-- [ ] `checklist.md` and `notes.md` written
-- [ ] `CHANGELOG.md` updated
-- [ ] `MASTER_HANDOFF.md` Session 008 entry appended
-- [ ] `NEXT_SESSION.md` rotated to M2
-- [ ] `PROJECT_STATE.md` updated
-- [ ] Final commit, push optional
+- [ ] `.next/BUILD_ID` exists; preflight passes
+- [ ] `next start` boots without error
+- [ ] `/api/health` returns 200 + `db:true`
+- [ ] Unauthenticated requests to protected routes redirect to `/login`
+- [ ] Login flow returns a valid session cookie
+- [ ] Authenticated `GET /api/auth/session` returns typed user
+- [ ] Authenticated `GET /api/users` returns the user list
+- [ ] Authenticated `GET /` returns 200 with Persian RTL HTML
+- [ ] Sign-out clears the cookie
+- [ ] Static asset request returns 200 with correct `Content-Type`
+- [ ] `next start` exits 0 on SIGTERM
+- [ ] All evidence files in `evidence/M2-prod-build/`
+- [ ] Documentation updated, commit made
 
 ## Out of scope (do NOT do in this session)
 
-- Anything beyond M1. M2 (next build + next start smoke test) is next.
+- Anything beyond M2. M3 (CI) is next.
 - New features (Catalog, Learning, etc.)
-- Refactoring on a whim
-- Bumping versions of Next.js / Node / TypeScript
+- Changing the database schema
+- New env vars beyond what M2 needs (`AUTH_SECRET`, `DATABASE_URL`)
 
 ## Notes for the next agent
 
-- All commands run via `cmd /c "pnpm ..."` because PowerShell execution policy blocks the `pnpm.ps1` shim.
-- Evidence files are plain text. Use the Write tool, not shell `>` redirects, to avoid encoding issues.
-- Do NOT skip the evidence step. Founder directive is binding.
-- If any command fails, STOP. Document the failure in `notes.md` with the full error. Do not silently retry or pivot to a workaround.
+- Run `next start` in the background (`Start-Process` or `&` job), then poll `/api/health` until 200 before running the smoke tests. Do not block the shell on the server.
+- PowerShell execution policy blocks `pnpm` directly. Use `cmd /c "pnpm --filter web start"` or run the underlying `next start` via `npx` / `node_modules/.bin/next`.
+- Capture both stdout AND stderr from `next start`. Production builds surface warnings only at startup.
+- If a smoke test fails, STOP. Document the failure in `notes.md` with the full response (headers + body). Do not silently retry or pivot.
+- If Docker / Postgres is not running, document the blocker in `notes.md` and pause for founder input. Do not mock.

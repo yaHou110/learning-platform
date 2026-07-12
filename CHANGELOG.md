@@ -13,19 +13,36 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
-- `apps/web/src/middleware.ts` — Edge-compatible route protection using `getToken` from `next-auth/jwt`
-- `apps/web/src/app/api/users/route.ts` — GET endpoint listing users for the current tenant
-- `apps/web/src/app/api/auth/session/route.ts` — GET endpoint returning typed session data
+- **SPRINT-001 — Production Foundation** plan with 7 milestones (M1..M7) and a hard gate: no new business features until M7 sign-off. Plan: `docs/06-sprints/SPRINT-001-production-foundation/SPRINT-001-production-foundation.md`.
+- Per-milestone evidence directories under `docs/06-sprints/SPRINT-001-production-foundation/evidence/M{n}-*/`.
 
-### Fixed
-- Middleware: removed incorrect `"use server"` directive (middleware runs on Edge, not Node.js)
-- Middleware: replaced `auth()` with Edge-compatible `getToken` from `next-auth/jwt`
-- `api/users/route.ts`: removed unused `req` parameter (caused TypeScript and ESLint errors)
-- `api/auth/session/route.ts`: removed unnecessary `"use server"` directive
+### Fixed (during M1 — Baseline Verification)
+- **`next/no-page-custom-font` warning in `apps/web/src/app/layout.tsx`** — Google Font (`Vazirmatn`) was loaded via raw `<link>` tags in App Router `<head>`. Converted to `next/font/google` so the font is inlined at build time and the warning is gone.
+- **Root `pnpm build` script had a broken filter** — `pnpm -r --filter='./packages/*' build` matched no projects in pnpm 9. Simplified the root `build` to `pnpm --filter web build`; per-package builds remain available for ad-hoc use. `transpilePackages` in `next.config.mjs` already makes the workspace package source consumable by Next.js.
+- **`@hawza/core` `exports` pointed to `dist/...js` while other packages pointed to source** — the only package that needed a build step before the Next.js build. Aligned core to source-export like the rest of the workspace (`./src/...ts`).
+- **Webpack did not map `.js` → `.ts` for NodeNext-style imports** — `@hawza/core/src/api/index.ts` uses `from '../db/client.js'` (NodeNext convention). Added `resolve.extensionAlias` to `apps/web/next.config.mjs` so webpack resolves `.js` → `.ts`/`.tsx` first.
+- **Native `bcrypt` is unbundlable in the Next.js server build** — `@hawza/core` used native `bcrypt` (C++ bindings) for password hashing, which webpack tried to bundle and choked on `node-pre-gyp`'s HTML files. Switched to pure-JS `bcryptjs` (already a dep of `apps/web`). Trade-off: ~250ms vs ~80ms per hash at cost 12, acceptable for login. Rationale documented in the JSDoc header of `credentials.ts`.
 
 ### Changed
-- `docs/00-bootstrap/NEXT_SESSION.md` — rotated to session 007
-- `docs/00-bootstrap/MASTER_HANDOFF.md` — appended Session 006 entry
+- `apps/web/src/app/layout.tsx` — uses `next/font/google` for Vazirmatn; `<html>` and `<body>` apply the font class.
+- `apps/web/next.config.mjs` — added `resolve.extensionAlias` for `.js`/`.mjs` → `.ts`/`.tsx`/`.mts`.
+- `package.json` (root) — `build` script simplified to `pnpm --filter web build`.
+- `packages/core/package.json` — exports now point to source (`./src/...ts`); dep `bcrypt` → `bcryptjs`, devDep `@types/bcrypt` → `@types/bcryptjs`.
+- `packages/core/src/auth/credentials.ts` — uses `bcryptjs`; JSDoc explains the rationale.
+- `docs/00-bootstrap/PROJECT_STATE.md` — v1.2, Sprint 001 in progress, M1 next.
+- `docs/00-bootstrap/NEXT_SESSION.md` — rotated to Session 008, M1 task.
+- `docs/00-bootstrap/MASTER_HANDOFF.md` — appended Session 008 entry.
+- `docs/03-development/TECH_STACK.md` — to be updated at M3/M4 (CI, security, observability) — deferred per M1 scope.
+
+### Verified
+- `pnpm install` (with lockfile) — exit 0
+- `pnpm -r lint` — exit 0, **zero warnings**
+- `pnpm -r typecheck` — exit 0
+- `pnpm -r test` — exit 0, 18 tests pass across 6 packages (core 3, plugin-auth 3, plugin-catalog 2, plugin-credentials 3, plugin-learning 2, plugin-localization 3, apps/web 2)
+- `pnpm build` — exit 0, 7 routes compiled (1 page, 5 API routes, 1 login page), middleware 42.5 kB, first-load JS shared 99.9 kB
+
+### Gate (binding)
+🚫 No new business features are merged until M7 (Production Readiness Review) is signed off. This includes Catalog API/UI, Dashboard real UI, Learning plugin, Credentials plugin, Event Bus, PWA.
 
 ---
 
