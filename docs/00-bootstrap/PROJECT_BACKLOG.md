@@ -1,7 +1,9 @@
-# NEXT_SESSION.md
+# PROJECT_BACKLOG.md
 
 > **The single task for the current session. Read this second (after `PROJECT_STATE.md`).**
 > Update this file at the end of every session, even if "no progress."
+>
+> _Renamed from `NEXT_SESSION.md` on 2026-07-12. Historical session entries in `PROJECT_HANDOVER.md` still reference the old name — that file is append-only._
 
 ---
 
@@ -20,7 +22,7 @@
 
 ## Context
 
-Session 008 closed **M1 (Baseline Verification)** with all five quality gates green. M1 also fixed five real issues in the build pipeline (see `MASTER_HANDOFF.md` Session 008 and `evidence/M1-baseline/notes.md`).
+Session 008 closed **M1 (Baseline Verification)** with all five quality gates green. M1 also fixed five real issues in the build pipeline (see `PROJECT_HANDOVER.md` Session 008 and `evidence/M1-baseline/notes.md`).
 
 `pnpm build` produced `apps/web/.next/` (server build, static, and middleware bundle). M2 starts that production server and validates that the **production-mode runtime behavior** matches what we saw in dev mode in session 007.
 
@@ -79,8 +81,8 @@ Write `evidence/M2-prod-build/`:
 
 ### 2.9 Documentation updates
 - `CHANGELOG.md` `[Unreleased]` — M2 entry
-- `MASTER_HANDOFF.md` — append Session 009 entry
-- `NEXT_SESSION.md` — rotate to M3
+- `PROJECT_HANDOVER.md` — append Session 009 entry
+- `PROJECT_BACKLOG.md` — rotate to M3
 - `PROJECT_STATE.md` — mark M2 complete, M3 in progress
 - Update SPRINT-001 milestone table to ✅ for M2
 

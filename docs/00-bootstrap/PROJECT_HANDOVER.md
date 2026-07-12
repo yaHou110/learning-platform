@@ -1,7 +1,9 @@
-# MASTER_HANDOFF.md
+# PROJECT_HANDOVER.md
 
 > **Append-only session log.** Every session ends by appending one entry here. Never edit old entries.
 > This is the project's *long-term memory*. It is the second thing a new agent reads (after `PROJECT_STATE.md`).
+>
+> _Renamed from `MASTER_HANDOFF.md` on 2026-07-12. Session 001-008 entries below intentionally still reference the old filename — append-only history is preserved verbatim. The companion file `PROJECT_BACKLOG.md` was also renamed (from `NEXT_SESSION.md`)._
 
 ---
 
@@ -16,7 +18,7 @@ Each entry has:
 **Done:** (bullet list, file paths)
 **Decisions:** (ADR links, or "none")
 **Open questions:** (or "none")
-**Next session:** (link to NEXT_SESSION.md update, or "same")
+**Next session:** (link to `PROJECT_BACKLOG.md` update, or "same")
 ```
 
 ---

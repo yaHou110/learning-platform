@@ -11,7 +11,7 @@
 | --- | --- |
 | Date | YYYY-MM-DD |
 | Agent | (e.g. ChatGPT, Claude, Codex, human) |
-| Goal | (one line — copy from NEXT_SESSION.md) |
+| Goal | (one line — copy from PROJECT_BACKLOG.md) |
 | Started at | HH:MM |
 | Finished at | HH:MM |
 
@@ -52,10 +52,10 @@
 
 ---
 
-## What to put in MASTER_HANDOFF.md (draft)
+## What to put in PROJECT_HANDOVER.md (draft)
 
 ```markdown
-(copy from HANDOFF_TEMPLATE.md, fill in, then paste at the bottom of MASTER_HANDOFF.md)
+(copy from HANDOFF_TEMPLATE.md, fill in, then paste at the bottom of PROJECT_HANDOVER.md)
 ```
 
 ---
@@ -64,7 +64,7 @@
 
 - [ ] All file paths in handoff are real (no broken links).
 - [ ] All "open questions" are actually open (not solved and forgotten).
-- [ ] NEXT_SESSION.md updated.
+- [ ] PROJECT_BACKLOG.md updated.
 - [ ] CHANGELOG.md updated.
 - [ ] DECISIONS.md updated (if ADRs were added).
 - [ ] No secrets, no `.env` files, no API keys.

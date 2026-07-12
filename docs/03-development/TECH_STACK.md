@@ -145,5 +145,5 @@
 1. If the change is a new technology category, write an ADR first (`docs/05-decisions/`).
 2. Update the relevant row above.
 3. Update `PROJECT_STATE.md` to mark the question closed.
-4. Update `CHANGELOG.md` and `MASTER_HANDOFF.md`.
+4. Update `CHANGELOG.md` and `PROJECT_HANDOVER.md`.
 5. Commit.

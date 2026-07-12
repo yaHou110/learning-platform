@@ -1,6 +1,6 @@
 # HANDOFF_TEMPLATE.md
 
-> **Template for a handoff entry.** Copy this into `docs/00-bootstrap/MASTER_HANDOFF.md` at the end of every non-trivial session.
+> **Template for a handoff entry.** Copy this into `docs/00-bootstrap/PROJECT_HANDOVER.md` at the end of every non-trivial session.
 
 ---
 
@@ -32,7 +32,7 @@
 - <list, or "none">
 
 **Next session:**
-<one line pointing to NEXT_SESSION.md, or "see NEXT_SESSION.md session NNN+1">
+<one line pointing to PROJECT_BACKLOG.md, or "see PROJECT_BACKLOG.md session NNN+1">
 
 **Notes for the next agent:**
 <any gotchas, links, things-to-remember — keep short>
@@ -73,7 +73,7 @@ Did some stuff. Updated docs. Next: more stuff.
 **Decisions still open:**
 - Hosting (question 5 in PROJECT_STATE.md) — to be picked in M7.
 
-**Next session:** Bootstrap the monorepo (`pnpm create`) + initial CI. See NEXT_SESSION.md session 006.
+**Next session:** Bootstrap the monorepo (`pnpm create`) + initial CI. See PROJECT_BACKLOG.md session 006.
 ```
 
 ---

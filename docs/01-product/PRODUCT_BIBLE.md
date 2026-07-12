@@ -117,5 +117,5 @@ We are building our own. It will be:
 تغییرات implementation، stack، یا timeline در فایل‌های مربوطه ثبت می‌شود.
 
 هر تغییر در این فایل باید:
-- در `MASTER_HANDOFF.md` ثبت شود.
+- در `PROJECT_HANDOVER.md` ثبت شود.
 - اگر binding است، یک ADR جدید ایجاد کند.

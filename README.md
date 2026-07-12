@@ -25,11 +25,11 @@ It is **not** a 20k-word super-prompt. It is a small, modular, Git-versioned bod
 ```bash
 git clone <this-repo>
 cd <this-repo>
-# Open AGENTS.md first if you are an AI agent
+# Open DEVELOPMENT_GUIDE.md first if you are an AI agent
 # Open README.md if you are a human
 ```
 
-If you are an AI agent, **start here**: [`AGENTS.md`](./AGENTS.md) (it is intentionally short — under 100 lines).
+If you are an AI agent, **start here**: [`DEVELOPMENT_GUIDE.md`](./DEVELOPMENT_GUIDE.md) (it is intentionally short — under 100 lines).
 
 ---
 
@@ -38,16 +38,16 @@ If you are an AI agent, **start here**: [`AGENTS.md`](./AGENTS.md) (it is intent
 ```
 .
 ├── README.md                      ← you are here (human entry)
-├── AGENTS.md                      ← AI agent entry (router, < 80 lines)
+├── DEVELOPMENT_GUIDE.md           ← AI agent entry (router, < 100 lines)
 ├── LICENSE
 ├── CHANGELOG.md
 │
 ├── docs/
 │   ├── 00-bootstrap/              ← how to onboard a new agent/session
-│   │   ├── PROJECT_BOOTSTRAP.md
-│   │   ├── MASTER_HANDOFF.md
+│   │   ├── PROJECT_FOUNDATION.md
+│   │   ├── PROJECT_HANDOVER.md
 │   │   ├── PROJECT_STATE.md
-│   │   └── NEXT_SESSION.md
+│   │   └── PROJECT_BACKLOG.md
 │   │
 │   ├── 01-product/                ← what we build and why
 │   │   ├── PRODUCT_BIBLE.md
@@ -68,7 +68,7 @@ If you are an AI agent, **start here**: [`AGENTS.md`](./AGENTS.md) (it is intent
 │   └── 05-decisions/              ← why we chose what we chose
 │       ├── DECISIONS.md
 │       ├── ADR-0001-no-wordpress.md
-│       └── ADR-0002-ai-project-os.md
+│       └── ADR-0002-operating-manual.md
 │
 └── templates/                     ← copy-paste starters
     ├── HANDOFF_TEMPLATE.md
@@ -95,13 +95,13 @@ For the full story, read [`docs/01-product/PRODUCT_BIBLE.md`](./docs/01-product/
 
 You are looking at the Hawza Family Learning Platform repo.
 
-1. Read `AGENTS.md` (it's the router — 80 lines).
+1. Read `DEVELOPMENT_GUIDE.md` (it's the router — under 100 lines).
 2. Read `docs/00-bootstrap/PROJECT_STATE.md` (what's done, what's next).
-3. Read `docs/00-bootstrap/NEXT_SESSION.md` (what to do this session).
-4. If you need history, read `docs/00-bootstrap/MASTER_HANDOFF.md`.
+3. Read `docs/00-bootstrap/PROJECT_BACKLOG.md` (what to do this session).
+4. If you need history, read `docs/00-bootstrap/PROJECT_HANDOVER.md`.
 5. **Do not** read all `docs/01-product/*` unless the task requires it. They are large.
 
-When you finish a session, **update `NEXT_SESSION.md` and append to `MASTER_HANDOFF.md`**. That is your only obligation.
+When you finish a session, **update `PROJECT_BACKLOG.md` and append to `PROJECT_HANDOVER.md`**. That is your only obligation.
 
 ---
 
@@ -130,7 +130,7 @@ This project is currently single-founder. Until v1.0 ships, the process is:
 1. Read the docs (especially PRODUCT_BIBLE).
 2. Open a branch: `git checkout -b <scope>/<short-name>`.
 3. Make changes.
-4. Update NEXT_SESSION.md.
+4. Update PROJECT_BACKLOG.md.
 5. Open a PR or self-merge with a clear commit message.
 
 ## Local dev (after `pnpm install` at the repo root)

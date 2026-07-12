@@ -10,7 +10,7 @@
 | # | Title | Status | Date |
 | --- | --- | --- | --- |
 | [ADR-0001](./ADR-0001-no-wordpress.md) | No WordPress — use a custom or framework-native stack | Accepted | 2026-07-10 |
-| [ADR-0002](./ADR-0002-ai-project-os.md) | Documentation is AI-native, agent-portable | Accepted | 2026-07-10 |
+| [ADR-0002](./ADR-0002-operating-manual.md) | Documentation is AI-native, agent-portable | Accepted | 2026-07-10 |
 | [ADR-0003](./ADR-0003-web-framework.md) | Web framework — Next.js 15 (App Router) on Node.js 20 LTS | Accepted | 2026-07-11 |
 | [ADR-0004](./ADR-0004-database.md) | Database — PostgreSQL 16 + Drizzle ORM (no vector DB in v1) | Accepted | 2026-07-11 |
 | [ADR-0005](./ADR-0005-auth.md) | Auth — Auth.js v5 Credentials + bcrypt + server-side sessions in Postgres | Accepted | 2026-07-11 |
@@ -59,5 +59,5 @@ A rejected proposal is kept here with its rationale. Useful for future "wait, wh
 3. از `templates/ADR_TEMPLATE.md` استفاده کنید.
 4. در همین فایل (`DECISIONS.md`) در جدول `Active` اضافه کنید.
 5. در `CHANGELOG.md` زیر `## [Unreleased]` اضافه کنید.
-6. در `MASTER_HANDOFF.md` در entry جلسه اخیر اشاره کنید.
+6. در `PROJECT_HANDOVER.md` در entry جلسه اخیر اشاره کنید.
 7. Commit.

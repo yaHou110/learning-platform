@@ -1,8 +1,8 @@
 # PROJECT_STATE.md
 
-> **Current snapshot of the project.** This is the *first* file to read after `AGENTS.md`.
+> **Current snapshot of the project.** This is the *first* file to read after `DEVELOPMENT_GUIDE.md`.
 
-> Last updated: 2026-07-11 (v1.2 — Production Foundation Sprint in progress, M1 ✅, M2 next)
+> Last updated: 2026-07-12 (v1.2 — Production Foundation Sprint in progress, M1 ✅, M2 next; doc rename refactor applied)
 
 ---
 
@@ -17,7 +17,7 @@
 | Phase | Status | Notes |
 | --- | --- | --- |
 | 0. Research & architecture | ✅ done | AI-native docs decision made. |
-| 1. Repository skeleton | ✅ done | This file, AGENTS.md, README, etc. |
+| 1. Repository skeleton | ✅ done | This file, `DEVELOPMENT_GUIDE.md`, README, etc. |
 | 2. Product documentation | ✅ done (skeleton) | Bible, requirements, features, personas, roadmap. |
 | 3. Architecture documentation | ✅ done (skeleton) | System arch, data model, plugin & permission matrices. |
 | 3b. Foundation docs | ✅ done | `MVP_SCOPE`, `BOUNDED_CONTEXTS`, `PROJECT_PRINCIPLES`, `ARCHITECTURE_CONSTRAINTS`. |
@@ -35,10 +35,10 @@
 | --- | --- | --- |
 | No WordPress, ever | `ADR-0001` | ✅ binding |
 | AI-native, agent-portable docs | `ADR-0002` | ✅ binding |
-| Repo root language for code/IDs: English | `AGENTS.md` | ✅ binding |
-| Repo narrative language for product: Farsi (Persian) | `AGENTS.md` | ✅ binding |
+| Repo root language for code/IDs: English | `DEVELOPMENT_GUIDE.md` | ✅ binding |
+| Repo narrative language for product: Farsi (Persian) | `DEVELOPMENT_GUIDE.md` | ✅ binding |
 | Single-product repo (LPC + Hawza instance in one repo) | `PRODUCT_BIBLE.md` | ✅ binding |
-| Append-only history (CHANGELOG, handoffs, ADRs) | `AGENTS.md` | ✅ binding |
+| Append-only history (CHANGELOG, handoffs, ADRs) | `DEVELOPMENT_GUIDE.md` | ✅ binding |
 | Next.js 15 (App Router) + Node 20 LTS + TS strict | `ADR-0003` | ✅ binding |
 | PostgreSQL 16 + Drizzle ORM (no vector DB v1) | `ADR-0004` | ✅ binding |
 | Auth.js v5 Credentials + bcrypt + server sessions | `ADR-0005` | ✅ binding |
@@ -80,7 +80,7 @@ Q5 is consumed by SPRINT-001 M6. Q6 affects schema evolution; defer until M6 lan
 
 1. **Context rot** — mitigated by small, modular docs and append-only history.
 2. **Single-founder bus factor** — mitigated by docs being the source of truth, not chat history.
-3. **Tool lock-in** — mitigated by Agent-portable AGENTS.md and standard Markdown.
+3. **Tool lock-in** — mitigated by Agent-portable `DEVELOPMENT_GUIDE.md` and standard Markdown.
 4. **Premature standardization** — many docs are skeletons. Resist the urge to over-spec before the first code commit.
 5. **Sprint drift** — mitigated by hard gate (no features until M7) and per-milestone evidence requirement.
 
@@ -88,4 +88,4 @@ Q5 is consumed by SPRINT-001 M6. Q6 affects schema evolution; defer until M6 lan
 
 ## What's next
 
-The very next concrete action is in `NEXT_SESSION.md`. Read that file **second** (right after this one).
+The very next concrete action is in `PROJECT_BACKLOG.md`. Read that file **second** (right after this one).

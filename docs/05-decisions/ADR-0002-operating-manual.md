@@ -26,7 +26,7 @@ We considered three approaches.
 
 - A small, **router-style `AGENTS.md`** (< 100 lines) that points at deeper docs.
 - A set of **modular Markdown docs** organized by concern (bootstrap, product, architecture, development, decisions).
-- **Append-only history** for `CHANGELOG.md`, `MASTER_HANDOFF.md`, and ADRs.
+- **Append-only history** for `CHANGELOG.md`, `PROJECT_HANDOVER.md`, and ADRs.
 - **Tool-agnostic structure** that works in ChatGPT web, Claude Code, Codex CLI, Cursor, Gemini CLI, and any agent that supports the `AGENTS.md` convention.
 - **No "super-prompt"** as the source of truth — the repo is.
 
@@ -60,7 +60,7 @@ We are a single founder. Documentation must be:
 
 ### 4. Append-only history protects truth
 
-Decisions should not silently change. The `MASTER_HANDOFF.md`, `CHANGELOG.md`, and ADR pattern enforce this: history is preserved, new entries are appended.
+Decisions should not silently change. The `PROJECT_HANDOVER.md`, `CHANGELOG.md`, and ADR pattern enforce this: history is preserved, new entries are appended.
 
 ### 5. Standard `AGENTS.md` is an emerging convention
 
@@ -112,16 +112,18 @@ By following the convention, we get multi-agent support for free.
 ## The specific shape we use
 
 ```
-README.md          → human entry, 1-page summary
-AGENTS.md          → AI agent router (< 100 lines)
+README.md              → human entry, 1-page summary
+DEVELOPMENT_GUIDE.md   → AI agent router (< 100 lines)
 docs/
-  00-bootstrap/    → onboarding (PROJECT_STATE, NEXT_SESSION, MASTER_HANDOFF, BOOTSTRAP)
-  01-product/      → product truth (BIBLE, REQUIREMENTS, FEATURES, PERSONAS, ROADMAP)
-  02-architecture/ → system shape (SYSTEM_ARCHITECTURE, DATA_MODEL, PLUGIN_MATRIX, PERMISSION_MATRIX)
-  03-development/  → conventions (TECH_STACK, …)
-  05-decisions/    → why (DECISIONS, ADR-NNNN)
-templates/         → copy-paste starters
+  00-bootstrap/        → onboarding (PROJECT_STATE, PROJECT_BACKLOG, PROJECT_HANDOVER, PROJECT_FOUNDATION)
+  01-product/          → product truth (BIBLE, REQUIREMENTS, FEATURES, PERSONAS, ROADMAP)
+  02-architecture/     → system shape (SYSTEM_ARCHITECTURE, DATA_MODEL, PLUGIN_MATRIX, PERMISSION_MATRIX)
+  03-development/      → conventions (TECH_STACK, …)
+  05-decisions/        → why (DECISIONS, ADR-NNNN)
+templates/             → copy-paste starters
 ```
+
+> _Updated 2026-07-12: the on-disk filenames use a `PROJECT_*` prefix for the four bootstrap files. The router file is named `DEVELOPMENT_GUIDE.md` for clarity; the rationale of this ADR (small router at repo root, on-demand deep docs, append-only history) is unchanged. The `AGENTS.md` convention name is preserved where the text refers to the broader ecosystem convention; project-internal references to specific files use the current filenames._
 
 Each file:
 - Has a single concern.
@@ -133,15 +135,15 @@ Each file:
 
 ## How agents are expected to behave
 
-(From `AGENTS.md`.)
+(From `DEVELOPMENT_GUIDE.md`.)
 
-1. Read `AGENTS.md`.
+1. Read `DEVELOPMENT_GUIDE.md`.
 2. Read `docs/00-bootstrap/PROJECT_STATE.md`.
-3. Read `docs/00-bootstrap/NEXT_SESSION.md`.
-4. Read `docs/00-bootstrap/MASTER_HANDOFF.md` (recent entries).
+3. Read `docs/00-bootstrap/PROJECT_BACKLOG.md`.
+4. Read `docs/00-bootstrap/PROJECT_HANDOVER.md` (recent entries).
 5. Read `docs/05-decisions/DECISIONS.md` if the task touches a binding decision.
 6. **Do not** read `docs/01-product/*` or `docs/02-architecture/*` unless the task requires it.
-7. At the end of a session, update `NEXT_SESSION.md` and append to `MASTER_HANDOFF.md`.
+7. At the end of a session, update `PROJECT_BACKLOG.md` and append to `PROJECT_HANDOVER.md`.
 8. If a binding decision is made, write a new ADR.
 
 ---

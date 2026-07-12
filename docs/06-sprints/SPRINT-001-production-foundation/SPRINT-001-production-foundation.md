@@ -24,7 +24,7 @@ This includes: Catalog API routes, CourseCard, LessonList, Dashboard real UI, Le
 1. **Plan** — concrete task, done-when checklist, evidence requirements
 2. **Implement** — minimum change that satisfies the plan
 3. **Verify** — produce objective evidence (logs, test output, build output, CI status, doc diffs)
-4. **Update Documentation** — `NEXT_SESSION.md`, `PROJECT_STATE.md`, `MASTER_HANDOFF.md`, `CHANGELOG.md`, sprint evidence files
+4. **Update Documentation** — `PROJECT_BACKLOG.md`, `PROJECT_STATE.md`, `PROJECT_HANDOVER.md`, `CHANGELOG.md`, sprint evidence files
 5. **Commit** — Conventional Commits, reference the milestone
 6. **Review** — founder reviews evidence; only then proceed to next milestone
 
@@ -81,4 +81,4 @@ This includes: Catalog API routes, CourseCard, LessonList, Dashboard real UI, Le
 1. Copy this file to `docs/06-sprints/SPRINT-NNN-<slug>.md`.
 2. Create the same `evidence/M{n}-*/` directory tree.
 3. Add a row to `docs/00-bootstrap/PROJECT_STATE.md` (Phase row).
-4. Add a `Sprint` entry in `MASTER_HANDOFF.md` when the sprint starts.
+4. Add a `Sprint` entry in `PROJECT_HANDOVER.md` when the sprint starts.

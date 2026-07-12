@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 > **Convention**: each repo-level version is the documentation OS version (AI Project OS),
 > not the product version. Product versions are tracked in `docs/01-product/ROADMAP.md`.
+>
+> _Note: a file rename refactor was applied on 2026-07-12 (`AGENTS.md` → `DEVELOPMENT_GUIDE.md`, `NEXT_SESSION.md` → `PROJECT_BACKLOG.md`, `PROJECT_BOOTSTRAP.md` → `PROJECT_FOUNDATION.md`, `MASTER_HANDOFF.md` → `PROJECT_HANDOVER.md`, `ADR-0002-ai-project-os.md` → `ADR-0002-operating-manual.md`). Historical entries below intentionally keep the old filenames — the changelog is append-only._
 
 ---
 

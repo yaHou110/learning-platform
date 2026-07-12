@@ -19,7 +19,7 @@
 ### M0 — AI Project OS v1.0 ✅ (shipped: 2026-07-10)
 
 - ایجاد ساختار مستندات AI-native
-- اتصال بین AGENTS.md و سایر فایل‌ها
+- اتصال بین DEVELOPMENT_GUIDE.md و سایر فایل‌ها
 - تصمیمات binding: no-WordPress, AI-native docs
 
 ### M1 — Stack Lock + Repo Bootstrap (Now → ~2026-08)
@@ -119,4 +119,4 @@
 ## Change policy
 
 این فایل هر ماه یا با تغییر milestone بزرگ به‌روزرسانی می‌شود.
-تغییرات جزئی (task-level) در `NEXT_SESSION.md` و `MASTER_HANDOFF.md` ثبت می‌شود، نه اینجا.
+تغییرات جزئی (task-level) در `PROJECT_BACKLOG.md` و `PROJECT_HANDOVER.md` ثبت می‌شود، نه اینجا.
