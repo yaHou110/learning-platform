@@ -15,6 +15,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- **Executable governance (CI-enforced):** `.github/workflows/governance.yml` runs `pnpm verify` + `pnpm governance:validate` on PRs and pushes to `main`.
+- **`scripts/governance/validate.mjs`** — PR template validation (Risk, DoR, DoD, ADR, Rollback, Evidence), CHANGELOG requirement, ADR index integrity, ADR-0001 code scan.
+- **`.github/pull_request_template.md`** — mandatory governance sections with CI markers.
+- **GitHub Issue Templates:** `.github/ISSUE_TEMPLATE/feature.yml`, `bug.yml`.
+- **`docs/03-development/GOVERNANCE_CHECKLIST.md`** — session checklist (Phase A/B/C).
+- **`AGENTS.md`**, **`CLAUDE.md`**, **`.github/copilot-instructions.md`** — synchronized agent entry points (`pnpm sync:agents`).
+- **`.cursor/rules/agent-router.mdc`** — Cursor agent router aligned with `AGENTS.md`.
+- **ADR-0013 — Engineering Protocol v2 (EOS):** extends ADR-0012 with rules §39–§60; thematic chapter organization; Definition of Ready (§39); specification-first workflow (§40); human approval matrix (§41); risk classification (§42); ADR enforcement (§43); rule priority (§47); governance before generation (§59); verification before completion (§60).
+- **`docs/03-development/RISK_CLASSIFICATION.md`** — LOW/MEDIUM/HIGH/CRITICAL matrix with review, approval, and rollback requirements.
+- **`templates/DEFINITION_OF_READY.md`** — DoR checklist for §39.
+- **`templates/HUMAN_APPROVAL_CHECKLIST.md`** — founder approval workflow for §41.
+- **ADR-0012 — Mandatory Engineering Protocol:** binding process doc (`docs/03-development/ENGINEERING_PROTOCOL.md`) covering repository read order, milestone scope, quality gates, definition of done, planning-before-coding, security/rollback/evidence rules, and AI agent constraints.
+- **`docs/03-development/QUALITY_GATES.md`** — canonical lint/typecheck/test/build commands; CI alignment notes.
+- **`pnpm verify`** root script — runs all four quality gates in sequence.
+- **`scripts/quality-gates.ps1`** and **`scripts/quality-gates.sh`** — reproducible gate runners for Windows and Unix.
+- **`.cursor/rules/engineering-protocol.mdc`** — Cursor always-on enforcement rule.
+- **`templates/IMPLEMENTATION_PLAN.md`** and **`templates/DEFINITION_OF_DONE.md`** — planning and completion checklists.
 - **SPRINT-001 — Production Foundation** plan with 7 milestones (M1..M7) and a hard gate: no new business features until M7 sign-off. Plan: `docs/06-sprints/SPRINT-001-production-foundation/SPRINT-001-production-foundation.md`.
 - Per-milestone evidence directories under `docs/06-sprints/SPRINT-001-production-foundation/evidence/M{n}-*/`.
 - **Security headers** via `next.config.mjs` `headers()`: `X-Content-Type-Options`, `X-Frame-Options`, `X-XSS-Protection`, `Referrer-Policy`, `Permissions-Policy`.
@@ -36,6 +53,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **`.env.example` lacked comments** — added descriptions, security notes, and `openssl rand -base64 32` generation command.
 
 ### Changed
+- `package.json` — `governance:validate`, `governance:validate:local`, `sync:agents` scripts.
+- `DEVELOPMENT_GUIDE.md` — rule #9 (GOVERNANCE_CHECKLIST); CI reference.
+- `docs/03-development/QUALITY_GATES.md` — documents `governance.yml` pipeline.
+- `docs/03-development/ENGINEERING_PROTOCOL.md` — reorganized into 13 thematic chapters; v2.0 with 60 rules (§1–§38 preserved, §39–§60 added).
+- `.cursor/rules/engineering-protocol.mdc` — v2 enforcement (DoR, spec-first, governance before generation, rule priority).
+- `templates/DEFINITION_OF_DONE.md`, `templates/IMPLEMENTATION_PLAN.md` — aligned with §39, §55, §60.
+- `DEVELOPMENT_GUIDE.md` — onboarding table includes `ENGINEERING_PROTOCOL.md`; hard rule #8 and `pnpm verify` in build section.
+- `docs/05-decisions/DECISIONS.md` — ADR-0012 indexed.
 - `apps/web/src/app/layout.tsx` — uses `next/font/google` for Vazirmatn; `<html>` and `<body>` apply the font class.
 - `apps/web/next.config.mjs` — added `resolve.extensionAlias` for `.js`/`.mjs` → `.ts`/`.tsx`/`.mts`.
 - `package.json` (root) — `build` script simplified to `pnpm --filter web build`.

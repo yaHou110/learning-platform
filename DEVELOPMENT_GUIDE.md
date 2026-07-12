@@ -16,7 +16,7 @@ only if the task requires product context.
 
 ---
 
-## How to onboard (four reads, in order)
+## How to onboard (five reads, in order)
 
 | # | File | Why |
 | --- | --- | --- |
@@ -24,6 +24,7 @@ only if the task requires product context.
 | 2 | `docs/00-bootstrap/PROJECT_BACKLOG.md` | The exact task for this work cycle. |
 | 3 | `docs/00-bootstrap/PROJECT_HANDOVER.md` | Recent history, decisions, open questions. |
 | 4 | `docs/05-decisions/DECISIONS.md` | Why we chose what we chose (binding). |
+| 5 | `docs/03-development/ENGINEERING_PROTOCOL.md` | **Engineering OS v2** — 60 rules; before any code work (ADR-0012/0013). |
 
 Read `docs/01-product/*` or `docs/02-architecture/*` only when the current task touches
 them. They are large.
@@ -41,6 +42,8 @@ them. They are large.
 6. **Default to the smallest change that works.** Do not refactor on a whim.
 7. **English for code, identifiers, file names.** Farsi (Persian) for product copy,
    user-facing text, and project-specific narrative sections of docs.
+8. **Run `pnpm verify` before every commit.** See `docs/03-development/QUALITY_GATES.md`.
+9. **Complete `docs/03-development/GOVERNANCE_CHECKLIST.md` every session.** CI: `.github/workflows/governance.yml`.
 
 ---
 
@@ -52,6 +55,7 @@ pnpm install
 pnpm dev
 pnpm test
 pnpm build
+pnpm verify   # lint + typecheck + test + build — required before commit
 ```
 
 Do not invent build commands. Check `docs/03-development/TECH_STACK.md` before running

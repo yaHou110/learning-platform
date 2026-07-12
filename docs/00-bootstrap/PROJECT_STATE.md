@@ -2,7 +2,7 @@
 
 > **Current snapshot of the project.** This is the *first* file to read after `DEVELOPMENT_GUIDE.md`.
 
-> Last updated: 2026-07-12 (v1.2 — Production Foundation Sprint in progress, M1 ✅, M2 partial; code review fixes applied, smoke test blocked on PostgreSQL)
+> Last updated: 2026-07-12 (v1.5 — executable governance CI; M2 still blocked on PostgreSQL)
 
 ---
 
@@ -21,10 +21,10 @@
 | 2. Product documentation | ✅ done (skeleton) | Bible, requirements, features, personas, roadmap. |
 | 3. Architecture documentation | ✅ done (skeleton) | System arch, data model, plugin & permission matrices. |
 | 3b. Foundation docs | ✅ done | `MVP_SCOPE`, `BOUNDED_CONTEXTS`, `PROJECT_PRINCIPLES`, `ARCHITECTURE_CONSTRAINTS`. |
-| 4. Development conventions | ✅ done (v1.1) | `TECH_STACK.md` populated post ADR-0003..0006. |
+| 4. Development conventions | ✅ done (v1.3) | `ENGINEERING_PROTOCOL.md` v2 (60 rules), `RISK_CLASSIFICATION.md`, ADR-0012/0013. |
 | 5. Source code (Identity & Access) | ✅ done | Migration + Auth.js + middleware + 2 API routes (sessions 005–007). |
 | 5.5. Source code (other features) | ⏸️ paused | Catalog / Learning / Credentials / Localization / Dashboard — parked pending M7. |
-| 6. **Production Foundation Sprint** | 🔵 in progress | See [`../06-sprints/SPRINT-001-production-foundation/SPRINT-001-production-foundation.md`](../06-sprints/SPRINT-001-production-foundation/SPRINT-001-production-foundation.md). Currently on **M1 (Baseline Verification)**. |
+| 6. **Production Foundation Sprint** | 🔵 in progress | M1 ✅, M2 partial, **M3 governance CI ✅** (partial — `governance.yml` landed). |
 | 7. Deployment & CI/CD | ❌ not started | Blocked on sprint M3/M6. |
 
 ---
@@ -43,6 +43,8 @@
 | PostgreSQL 16 + Drizzle ORM (no vector DB v1) | `ADR-0004` | ✅ binding |
 | Auth.js v5 Credentials + bcrypt + server sessions | `ADR-0005` | ✅ binding |
 | pnpm monorepo + compile-time typed plugin manifest | `ADR-0006` | ✅ binding |
+| **Mandatory engineering protocol** (quality gates, DoD, agent constraints) | `ADR-0012` | ✅ binding |
+| **Engineering OS v2** (DoR, spec-first, human approval, risk matrix, §39–§60) | `ADR-0013` | ✅ binding |
 | **No new business features until M7 sign-off** | SPRINT-001 (founder directive 2026-07-11) | 🚧 active gate |
 
 ---

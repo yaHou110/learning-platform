@@ -28,6 +28,8 @@ This includes: Catalog API routes, CourseCard, LessonList, Dashboard real UI, Le
 5. **Commit** — Conventional Commits, reference the milestone
 6. **Review** — founder reviews evidence; only then proceed to next milestone
 
+> **Engineering Protocol (ADR-0012):** Full rules in `docs/03-development/ENGINEERING_PROTOCOL.md` (v2.0, 60 rules). Pre-commit gate: `pnpm verify`. Non-trivial work: DoR + spec-first (ADR-0013).
+
 > **Evidence rule (founder directive, 2026-07-11):** "Do not assume success. Produce objective evidence for every completed milestone (logs, test results, build results, CI status, and updated documentation)."
 > A milestone is not "done" until its evidence file in `evidence/M{n}-*/` is complete.
 

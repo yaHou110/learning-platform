@@ -351,3 +351,98 @@ Each entry has:
 - `apps/web/.env.example` — enhanced with comments.
 - `docs/06-sprints/SPRINT-001-production-foundation/evidence/M2-prod-build/*` — **NEW** evidence files.
 - `CHANGELOG.md` — M2 entries (security headers, env validation, fixes).
+
+---
+
+## Session 010 — 2026-07-12 — Cursor / Auto (Engineering Protocol — ADR-0012)
+
+**Goal:** Implement and document the mandatory Engineering Protocol (38 rules + planning / DoD extensions) for all architectural, implementation, refactoring, and deployment work.
+
+**Done:**
+- `docs/03-development/ENGINEERING_PROTOCOL.md` — canonical binding protocol (§1–§38).
+- `docs/03-development/QUALITY_GATES.md` — gate definitions and CI alignment.
+- `docs/05-decisions/ADR-0012-engineering-protocol.md` — **NEW** binding ADR.
+- `docs/05-decisions/DECISIONS.md` — ADR-0012 indexed.
+- `.cursor/rules/engineering-protocol.mdc` — always-on Cursor enforcement.
+- `templates/IMPLEMENTATION_PLAN.md`, `templates/DEFINITION_OF_DONE.md` — **NEW** templates.
+- `scripts/quality-gates.ps1`, `scripts/quality-gates.sh` — reproducible gate runners.
+- `package.json` — `pnpm verify` script added.
+- `DEVELOPMENT_GUIDE.md` — router updated (protocol reference, rule #8, verify command).
+- `docs/00-bootstrap/PROJECT_STATE.md` — v1.3, ADR-0012 locked.
+- `docs/00-bootstrap/PROJECT_BACKLOG.md` — session 011, M2 blocker preserved.
+- `CHANGELOG.md` — ADR-0012 entries.
+
+**Decisions made:**
+- ADR-0012: Mandatory engineering protocol (see above).
+
+**Decisions still open:**
+- PostgreSQL not installed — M2 smoke test still blocked (unchanged from session 009).
+- Hosting (Q5), multi-tenant (Q6), PWA (Q7) — unchanged.
+
+**Next session:** Resume M2 smoke test once PostgreSQL is available. Run `pnpm verify` before any commit.
+
+**Notes for the next agent:**
+- Full protocol: `docs/03-development/ENGINEERING_PROTOCOL.md`.
+- Pre-commit: `pnpm verify` (or `cmd /c "pnpm verify"` on Windows).
+- M2 blocker unchanged — do not skip smoke tests.
+
+---
+
+## Session 011 — 2026-07-12 — Cursor / Auto (Engineering OS v2 — ADR-0013)
+
+**Goal:** Extend Engineering Protocol to v2 (rules §39–§60) with thematic chapters, Spec-Driven Development alignment, and enterprise governance — without removing existing rules.
+
+**Done:**
+- `docs/03-development/ENGINEERING_PROTOCOL.md` — v2.0, 60 rules in 13 thematic chapters; §1–§38 preserved.
+- `docs/03-development/RISK_CLASSIFICATION.md` — **NEW** risk matrix for §42.
+- `docs/05-decisions/ADR-0013-engineering-protocol-v2.md` — **NEW** binding ADR.
+- `docs/05-decisions/DECISIONS.md` — ADR-0013 indexed.
+- `templates/DEFINITION_OF_READY.md` — **NEW** DoR checklist (§39).
+- `templates/HUMAN_APPROVAL_CHECKLIST.md` — **NEW** approval workflow (§41).
+- `templates/DEFINITION_OF_DONE.md`, `templates/IMPLEMENTATION_PLAN.md` — updated for §60, §39.
+- `.cursor/rules/engineering-protocol.mdc` — v2 enforcement (DoR, spec-first, §47 priority, §59).
+- `docs/00-bootstrap/PROJECT_STATE.md` — v1.4, ADR-0013 locked.
+- `CHANGELOG.md` — ADR-0013 entries.
+
+**Decisions made:**
+- ADR-0013: Engineering Protocol v2 / EOS extension (see above).
+
+**Decisions still open:**
+- PostgreSQL not installed — M2 smoke test still blocked (unchanged).
+- Hosting (Q5), multi-tenant (Q6), PWA (Q7) — unchanged.
+
+**Next session:** Resume M2 smoke test once PostgreSQL is available. For any non-trivial task: DoR → spec → risk classify → implement.
+
+**Notes for the next agent:**
+- Full EOS: `docs/03-development/ENGINEERING_PROTOCOL.md` (60 rules, 13 chapters).
+- Rule priority: Security → Human approval → ADRs → Protocol → Docs → Sprint → Preference (§47).
+- Governance before generation (§59): load constraints, check ADRs, get approval if HIGH/CRITICAL.
+
+---
+
+## Session 012 — 2026-07-12 — Cursor / Auto (Executable governance — CI enforcement)
+
+**Goal:** Transform Engineering OS from documentation into executable governance (PR template, issue templates, CI, ADR compliance scripts, agent sync) without new protocol rules or ADR edits.
+
+**Done:**
+- `.github/workflows/governance.yml` — **NEW** runs `pnpm verify` + `pnpm governance:validate` on PR/push to `main`.
+- `.github/pull_request_template.md` — mandatory Risk, DoR, DoD, ADR, Rollback, Evidence (CI markers).
+- `.github/ISSUE_TEMPLATE/feature.yml`, `bug.yml`, `config.yml` — **NEW** issue templates.
+- `scripts/governance/validate.mjs` + libs — **NEW** PR body, ADR, CHANGELOG enforcement.
+- `docs/03-development/GOVERNANCE_CHECKLIST.md` — **NEW** session checklist (Phase A/B/C).
+- `AGENTS.md`, `CLAUDE.md`, `.github/copilot-instructions.md` — **NEW** synchronized via `pnpm sync:agents`.
+- `.cursor/rules/agent-router.mdc` — **NEW** Cursor agent router.
+- `package.json` — `governance:validate`, `governance:validate:local`, `sync:agents`.
+- `DEVELOPMENT_GUIDE.md`, `QUALITY_GATES.md`, `CHANGELOG.md`, `PROJECT_STATE.md` v1.5 — updated.
+
+**Decisions made:**
+- none (no new ADRs; existing ADR-0012/0013 unchanged)
+
+**Decisions still open:**
+- PostgreSQL — M2 smoke test blocked (unchanged).
+
+**Next session:** Resume M2 smoke test when PostgreSQL available. Open PRs must fill governance template — CI blocks otherwise.
+
+**Notes for the next agent:**
+- Local pre-PR: `pnpm governance:validate:local` then fill PR template before opening PR.
+- Agent sync: edit `AGENTS.md` only, then `pnpm sync:agents`.

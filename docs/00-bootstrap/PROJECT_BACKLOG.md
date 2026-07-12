@@ -11,18 +11,18 @@
 
 | Field | Value |
 | --- | --- |
-| Session # | 010 |
+| Session # | 011 |
 | Date opened | 2026-07-12 |
-| Agent | opencode/mimo-v2.5-free |
+| Agent | Cursor / Auto |
 | Sprint | SPRINT-001 — Production Foundation |
-| Goal | **M2 — Production Build Validation (resume).** PostgreSQL must be installed first (admin required). Then: `next start` against the production build, smoke test all endpoints (login, `/api/health`, `/api/users`, `/api/auth/session`, sign-out, static assets), capture evidence, update docs. |
+| Goal | **M2 — Production Build Validation (resume).** Blocked on PostgreSQL. Executable governance CI landed (`governance.yml`). |
 | Status | 🔵 blocked on PostgreSQL |
 
 ---
 
 ## Context
 
-Session 009 performed a comprehensive code review and applied 8 quality fixes (security headers, env validation, health route fix, etc.). The production build is ready (`apps/web/.next/` exists, build passes). However, the `next start` smoke test is **blocked** because PostgreSQL 16 is not installed on this machine and installation requires admin privileges.
+Session 010 established the mandatory Engineering Protocol (ADR-0012). Session 011 extended it to **Engineering OS v2** (ADR-0013): 60 rules in thematic chapters, Definition of Ready, spec-first workflow, human approval matrix, risk classification. M2 smoke test remains **blocked** because PostgreSQL 16 is not installed.
 
 ### Blocker resolution (pick one)
 1. **Run cmd as Administrator** → `choco install postgresql16 -y --params "/Password:hawza /UserName:hawza /dbName:hawza /port:5432"`
@@ -60,6 +60,7 @@ Once PostgreSQL is running:
 
 ### 2.8–2.10 Evidence + docs + commit
 - Write evidence files, update CHANGELOG/HANDOVER/BACKLOG/STATE, commit
+- Run `pnpm verify` before commit (ADR-0012)
 
 ## Done-when checklist (M2)
 
@@ -76,6 +77,7 @@ Once PostgreSQL is running:
 - [ ] `next start` exits 0 on SIGTERM
 - [ ] All evidence files in `evidence/M2-prod-build/`
 - [ ] Documentation updated, commit made
+- [ ] `pnpm verify` passes before commit
 
 ## Out of scope (do NOT do in this session)
 
@@ -90,4 +92,7 @@ Once PostgreSQL is running:
 - The `.env` file must be created in `apps/web/` (not repo root) with at minimum: `AUTH_SECRET=<random-32-byte-base64>`, `DATABASE_URL=postgres://hawza:hawza@localhost:5432/hawza`.
 - Run `next start` in the background, then poll `/api/health` until 200 before running smoke tests.
 - PowerShell execution policy blocks `pnpm` directly. Use `cmd /c "pnpm ..."`.
+- **Before every commit:** run `pnpm verify` (see `docs/03-development/QUALITY_GATES.md`).
+- **Non-trivial work:** complete DoR (`templates/DEFINITION_OF_READY.md`) and spec/plan before coding (§40).
+- **HIGH/CRITICAL risk or §41 triggers:** obtain founder approval (`templates/HUMAN_APPROVAL_CHECKLIST.md`).
 - If a smoke test fails, STOP. Document the failure. Do not silently retry.

@@ -113,7 +113,7 @@
 ### CI/CD
 
 - **Choice:** GitHub Actions
-- **Pipeline:** install → lint → typecheck → test → build, on every PR; deploy on merge to `main` (deploy step deferred until hosting ADR).
+- **Pipeline:** install → lint → typecheck → test → build (`pnpm verify`), on every PR; deploy on merge to `main` (deploy step deferred until hosting ADR).
 - **Status:** Locked. No separate ADR.
 - **ADR:** *(none yet)*
 

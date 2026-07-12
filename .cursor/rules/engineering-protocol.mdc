@@ -1,0 +1,54 @@
+---
+description: Engineering OS v2 — DoR, spec-first, human approval, governance before generation
+alwaysApply: true
+---
+
+# Engineering Protocol v2 (binding)
+
+Full rules (§1–§60): `docs/03-development/ENGINEERING_PROTOCOL.md`
+Quality gates: `docs/03-development/QUALITY_GATES.md`
+Risk matrix: `docs/03-development/RISK_CLASSIFICATION.md`
+
+## Rule priority when conflicts arise (§47)
+
+Security → Human approval → ADRs → Protocol → Docs → Sprint scope → Preference
+
+## Read order (§1)
+
+`DEVELOPMENT_GUIDE.md` → `PROJECT_STATE.md` → `PROJECT_BACKLOG.md` → sprint → ADRs → task source only.
+
+Confidence < 90% → stop and ask.
+
+## Before non-trivial implementation (§39, §40, §59)
+
+1. Definition of Ready satisfied (`templates/DEFINITION_OF_READY.md`)
+2. Spec/plan approved — never code directly from a prompt
+3. Risk classified (`RISK_CLASSIFICATION.md`)
+4. Human approval if HIGH/CRITICAL or §41 triggers (`templates/HUMAN_APPROVAL_CHECKLIST.md`)
+5. ADR compliance verified (§43) — conflict → STOP, write ADR first
+
+## Workflow (§40)
+
+Requirements → Clarification → Acceptance Criteria → Technical Plan → Implement → Verify → Document → Commit → Handover
+
+## Before every commit (§6)
+
+```bash
+pnpm verify
+```
+
+## Task complete only when (§60)
+
+DoR satisfied + DoD satisfied + acceptance criteria verified + quality gates + docs + evidence + rollback + handover.
+
+## Forbidden for AI agents (§58)
+
+Invent APIs/config/architecture/deps/conventions/undocumented behavior. Repository-wide refactors. Assume human approval. Violate ADRs silently.
+
+## Session end (§16)
+
+Update `PROJECT_STATE`, `PROJECT_BACKLOG`, `CHANGELOG`, append `PROJECT_HANDOVER`.
+
+## Executable governance
+
+Complete `docs/03-development/GOVERNANCE_CHECKLIST.md` every session. CI: `.github/workflows/governance.yml`.
