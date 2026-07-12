@@ -13,21 +13,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
-- Foundation documents for v1 (no implementation choices):
-  - `docs/01-product/MVP_SCOPE.md` — product scope and outcomes.
-  - `docs/02-architecture/BOUNDED_CONTEXTS.md` — domain boundaries and events.
-  - `docs/00-bootstrap/PROJECT_PRINCIPLES.md` — binding long-term principles.
-  - `docs/02-architecture/ARCHITECTURE_CONSTRAINTS.md` — hard constraints, SLOs, API-contract rule.
-- ADR candidates for v1 (foundation-reviewed, awaiting founder pick):
-  - ADR-0003 candidate: Next.js 15 (App Router) on Node.js 20 LTS, TypeScript strict.
-  - ADR-0004 candidate: PostgreSQL 16 + Drizzle ORM (no vector DB in v1).
-  - ADR-0005 candidate: Auth.js (NextAuth) Credentials provider, bcrypt, server-side sessions in Postgres.
-  - ADR-0006 candidate: TypeScript pnpm monorepo, `packages/core` + `packages/plugins/*`, typed compile-time manifest, no runtime loading.
+- `apps/web/src/middleware.ts` — Edge-compatible route protection using `getToken` from `next-auth/jwt`
+- `apps/web/src/app/api/users/route.ts` — GET endpoint listing users for the current tenant
+- `apps/web/src/app/api/auth/session/route.ts` — GET endpoint returning typed session data
+
+### Fixed
+- Middleware: removed incorrect `"use server"` directive (middleware runs on Edge, not Node.js)
+- Middleware: replaced `auth()` with Edge-compatible `getToken` from `next-auth/jwt`
+- `api/users/route.ts`: removed unused `req` parameter (caused TypeScript and ESLint errors)
+- `api/auth/session/route.ts`: removed unnecessary `"use server"` directive
 
 ### Changed
-- `docs/00-bootstrap/MASTER_HANDOFF.md` — appended Session 003 entry (foundation review + ADR candidates).
-- `docs/00-bootstrap/PROJECT_STATE.md` — open questions 1–4 status moved from "Pending" to "Candidates ready, awaiting founder pick".
-- `docs/00-bootstrap/NEXT_SESSION.md` — rotated to Session 003.
+- `docs/00-bootstrap/NEXT_SESSION.md` — rotated to session 007
+- `docs/00-bootstrap/MASTER_HANDOFF.md` — appended Session 006 entry
 
 ---
 

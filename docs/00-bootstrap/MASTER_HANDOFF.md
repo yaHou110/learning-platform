@@ -188,3 +188,37 @@ Each entry has:
 - `packages/plugins/*/vitest.config.ts` — added resolve aliases for all 5 plugins
 
 ---
+
+## Session 006 — 2026-07-11 — code quality + API routes + middleware
+
+**Goal:** Fix remaining code quality issues (unused params, incorrect directives), implement first API routes, add Edge-compatible middleware.
+
+**Done:**
+- Fixed middleware (`apps/web/src/middleware.ts`): removed incorrect `"use server"` directive, replaced `auth()` with Edge-compatible `getToken` from `next-auth/jwt`, added route matcher config
+- Fixed `apps/web/src/app/api/users/route.ts`: removed `"use server"`, removed unused `req` parameter
+- Fixed `apps/web/src/app/api/auth/session/route.ts`: removed unnecessary `"use server"`
+- Created `apps/web/src/app/api/auth/session/route.ts` — GET endpoint returning session data
+- Created `apps/web/src/app/api/users/route.ts` — GET endpoint listing users for current tenant
+- All typechecks pass: `pnpm -r typecheck`
+- All lint checks pass: `pnpm -r lint` (zero warnings)
+- All tests pass: `pnpm -r test` — 18 tests across 7 packages
+
+**Decisions:**
+- Middleware uses `getToken` (Edge-compatible) instead of `auth()` (Node.js-only). This is the correct pattern for Next.js App Router middleware.
+- API routes do NOT use `"use server"` — only Server Components and Server Actions use that directive.
+- `GET /api/auth/session` is implemented as a separate route (NextAuth's built-in session endpoint exists but this gives us typed output).
+
+**Open questions:**
+- Smoke test still not executed — Docker not available on dev machine.
+- Dashboard UI is still a placeholder — needs implementation.
+- Event bus (22 events defined, zero infrastructure) — deferred.
+
+**Next session:** Run smoke test; implement dashboard placeholder; add sign-out. See `NEXT_SESSION.md` session 007.
+
+**Files changed:**
+- `apps/web/src/middleware.ts` — **NEW** Edge-compatible route protection
+- `apps/web/src/app/api/users/route.ts` — **NEW** GET /api/users
+- `apps/web/src/app/api/auth/session/route.ts` — **NEW** GET /api/auth/session
+- `docs/00-bootstrap/NEXT_SESSION.md` — rotated to session 007
+
+---
