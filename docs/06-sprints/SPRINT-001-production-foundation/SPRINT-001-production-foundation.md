@@ -1,0 +1,84 @@
+# SPRINT-001 — Production Foundation Sprint
+
+> **Status:** 🔵 Active
+> **Session range:** 008 → (open)
+> **Date opened:** 2026-07-11
+> **Decider:** founder (you)
+
+---
+
+## Why this sprint exists
+
+The repository has a working dev-mode stack (Identity & Access plugin end-to-end, smoke test passed in session 007), but is **not yet production-candidate**. Before adding new business features (Catalog, Learning, Credentials, Localization, Event Bus, Dashboard), we lock down the foundation: build, test, CI, security, observability, deployment.
+
+This sprint **overrides the previous Session 008 plan** (which was to start Catalog plugin UI/API). Per founder directive (2026-07-11 chat), we suspend feature work until the production-readiness checklist is fully green.
+
+## Hard gate (binding)
+
+🚫 **No new business features are merged to `main` until M7 (Production Readiness Review) is signed off.**
+
+This includes: Catalog API routes, CourseCard, LessonList, Dashboard real UI, Learning enrollment, Credentials issuance, Event Bus, PWA. They are parked, not deleted.
+
+## Operating cycle (binding for every session in this sprint)
+
+1. **Plan** — concrete task, done-when checklist, evidence requirements
+2. **Implement** — minimum change that satisfies the plan
+3. **Verify** — produce objective evidence (logs, test output, build output, CI status, doc diffs)
+4. **Update Documentation** — `NEXT_SESSION.md`, `PROJECT_STATE.md`, `MASTER_HANDOFF.md`, `CHANGELOG.md`, sprint evidence files
+5. **Commit** — Conventional Commits, reference the milestone
+6. **Review** — founder reviews evidence; only then proceed to next milestone
+
+> **Evidence rule (founder directive, 2026-07-11):** "Do not assume success. Produce objective evidence for every completed milestone (logs, test results, build results, CI status, and updated documentation)."
+> A milestone is not "done" until its evidence file in `evidence/M{n}-*/` is complete.
+
+---
+
+## Milestones
+
+| # | Title | Goal | Evidence location |
+|---|---|---|---|
+| **M1** | Baseline Verification | Freeze current state; verify `pnpm install`, `lint`, `typecheck`, `test`, `build` all pass from a clean checkout | `evidence/M1-baseline/` |
+| **M2** | Production Build Validation | `next build` succeeds; `next start` serves on production port; smoke test against prod build | `evidence/M2-prod-build/` |
+| **M3** | CI/CD | GitHub Actions runs lint+typecheck+test+build on every PR; blocks merge on red | `evidence/M3-ci/` |
+| **M4** | Security Hardening | CSP, security headers, rate limiting, input validation, secret management, audit logging | `evidence/M4-security/` |
+| **M5** | Observability | Structured JSON logs, metrics endpoint, error reporting, `/api/health` deep check, `/api/ready` | `evidence/M5-observability/` |
+| **M6** | Deployment | Docker Compose for prod, Nginx reverse-proxy config, systemd unit, backup & restore scripts, deployment guide | `evidence/M6-deployment/` |
+| **M7** | Production Readiness Review | Final checklist, no red, founder sign-off; gate lifts for features | `evidence/M7-readiness/` |
+
+---
+
+## Architectural constraints respected
+
+- Single VPS ≤ 4 GB RAM (`ARCHITECTURE_CONSTRAINTS.md` C1) — no new heavy runtimes introduced in M4–M6.
+- Modular monolith (`PROJECT_PRINCIPLES.md` #4) — no new services; we extend the existing Next.js + Postgres + MinIO processes only.
+- Self-hosted, OSS-first (C3, principle #3) — no SaaS introduced.
+- Security-first (C5) — every M4 item is mandatory; nothing is "deferred to a later sprint" within M4.
+- Persian/RTL first-class — no regressions in RTL/LTR handling.
+- License-clean (no GPL in core) — verified per item.
+
+## Out of scope (parked for post-sprint)
+
+- Catalog API + UI (course card, lesson list)
+- Learning plugin (enrollment, progress)
+- Credentials plugin (certificate issuance, verification)
+- Localization plugin (Shamsi dates, key translation, beyond what's already wired)
+- Event bus infrastructure
+- PWA / offline
+- Real i18n catalog (LTR English mirror)
+- Multi-tenant subdomain routing (Q6 still open)
+
+## How to read this folder
+
+- `SPRINT-001-production-foundation.md` — this file
+- `evidence/M{n}-*/` — per-milestone evidence. Each contains:
+  - `commands.txt` — exact commands run
+  - `output-<step>.txt` — captured output (full or relevant excerpts)
+  - `notes.md` — observations, deviations, decisions
+  - `checklist.md` — milestone-specific done-when checklist with ticks
+
+## How to add a new sprint
+
+1. Copy this file to `docs/06-sprints/SPRINT-NNN-<slug>.md`.
+2. Create the same `evidence/M{n}-*/` directory tree.
+3. Add a row to `docs/00-bootstrap/PROJECT_STATE.md` (Phase row).
+4. Add a `Sprint` entry in `MASTER_HANDOFF.md` when the sprint starts.

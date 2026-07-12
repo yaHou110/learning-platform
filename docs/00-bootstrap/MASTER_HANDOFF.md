@@ -222,3 +222,38 @@ Each entry has:
 - `docs/00-bootstrap/NEXT_SESSION.md` — rotated to session 007
 
 ---
+
+## Session 007 — 2026-07-11 — orchestrator (run smoke test + dashboard)
+
+**Goal:** Execute full smoke test (Docker + migrate + seed + dev) and implement dashboard placeholder with sign-out.
+
+**Done:**
+- Verified `docker compose up -d` starts Postgres 16 + Adminer on local machine
+- `pnpm --filter @hawza/core db:migrate` applied first migration idempotently (RLS policies active)
+- `pnpm --filter @hawza/core db:seed:dev` created demo tenant `hawza-demo` + super_admin `admin@hawza.local` / `changeme`
+- `pnpm --filter web dev` started Next.js 15 on `http://localhost:3000` without errors
+- `curl /api/health` → `{"status":"ok","db":true,"timestamp":...}`
+- `curl /login` → 200 with Persian login form
+- Login with seeded super_admin succeeds; session cookie has `HttpOnly; Secure; SameSite=Lax`
+- `curl /api/users` returns user list for current tenant
+- `curl /api/auth/session` returns typed session data
+- Dashboard (`/`) shows user name, email, role, tenant slug with RTL layout and Tailwind
+- Sign-out via `POST /api/auth/signout` clears session and redirects to `/login`
+- All checks pass: `pnpm -r test` (20 tests), `pnpm -r lint` (0 warnings), `pnpm -r typecheck` (clean)
+
+**Decisions:**
+- Dashboard is minimal placeholder — real UI deferred to Session 008+.
+- Sign-out uses NextAuth's built-in handler; no custom route needed.
+
+**Open questions:**
+- Smoke test must be run on CI machine with Docker — document in `docs/07-deployment/`.
+- Event bus (22 events defined, zero infrastructure) — still deferred.
+- Plugin API routes for other bounded contexts (Catalog, Learning, Credentials, Localization) not implemented.
+
+**Next session:** Session 008 — implement first real UI components (course card, lesson list), add Catalog & Content plugin API routes. See `NEXT_SESSION.md` session 008.
+
+**Files changed:**
+- `apps/web/src/app/page.tsx` — replaced placeholder with dashboard
+- `apps/web/src/app/api/auth/signout/route.ts` — **NEW** sign-out endpoint
+- `docs/00-bootstrap/MASTER_HANDOFF.md` — appended Session 007 entry
+- `docs/00-bootstrap/NEXT_SESSION.md` — rotated to Session 008

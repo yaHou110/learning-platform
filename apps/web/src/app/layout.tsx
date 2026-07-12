@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
-import "./globals.css";
+import "@/app/globals.css";
 
 export const metadata: Metadata = {
   title: "پلتفرم یادگیری خانواده حوزوی",
-  description: "Hawza Family Learning Platform — AI-native LMS for Islamic seminary families.",
+  description: "سیستم مدیریت یادگیری برای مراکز حوزوی",
 };
 
 export default function RootLayout({
@@ -13,7 +13,17 @@ export default function RootLayout({
 }): JSX.Element {
   return (
     <html lang="fa" dir="rtl">
-      <body className="min-h-screen bg-gray-50 text-gray-900 antialiased">{children}</body>
+      <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link
+          href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700&display=swap"
+          rel="stylesheet"
+        />
+      </head>
+      <body className="font-[Vazirmatn] antialiased bg-gray-50 text-gray-900">
+        {children}
+      </body>
     </html>
   );
 }

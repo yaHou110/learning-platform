@@ -1,6 +1,6 @@
-import type { NextRequest } from "next/server";
-import { NextResponse } from "next/server";
 import { getToken } from "next-auth/jwt";
+import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
 
 export async function middleware(request: NextRequest) {
   const token = await getToken({
@@ -8,14 +8,22 @@ export async function middleware(request: NextRequest) {
     secret: process.env.AUTH_SECRET ?? "dev-secret-change-in-production",
   });
 
-  const isProtectedRoute =
-    request.nextUrl.pathname.startsWith("/dashboard") ||
-    request.nextUrl.pathname.startsWith("/api/users") ||
-    request.nextUrl.pathname.startsWith("/api/courses") ||
-    request.nextUrl.pathname.startsWith("/api/enrollments") ||
-    request.nextUrl.pathname.startsWith("/api/certificates");
+  const isAuthPage = request.nextUrl.pathname.startsWith("/login");
+  const isApiAuthPage = request.nextUrl.pathname.startsWith("/api/auth");
+  const isHealthPage = request.nextUrl.pathname === "/api/health";
 
-  if (isProtectedRoute && !token) {
+  if (isApiAuthPage || isHealthPage) {
+    return NextResponse.next();
+  }
+
+  if (isAuthPage) {
+    if (token) {
+      return NextResponse.redirect(new URL("/", request.url));
+    }
+    return NextResponse.next();
+  }
+
+  if (!token) {
     const loginUrl = new URL("/login", request.url);
     loginUrl.searchParams.set("callbackUrl", request.nextUrl.pathname);
     return NextResponse.redirect(loginUrl);
@@ -26,10 +34,6 @@ export async function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
-    "/dashboard/:path*",
-    "/api/users",
-    "/api/courses/:path*",
-    "/api/enrollments/:path*",
-    "/api/certificates/:path*",
+    "/((?!_next/static|_next/image|favicon.ico|.*\\.png$).*)",
   ],
 };

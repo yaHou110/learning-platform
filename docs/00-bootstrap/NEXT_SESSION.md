@@ -9,85 +9,98 @@
 
 | Field | Value |
 | --- | --- |
-| Session # | 007 |
+| Session # | 008 |
 | Date opened | 2026-07-11 |
 | Agent | orchestrator (Mavis) |
-| Goal | **Run smoke test and implement dashboard placeholder.** |
+| Sprint | SPRINT-001 — Production Foundation |
+| Goal | **M1 — Baseline Verification.** Freeze the current state, take a clean commit, run `pnpm install` → `lint` → `typecheck` → `test` → `build` from a clean state and capture every output. |
+| Status | 🔵 in progress |
 
 ---
 
 ## Context
 
-Sessions 005–006 fixed all critical bugs (migration ordering, connection leak, missing layout/Tailwind, middleware Edge-compatibility, unused parameters, `"use server"` directives). The app now:
+Sessions 005–007 produced a working Identity & Access stack (Postgres + Drizzle + Auth.js v5 + Edge middleware + login/dashboard + 2 API routes). Dev-mode smoke test passed locally.
 
-- Compiles without errors (`pnpm -r typecheck` passes)
-- Lints cleanly (`pnpm -r lint` passes)
-- All 18 tests pass (`pnpm -r test` passes)
-- Has working middleware (Edge-compatible, uses `getToken`)
-- Has `GET /api/users` and `GET /api/auth/session` API routes
-- Has Tailwind CSS configured
-- Has root layout with RTL support
+Session 008 *originally* planned Catalog API/UI work. **That plan is suspended.** Per founder directive (2026-07-11 chat), we run a Production Foundation Sprint first and gate feature work behind M7 sign-off.
 
-The smoke test (docker compose, migrate, seed, curl) has NOT been executed yet because Docker is not available on the development machine.
+12 files from sessions 005–007 are still uncommitted in the working tree. M1 freezes those as a baseline.
 
-## Task
+## Active sprint
 
-### 1. Run the smoke test (requires Docker + Postgres)
+- Plan: [`../06-sprints/SPRINT-001-production-foundation/SPRINT-001-production-foundation.md`](../06-sprints/SPRINT-001-production-foundation/SPRINT-001-production-foundation.md)
+- Evidence dir: `../06-sprints/SPRINT-001-production-foundation/evidence/M1-baseline/`
 
-- `docker compose up -d` — Postgres 16 + Adminer
-- `pnpm --filter @hawza/core db:migrate` — apply the first migration
-- `pnpm --filter @hawza/core db:seed:dev` — seed demo tenant + admin user
-- `pnpm --filter web dev` — start Next.js dev server
-- `curl http://localhost:3000/api/health` — expect `{"status":"ok","db":true,...}`
-- `curl -i http://localhost:3000/login` — expect 200 with Persian login form
-- Log in via `hawza-demo` / `admin@hawza.local` / `changeme`
-- `curl http://localhost:3000/api/users` — expect list of users (after login)
-- `curl http://localhost:3000/api/auth/session` — expect session data
+## M1 — Baseline Verification — task
 
-### 2. Dashboard placeholder
+### 1.1 Freeze current state
+- `git status` must show only intended changes
+- Commit all 12 uncommitted files as `chore: freeze session 005-007 work as sprint baseline`
+- `git status` clean afterward
 
-Replace the homepage placeholder (`apps/web/src/app/page.tsx`) with a simple dashboard showing:
-- User name, email, role, tenant slug
-- Sign out button
-- Basic layout with Tailwind
+### 1.2 pnpm install (clean)
+- `pnpm install --frozen-lockfile`
+- Capture: exit code, install summary, any warnings
 
-### 3. Sign out route
+### 1.3 Lint
+- `pnpm -r lint`
+- Capture: exit code, full output (must be zero warnings)
 
-Implement `POST /api/auth/signout` or use NextAuth's built-in sign-out.
+### 1.4 Typecheck
+- `pnpm -r typecheck`
+- Capture: exit code, full output (must be clean)
+
+### 1.5 Test
+- `pnpm -r test`
+- Capture: exit code, summary (X tests passed across Y packages)
+
+### 1.6 Build
+- `pnpm build` (root script — runs `packages/*` build then `apps/web` build)
+- Capture: exit code, Next.js build summary (route table)
+
+### 1.7 Evidence file
+Write `evidence/M1-baseline/`:
+- `commands.txt` — exact commands run
+- `output-install.txt`, `output-lint.txt`, `output-typecheck.txt`, `output-test.txt`, `output-build.txt`
+- `checklist.md` — milestone done-when with ticks
+- `notes.md` — observations, deviations, decisions
+
+### 1.8 Documentation updates
+- `CHANGELOG.md` `[Unreleased]` — entry
+- `MASTER_HANDOFF.md` — append Session 008 entry
+- `NEXT_SESSION.md` — rotate to M2
+- `PROJECT_STATE.md` — mark M1 complete, M2 in progress
+- Update SPRINT-001 milestone table to ✅ for M1
+
+### 1.9 Commit
+- One commit per milestone, Conventional Commits message
+
+## Done-when checklist (M1)
+
+- [ ] Working tree clean, all 12 uncommitted files committed as baseline
+- [ ] `pnpm install --frozen-lockfile` exit 0
+- [ ] `pnpm -r lint` exit 0, zero warnings
+- [ ] `pnpm -r typecheck` exit 0
+- [ ] `pnpm -r test` exit 0, all tests pass
+- [ ] `pnpm build` exit 0
+- [ ] All 5 output files in `evidence/M1-baseline/`
+- [ ] `checklist.md` and `notes.md` written
+- [ ] `CHANGELOG.md` updated
+- [ ] `MASTER_HANDOFF.md` Session 008 entry appended
+- [ ] `NEXT_SESSION.md` rotated to M2
+- [ ] `PROJECT_STATE.md` updated
+- [ ] Final commit, push optional
 
 ## Out of scope (do NOT do in this session)
 
-- Other bounded contexts (Catalog, Learning, Credentials, Localization) — deferred to dedicated sessions
-- Event bus implementation
-- Hosting / deployment
-- Object storage, email, background jobs
-- UI beyond Tailwind defaults (no component library)
-
-## Done-when checklist
-
-- [ ] `docker compose up -d` starts Postgres + Adminer without errors
-- [ ] `pnpm --filter @hawza/core db:migrate` succeeds and is idempotent
-- [ ] `pnpm --filter @hawza/core db:seed:dev` creates demo tenant + admin
-- [ ] `pnpm --filter web dev` starts without errors
-- [ ] `/api/health` returns 200 with `db: true`
-- [ ] `/login` renders the Persian form
-- [ ] Login with seeded super_admin succeeds; session cookie has correct flags
-- [ ] `/api/users` returns list of users after login
-- [ ] `/api/auth/session` returns session data after login
-- [ ] Homepage shows dashboard with user info
-- [ ] Sign out works and clears session
-- [ ] Vitest suite passes: `pnpm -r test`
-- [ ] Lint passes: `pnpm -r lint`
-- [ ] Typecheck passes: `pnpm -r typecheck`
-- [ ] `MASTER_HANDOFF.md` has the Session 007 entry
-- [ ] `CHANGELOG.md` `[Unreleased]` is updated
+- Anything beyond M1. M2 (next build + next start smoke test) is next.
+- New features (Catalog, Learning, etc.)
+- Refactoring on a whim
+- Bumping versions of Next.js / Node / TypeScript
 
 ## Notes for the next agent
 
-- Docker is required for the smoke test. If unavailable, use a local Postgres install or skip to code tasks.
-- Middleware uses `getToken` from `next-auth/jwt` (Edge-compatible), NOT `auth()` from NextAuth.
-- API routes do NOT use `"use server"` — only Server Components and Server Actions use that directive.
-- The `getTenantDb` connection leak was fixed by removing the per-connection pattern entirely. All queries now use the pooled `getDb()` with explicit WHERE tenant_id clauses.
-- Tailwind CSS v3 is used (not v4). Config is in `tailwind.config.ts` + `postcss.config.mjs`.
-- The root layout at `apps/web/src/app/layout.tsx` sets `html lang="fa" dir="rtl"` and imports `globals.css`.
-- Plugin vitest configs now include resolve aliases for `@hawza/core` and `@hawza/contracts` to match tsconfig paths.
+- All commands run via `cmd /c "pnpm ..."` because PowerShell execution policy blocks the `pnpm.ps1` shim.
+- Evidence files are plain text. Use the Write tool, not shell `>` redirects, to avoid encoding issues.
+- Do NOT skip the evidence step. Founder directive is binding.
+- If any command fails, STOP. Document the failure in `notes.md` with the full error. Do not silently retry or pivot to a workaround.

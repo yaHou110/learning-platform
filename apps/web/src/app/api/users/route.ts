@@ -1,21 +1,15 @@
-import { NextResponse } from "next/server";
 import { auth } from "@/auth";
 import { identity } from "@hawza/core/api";
+import { NextResponse } from "next/server";
 
-export async function GET() {
+export const dynamic = "force-dynamic";
+
+export async function GET(): Promise<NextResponse> {
   const session = await auth();
-
-  if (!session?.user) {
+  if (!session?.user?.tenantId) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const tenantId = session.user.tenantId;
-
-  try {
-    const users = await identity.listUsers(tenantId);
-    return NextResponse.json(users);
-  } catch (error) {
-    console.error("Error listing users:", error);
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
-  }
+  const users = await identity.listUsers(session.user.tenantId);
+  return NextResponse.json(users);
 }
