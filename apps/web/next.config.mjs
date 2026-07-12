@@ -11,11 +11,31 @@ const nextConfig = {
     "@hawza/plugin-localization",
   ],
   // Native Node modules used by workspace packages must NOT be bundled
-  // by webpack — they are required at runtime. `@hawza/core` uses `bcrypt`
-  // (native) for password hashing; the alternative `bcryptjs` (pure JS) is
-  // also present in `apps/web` for Auth.js adapters that need it.
-  serverExternalPackages: ["bcrypt"],
+  // by webpack — they are required at runtime.
+  // Note: `bcrypt` was replaced by `bcryptjs` (pure JS) in M1. Kept
+  // empty for future native modules if needed.
+  serverExternalPackages: [],
   reactStrictMode: true,
+  // Hide the X-Powered-By header (security best practice).
+  poweredByHeader: false,
+  // Security headers applied to all routes.
+  async headers() {
+    return [
+      {
+        source: "/(.*)",
+        headers: [
+          { key: "X-Content-Type-Options", value: "nosniff" },
+          { key: "X-Frame-Options", value: "DENY" },
+          { key: "X-XSS-Protection", value: "1; mode=block" },
+          { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
+          {
+            key: "Permissions-Policy",
+            value: "camera=(), microphone=(), geolocation=()",
+          },
+        ],
+      },
+    ];
+  },
   // TypeScript NodeNext convention: source uses `.js` extensions that
   // resolve to `.ts` files. Webpack must alias this for Next.js to
   // bundle workspace packages that follow that pattern (e.g. @hawza/core).

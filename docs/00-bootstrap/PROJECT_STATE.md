@@ -2,13 +2,13 @@
 
 > **Current snapshot of the project.** This is the *first* file to read after `DEVELOPMENT_GUIDE.md`.
 
-> Last updated: 2026-07-12 (v1.2 — Production Foundation Sprint in progress, M1 ✅, M2 next; doc rename refactor applied)
+> Last updated: 2026-07-12 (v1.2 — Production Foundation Sprint in progress, M1 ✅, M2 partial; code review fixes applied, smoke test blocked on PostgreSQL)
 
 ---
 
 ## One-line status
 
-**Production Foundation Sprint in progress (M1 ✅, M2 next).** Feature development suspended until M7 sign-off.
+**Production Foundation Sprint in progress (M1 ✅, M2 partial).** Code review + 8 quality fixes applied. Smoke test blocked — PostgreSQL not installed. Feature development suspended until M7 sign-off.
 
 ---
 
@@ -69,9 +69,9 @@ Q5 is consumed by SPRINT-001 M6. Q6 affects schema evolution; defer until M6 lan
 | --- | --- |
 | Sprint | SPRINT-001 — Production Foundation |
 | Opened | 2026-07-11 |
-| Current milestone | **M2 — Production Build Validation** (M1 ✅) |
+| Current milestone | **M2 — Production Build Validation** (M1 ✅, M2 partial — blocked on PostgreSQL) |
 | Plan | [`../06-sprints/SPRINT-001-production-foundation/SPRINT-001-production-foundation.md`](../06-sprints/SPRINT-001-production-foundation/SPRINT-001-production-foundation.md) |
-| Evidence | `docs/06-sprints/SPRINT-001-production-foundation/evidence/M1-baseline/` |
+| Evidence | `docs/06-sprints/SPRINT-001-production-foundation/evidence/M2-prod-build/` |
 | Gate | No feature work merged until M7 sign-off |
 
 ---

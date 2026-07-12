@@ -25,7 +25,7 @@ export default async function LoginPage({
   }
 
   return (
-    <main className="mx-auto max-w-md p-8">
+    <main dir="rtl" lang="fa" className="mx-auto max-w-md p-8">
       <h1 className="mb-6 text-2xl font-bold">ورود</h1>
       <form action={action} className="flex flex-col gap-4">
         <label className="flex flex-col gap-1 text-sm">

@@ -17,6 +17,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - **SPRINT-001 — Production Foundation** plan with 7 milestones (M1..M7) and a hard gate: no new business features until M7 sign-off. Plan: `docs/06-sprints/SPRINT-001-production-foundation/SPRINT-001-production-foundation.md`.
 - Per-milestone evidence directories under `docs/06-sprints/SPRINT-001-production-foundation/evidence/M{n}-*/`.
+- **Security headers** via `next.config.mjs` `headers()`: `X-Content-Type-Options`, `X-Frame-Options`, `X-XSS-Protection`, `Referrer-Policy`, `Permissions-Policy`.
+- **Centralized env validation** (`apps/web/src/lib/env.ts`): production throws on missing `AUTH_SECRET`/`DATABASE_URL`, development uses safe defaults with warnings.
+- `poweredByHeader: false` in `next.config.mjs` to hide the Next.js version string.
 
 ### Fixed (during M1 — Baseline Verification)
 - **`next/no-page-custom-font` warning in `apps/web/src/app/layout.tsx`** — Google Font (`Vazirmatn`) was loaded via raw `<link>` tags in App Router `<head>`. Converted to `next/font/google` so the font is inlined at build time and the warning is gone.
@@ -24,6 +27,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **`@hawza/core` `exports` pointed to `dist/...js` while other packages pointed to source** — the only package that needed a build step before the Next.js build. Aligned core to source-export like the rest of the workspace (`./src/...ts`).
 - **Webpack did not map `.js` → `.ts` for NodeNext-style imports** — `@hawza/core/src/api/index.ts` uses `from '../db/client.js'` (NodeNext convention). Added `resolve.extensionAlias` to `apps/web/next.config.mjs` so webpack resolves `.js` → `.ts`/`.tsx` first.
 - **Native `bcrypt` is unbundlable in the Next.js server build** — `@hawza/core` used native `bcrypt` (C++ bindings) for password hashing, which webpack tried to bundle and choked on `node-pre-gyp`'s HTML files. Switched to pure-JS `bcryptjs` (already a dep of `apps/web`). Trade-off: ~250ms vs ~80ms per hash at cost 12, acceptable for login. Rationale documented in the JSDoc header of `credentials.ts`.
+
+### Fixed (during M2 — code review)
+- **Stale `serverExternalPackages: ["bcrypt"]`** — removed from `next.config.mjs`; we use `bcryptjs` (pure JS) since M1.
+- **Health route `db` field returned string** — changed to return boolean (`true`/`false`) for consistency with API contract. Added `try/catch` for graceful error handling.
+- **Login page missing `dir="rtl"`** — added for consistency with dashboard page.
+- **AUTH_SECRET silent fallback in production** — previously, if `AUTH_SECRET` was not set, the app would silently use a predictable dev secret. Now throws at startup in production.
+- **`.env.example` lacked comments** — added descriptions, security notes, and `openssl rand -base64 32` generation command.
 
 ### Changed
 - `apps/web/src/app/layout.tsx` — uses `next/font/google` for Vazirmatn; `<html>` and `<body>` apply the font class.
@@ -41,7 +51,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `pnpm -r lint` — exit 0, **zero warnings**
 - `pnpm -r typecheck` — exit 0
 - `pnpm -r test` — exit 0, 18 tests pass across 6 packages (core 3, plugin-auth 3, plugin-catalog 2, plugin-credentials 3, plugin-learning 2, plugin-localization 3, apps/web 2)
-- `pnpm build` — exit 0, 7 routes compiled (1 page, 5 API routes, 1 login page), middleware 42.5 kB, first-load JS shared 99.9 kB
+- `pnpm build` — exit 0, 7 routes compiled (1 page, 5 API routes, 1 login page), middleware 42.7 kB, first-load JS shared 99.9 kB
+
+### Security
+- Added 5 security headers: `X-Content-Type-Options: nosniff`, `X-Frame-Options: DENY`, `X-XSS-Protection: 1; mode=block`, `Referrer-Policy: strict-origin-when-cross-origin`, `Permissions-Policy: camera=(), microphone=(), geolocation=()`.
+- `poweredByHeader: false` hides the Next.js version string.
+- Centralized env validation: `AUTH_SECRET` and `DATABASE_URL` are required in production; throws at startup if missing.
 
 ### Gate (binding)
 🚫 No new business features are merged until M7 (Production Readiness Review) is signed off. This includes Catalog API/UI, Dashboard real UI, Learning plugin, Credentials plugin, Event Bus, PWA.

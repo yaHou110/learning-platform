@@ -1,6 +1,6 @@
 # SPRINT-001 — Production Foundation Sprint
 
-> **Status:** 🔵 Active — M1 ✅, M2 next
+> **Status:** 🔵 Active — M1 ✅, M2 partial (blocked on PostgreSQL)
 > **Session range:** 008 → (open)
 > **Date opened:** 2026-07-11
 > **Decider:** founder (you)
@@ -38,7 +38,7 @@ This includes: Catalog API routes, CourseCard, LessonList, Dashboard real UI, Le
 | # | Title | Goal | Evidence location |
 |---|---|---|---|
 | **M1** | Baseline Verification | Freeze current state; verify `pnpm install`, `lint`, `typecheck`, `test`, `build` all pass from a clean checkout | `evidence/M1-baseline/` | ✅ Done (session 008) |
-| **M2** | Production Build Validation | `next build` succeeds; `next start` serves on production port; smoke test against prod build | `evidence/M2-prod-build/` |
+| **M2** | Production Build Validation | `next build` succeeds; `next start` serves on production port; smoke test against prod build | `evidence/M2-prod-build/` | 🟡 partial (code review done, smoke test blocked) |
 | **M3** | CI/CD | GitHub Actions runs lint+typecheck+test+build on every PR; blocks merge on red | `evidence/M3-ci/` |
 | **M4** | Security Hardening | CSP, security headers, rate limiting, input validation, secret management, audit logging | `evidence/M4-security/` |
 | **M5** | Observability | Structured JSON logs, metrics endpoint, error reporting, `/api/health` deep check, `/api/ready` | `evidence/M5-observability/` |

@@ -12,6 +12,7 @@ import Credentials from "next-auth/providers/credentials";
 import { verifyPassword, CredentialsInputSchema } from "@hawza/core/auth";
 import { getDb } from "@hawza/core/db";
 import type { Role } from "@hawza/core/db/schema";
+import { env } from "@/lib/env";
 
 declare module "next-auth" {
   interface Session {
@@ -27,7 +28,7 @@ declare module "next-auth" {
 
 const authConfig: NextAuthConfig = {
   session: { strategy: "jwt" },
-  secret: process.env.AUTH_SECRET ?? "dev-secret-change-in-production",
+  secret: env.AUTH_SECRET,
   providers: [
     Credentials({
       name: "Credentials",

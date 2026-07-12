@@ -305,3 +305,49 @@ Each entry has:
 - `docs/00-bootstrap/PROJECT_STATE.md` — v1.2, sprint + M1 row.
 - `docs/00-bootstrap/NEXT_SESSION.md` — M1 task.
 - `CHANGELOG.md` `[Unreleased]` — M1 entry.
+
+---
+
+## Session 009 — 2026-07-12 — opencode/mimo-v2.5-free (SPRINT-001 / M2 — code review + quality fixes)
+
+**Goal:** M2 — Production Build Validation. Run `next start` against the production build, smoke test all endpoints. Also perform comprehensive code review.
+
+**Done:**
+- Pre-flight verified: `.next/BUILD_ID` exists, build directory complete.
+- Comprehensive code review of all source files across the monorepo (16+ files).
+- Fixed 8 issues (see below).
+- Re-ran all quality gates: typecheck ✅, lint ✅ (0 warnings), test ✅ (18 pass), build ✅ (7 routes, middleware 42.7 kB).
+- Created M2 evidence directory with `commands.txt`, `checklist.md`, `notes.md`.
+
+**Code review fixes:**
+1. Removed stale `serverExternalPackages: ["bcrypt"]` from `next.config.mjs` (we use `bcryptjs` since M1).
+2. Added 5 security headers via `next.config.mjs` `headers()`: `X-Content-Type-Options`, `X-Frame-Options`, `X-XSS-Protection`, `Referrer-Policy`, `Permissions-Policy`.
+3. Added `poweredByHeader: false` to hide Next.js version string.
+4. Created `apps/web/src/lib/env.ts` — centralized env validation with production throw on missing `AUTH_SECRET`/`DATABASE_URL`.
+5. Updated `auth.ts` and `middleware.ts` to use shared `env` helper (was hardcoded fallback).
+6. Fixed health route: `db` field now returns boolean (was string "ok"/"fail"); added `try/catch`.
+7. Added `dir="rtl"` to login page `<main>` for consistency with dashboard.
+8. Enhanced `.env.example` with comments and stronger AUTH_SECRET placeholder.
+
+**Decisions:**
+- Security headers (X-Frame-Options, CSP, etc.) are added now in M2 rather than waiting for M4 because they are zero-cost and high-impact. M4 will add CSP (Content-Security-Policy) which requires more careful tuning.
+- Env validation throws in production if `AUTH_SECRET` is not set — prevents the silent fallback-to-dev-secret vulnerability.
+
+**Open questions:**
+- **PostgreSQL not installed** — `next start` smoke test is blocked. Needs admin privileges to install (winget/choco both fail without elevation). Founder must either: (a) run installer as admin, (b) install Docker Desktop, or (c) provide a remote `DATABASE_URL`.
+- Hosting (Q5) — still pending.
+- Multi-tenant isolation (Q6) — still parked.
+- PWA / offline (Q7) — still parked.
+
+**Next session:** Resume M2 smoke test once PostgreSQL is available. The production build is ready; only the runtime validation is blocked.
+
+**Files changed (M2):**
+- `apps/web/next.config.mjs` — removed stale `bcrypt` externals; added security headers + `poweredByHeader: false`.
+- `apps/web/src/lib/env.ts` — **NEW** centralized env validation.
+- `apps/web/src/auth.ts` — uses `env.AUTH_SECRET` instead of hardcoded fallback.
+- `apps/web/src/middleware.ts` — uses `env.AUTH_SECRET` instead of hardcoded fallback.
+- `apps/web/src/app/api/health/route.ts` — `db` returns boolean; added try/catch.
+- `apps/web/src/app/login/page.tsx` — added `dir="rtl"` to `<main>`.
+- `apps/web/.env.example` — enhanced with comments.
+- `docs/06-sprints/SPRINT-001-production-foundation/evidence/M2-prod-build/*` — **NEW** evidence files.
+- `CHANGELOG.md` — M2 entries (security headers, env validation, fixes).
