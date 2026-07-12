@@ -86,6 +86,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Gate (binding)
 🚫 No new business features are merged until M7 (Production Readiness Review) is signed off. This includes Catalog API/UI, Dashboard real UI, Learning plugin, Credentials plugin, Event Bus, PWA.
 
+### Security audit (M4 pre-work, 2026-07-12)
+- **🔴 28 known vulnerabilities** in production dependencies (see `evidence/M4-security/audit-baseline.json`): 2 critical, 8 high, 14 moderate, 4 low. All in `next@15.0.3` and `next-auth@5.0.0-beta.25`; transitive `postcss@8.4.31` (via `next`).
+- **Mitigation spec drafted:** `evidence/M4-security/M4-1-dependency-upgrade.md` — bump `next` to `15.5.16+`, `next-auth` to `5.0.0-beta.30+`. **Risk: CRITICAL → HIGH after fix. Founder approval required per ADR-0013 §41.**
+- **M3 evidence gap closed:** `evidence/M3-ci/{notes.md,checklist.md,commands.txt}` (governance CI workflow, validator script, PR + issue templates, agent sync).
+
 ---
 
 ## [1.1.0] — 2026-07-11

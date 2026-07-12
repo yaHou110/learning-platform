@@ -446,3 +446,34 @@ Each entry has:
 **Notes for the next agent:**
 - Local pre-PR: `pnpm governance:validate:local` then fill PR template before opening PR.
 - Agent sync: edit `AGENTS.md` only, then `pnpm sync:agents`.
+
+---
+
+## Session 013 — 2026-07-12 — mavis (orchestrator) (M3 evidence gap + M4 audit critical finding)
+
+**Goal:** Close the M3 evidence gap from session 012; surface and document any pre-M4 work; do not block on the M2 PostgreSQL blocker (still real, but lower priority than a critical security finding).
+
+**Done:**
+- `evidence/M3-ci/notes.md`, `checklist.md`, `commands.txt` — M3 evidence gap closed. The work itself (governance.yml, validate.mjs, PR + issue templates, agent sync) was already merged in session 012; this session only wrote the evidence files the founder directive requires.
+- `evidence/M4-security/audit-baseline.json` — `pnpm audit --prod --json` captured. **28 advisories** (2 critical, 8 high, 14 moderate, 4 low) in `next@15.0.3` and `next-auth@5.0.0-beta.25`; transitive `postcss@8.5.10`.
+- `evidence/M4-security/notes.md` — severity breakdown + risk classification.
+- `evidence/M4-security/checklist.md` — pre-work checklist.
+- `evidence/M4-security/M4-1-dependency-upgrade.md` — DoR + spec + risk matrix. **Awaiting founder approval (CRITICAL risk per ADR-0013 §42)**.
+- `PROJECT_BACKLOG.md` — rotated to session 013, founder-decision items listed.
+- `PROJECT_STATE.md` — v1.6, new risk #6 added.
+- `CHANGELOG.md` — M4 audit finding + M3 evidence gap entries.
+- This file appended.
+
+**Decisions made:**
+- none (no new ADRs; no code changes; no commit yet — waiting on founder approval before merging the evidence files as a single commit)
+
+**Decisions still open (in priority order):**
+1. **🔴 M4 dependency upgrade approval** — `next@15.0.3 → 15.5.16+`, `next-auth@5.0.0-beta.25 → 5.0.0-beta.30+`. Spec at `evidence/M4-security/M4-1-dependency-upgrade.md`.
+2. **PostgreSQL path for M2 smoke test** — admin install / Docker / remote URL / portable.
+
+**Next session:** Founder decision on the upgrade. If approved → M4.1: bump deps on a branch, run `pnpm verify` + `pnpm audit`, open PR. If not approved → M4 non-DB items: CSP header, rate-limit middleware, Zod input validation on existing API routes, `security.txt`.
+
+**Notes for the next agent:**
+- **Do not** merge the upgrade without founder sign-off. ADR-0013 §41 is binding.
+- The audit baseline JSON is the only objective evidence; preserve it.
+- The M2 PostgreSQL blocker is real but lower priority than the M4 critical finding.

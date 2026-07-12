@@ -2,13 +2,13 @@
 
 > **Current snapshot of the project.** This is the *first* file to read after `DEVELOPMENT_GUIDE.md`.
 
-> Last updated: 2026-07-12 (v1.5 — executable governance CI; M2 still blocked on PostgreSQL)
+> Last updated: 2026-07-12 (v1.6 — M3 evidence closed; M4 audit reveals 28 vulnerabilities; awaiting founder decision)
 
 ---
 
 ## One-line status
 
-**Production Foundation Sprint in progress (M1 ✅, M2 partial).** Code review + 8 quality fixes applied. Smoke test blocked — PostgreSQL not installed. Feature development suspended until M7 sign-off.
+**Production Foundation Sprint in progress (M1 ✅, M2 partial, M3 ✅, M4 pre-work).** M3 evidence gap closed. **Critical security finding in M4:** 28 known vulnerabilities (2C/8H/14M/4L) in `next@15.0.3` and `next-auth@5.0.0-beta.25`. DoR + spec written; **founder approval required** before merge. PostgreSQL smoke test still blocked. Feature development suspended until M7 sign-off.
 
 ---
 
@@ -24,7 +24,7 @@
 | 4. Development conventions | ✅ done (v1.3) | `ENGINEERING_PROTOCOL.md` v2 (60 rules), `RISK_CLASSIFICATION.md`, ADR-0012/0013. |
 | 5. Source code (Identity & Access) | ✅ done | Migration + Auth.js + middleware + 2 API routes (sessions 005–007). |
 | 5.5. Source code (other features) | ⏸️ paused | Catalog / Learning / Credentials / Localization / Dashboard — parked pending M7. |
-| 6. **Production Foundation Sprint** | 🔵 in progress | M1 ✅, M2 partial, **M3 governance CI ✅** (partial — `governance.yml` landed). |
+| 6. **Production Foundation Sprint** | 🔵 in progress | M1 ✅, M2 partial (PostgreSQL blocker), M3 ✅ (evidence closed 2026-07-12), M4 pre-work done (audit baseline + upgrade spec, awaiting founder). |
 | 7. Deployment & CI/CD | ❌ not started | Blocked on sprint M3/M6. |
 
 ---
@@ -71,10 +71,11 @@ Q5 is consumed by SPRINT-001 M6. Q6 affects schema evolution; defer until M6 lan
 | --- | --- |
 | Sprint | SPRINT-001 — Production Foundation |
 | Opened | 2026-07-11 |
-| Current milestone | **M2 — Production Build Validation** (M1 ✅, M2 partial — blocked on PostgreSQL) |
+| Current milestone | **M4 — Security Hardening (pre-work)** (M1 ✅, M2 partial, M3 ✅) |
 | Plan | [`../06-sprints/SPRINT-001-production-foundation/SPRINT-001-production-foundation.md`](../06-sprints/SPRINT-001-production-foundation/SPRINT-001-production-foundation.md) |
-| Evidence | `docs/06-sprints/SPRINT-001-production-foundation/evidence/M2-prod-build/` |
+| Evidence | `docs/06-sprints/SPRINT-001-production-foundation/evidence/M{2,3,4}-*/` |
 | Gate | No feature work merged until M7 sign-off |
+| **Critical finding** | 28 vulnerabilities (2C/8H/14M/4L) in `next@15.0.3` + `next-auth@5.0.0-beta.25`. Spec at `evidence/M4-security/M4-1-dependency-upgrade.md`. **Founder approval required** before merging the upgrade. |
 
 ---
 
@@ -85,6 +86,7 @@ Q5 is consumed by SPRINT-001 M6. Q6 affects schema evolution; defer until M6 lan
 3. **Tool lock-in** — mitigated by Agent-portable `DEVELOPMENT_GUIDE.md` and standard Markdown.
 4. **Premature standardization** — many docs are skeletons. Resist the urge to over-spec before the first code commit.
 5. **Sprint drift** — mitigated by hard gate (no features until M7) and per-milestone evidence requirement.
+6. **🔴 M4 security exposure** — 28 known vulnerabilities in `next` + `next-auth` until the dependency upgrade merges. Mitigated by self-hosted + private network exposure, but still a public-internet attack surface. **Mitigation in progress** — DoR + spec ready, awaiting founder approval.
 
 ---
 
