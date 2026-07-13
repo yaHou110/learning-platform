@@ -82,6 +82,51 @@ Specifically:
 
 A new ADR is required to overturn this one.
 
+---
+
+## Revision history
+
+### Revision 1 — 2026-07-13 (Session 015)
+
+**Trigger:** Manual security review cross-referenced with the M4 audit surfaced
+two issues tied to this ADR:
+
+1. The Credentials provider in Auth.js v5 only supports the `jwt` session
+   strategy. The `@auth/drizzle-adapter` (used for DB-backed sessions) requires
+   an OAuth provider. The implementation in `apps/web/src/auth.ts` therefore
+   uses `session: { strategy: "jwt" }` and does **not** use the Drizzle adapter.
+   The original Decision said "database sessions via `@auth/drizzle-adapter`" —
+   that is **technically infeasible** with the Credentials provider alone.
+
+2. The "instant revocation" property the original Decision promised depends on
+   the DB-session approach. With JWT only, a deactivated user keeps a valid
+   session token until the JWT expires (default 30 days). This is the
+   "deactivation gap."
+
+**Amendment to the Decision section (additive; does not contradict the
+constraints):**
+
+- Sessions: **JWT** signed with `AUTH_SECRET`. The `@auth/drizzle-adapter` is
+  **not** part of v1. It will be added in v1.1 when an OAuth provider
+  (out-of-scope for v1 per `MVP_SCOPE.md`) is introduced.
+- "Instant revocation" is achieved by a **per-request `isActive` re-check** in
+  the Auth.js `session` callback: a single-row `SELECT id, is_active FROM
+  users WHERE id = $1` (primary-key lookup, sub-ms). If the user is missing
+  or `is_active = false`, the session resolves to an empty user and the caller
+  receives a 401. This adds one indexed lookup per authenticated request,
+  which is well inside the `p95 < 500 ms` SLO for v1.
+- All other parts of the original Decision stand unchanged: bcrypt cost 12,
+  `httpOnly` + `Secure` + `SameSite=Lax` cookies, RBAC via the `role` column,
+  tenant resolution via `tenant_id` on the session.
+
+**Why this is a Revision and not a new ADR:** the *constraints* (C3, C5,
+self-hosted, revocability) are unchanged. The *mechanism* changes; the
+mechanism was underspecified in the original ADR. A Revision preserves the
+decision lineage without forcing a fresh ADR for what is effectively a
+correction.
+
+**Linked work:** `evidence/M4-security/M4-0-authz-data-leak.md`.
+
 ## References
 
 - `docs/01-product/MVP_SCOPE.md` — auth scope (email + password in v1; SMS deferred).

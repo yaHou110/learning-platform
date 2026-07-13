@@ -5,12 +5,15 @@
  * needed here — it's only required for OAuth/database sessions. We may add
  * it later when OAuth providers are introduced.
  *
- * See ADR-0005 for the full auth design.
+ * See ADR-0005 (revised 2026-07-13, Session 015) for the full auth design
+ * and the rationale for the per-request `isActive` re-check that closes the
+ * JWT deactivation gap.
  */
 import NextAuth, { type NextAuthConfig } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import { verifyPassword, CredentialsInputSchema } from "@hawza/core/auth";
 import { getDb } from "@hawza/core/db";
+import { identity } from "@hawza/core/api";
 import type { Role } from "@hawza/core/db/schema";
 import { env } from "@/lib/env";
 
@@ -63,7 +66,18 @@ const authConfig: NextAuthConfig = {
       return token;
     },
     async session({ session, token }) {
-      if (token && session.user) {
+      if (!token?.id) return session;
+      // Per-request deactivation re-check. ADR-0005 §Revision 1:
+      // Auth.js Credentials only supports JWT, so we close the deactivation
+      // gap by verifying the user still exists and is active on every
+      // `auth()` call. Cost: one primary-key lookup per request, sub-ms.
+      const status = await identity.checkUserActive(token.id as string);
+      if (!status.exists || !status.active) {
+        // Returning a session with no user makes `auth()` return null in
+        // route handlers, so they correctly emit 401.
+        return { ...session, user: undefined as unknown as typeof session.user };
+      }
+      if (session.user) {
         session.user.id = token.id as string;
         session.user.role = token.role as Role;
         session.user.tenantId = token.tenantId as string;

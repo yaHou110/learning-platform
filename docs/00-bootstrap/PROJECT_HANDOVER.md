@@ -520,3 +520,56 @@ Each entry has:
 - The upgrade commit is the only thing on `fix/m4-dependency-upgrade`. No feature work was mixed in.
 - The 2 residual advisories are documented; do not attempt to fix them in this PR.
 - The M2 Docker blocker is founder-side action; once installed, the smoke test resumes per the M2 plan.
+
+---
+
+## Session 015 — 2026-07-13 — mavis (orchestrator) (M4.0 P0 — authorization gap + password-hash leak)
+
+**Goal:** Founder handed the project a manual security review (cross-referenced with a ChatGPT-5 "ultra" review). The single P0 finding to address: `GET /api/users` returned `passwordHash` to any logged-in user, with no role-based authorization. A secondary ADR mismatch (ADR-0005 says "DB sessions" but the code uses JWT) was also surfaced. Founder directive 2026-07-13: "do whatever you think is best, no rush, don't break engineering principles."
+
+**Done:**
+- Wrote the spec first: `evidence/M4-security/M4-0-authz-data-leak.md` (DoR per §39, spec per §40, risk matrix per §42, roll-back per §30/§55, approval per §41).
+- **`packages/core/src/api/index.ts`:** rewrote `identity.listUsers` to use **explicit Drizzle column projection**; added `identity.getUserById` and `identity.checkUserActive`; exported a new `UserPublic` type that does not include `passwordHash`. Defense in depth at three layers (SQL projection, TypeScript return type, JSON serialization).
+- **`apps/web/src/lib/authz.ts` (NEW):** the single chokepoint for route-level authorization. `requireRole(['center_admin', 'super_admin'])` returns either `{ ok: true, user }` or `{ ok: false, response: NextResponse }` so route handlers cannot accidentally forget to set a status code.
+- **`apps/web/src/app/api/users/route.ts`:** now uses `requireRole(['center_admin', 'super_admin'])`. `student`/`teacher` → 403; no session → 401.
+- **`apps/web/src/auth.ts`:** the Auth.js `session` callback now does a per-request `identity.checkUserActive` lookup; on `isActive=false` or user-not-found, the session resolves to an empty user. Closes the JWT deactivation gap (ADR-0005 Revision 1).
+- **`docs/05-decisions/ADR-0005-auth.md`:** appended Revision 1 explaining that the Auth.js Credentials provider only supports JWT (verified against Auth.js v5 docs) and that "instant revocation" is delivered by the per-request `isActive` re-check.
+- **New tests:**
+  - `packages/core/tests/api-user-public-type.test.ts` — type-level guarantee that `UserPublic` cannot have a `passwordHash` field (compile-time failure on accidental addition).
+  - `apps/web/tests/authz-require-role.test.ts` — 6 cases: no session, session without user, role not in allowlist, center_admin, super_admin, teacher explicitly denied.
+- **Quality gates (`pnpm verify`):** lint ✓, typecheck ✓, **26/26 tests** (5/5 core + 8/8 web + 13/13 plugins), build ✓ (7 routes, Middleware 46 kB, First Load JS 102 kB). No new audit advisories introduced.
+- **Spec doc:** `evidence/M4-security/M4-0-authz-data-leak.md` — full DoR/DoD/risk matrix; suitable as the PR body once approved.
+- **Re-run audit:** `evidence/M4-security/audit-after-2.json` — same 2 residual advisories (drizzle-orm + transitive postcss) from M4.1; no regressions.
+
+**Decisions made:**
+- **DB session was technically infeasible** with Auth.js Credentials — revised ADR-0005 in place (Revision 1) rather than writing a new ADR. The constraints (self-hosted, revocability) are unchanged; the *mechanism* (per-request `isActive` re-check) is now correctly specified. Per ADR-0013 §43, an ADR amendment is preferred over a silent contradiction; per §57 (repo as source of truth), the code was already correct, the ADR was the wrong artifact.
+- **`UserPublic` as a TypeScript-only contract.** The DB query uses `db.select({...})` with explicit column references; the return type is `UserPublic`; the JSON serializer can only serialize what the type has. Three layers of defense against accidental password-hash leakage. Cheap (no schema change, no extra tables, no extra RLS policy), strong (any future field added to `users.passwordHash` would have to be added to `UserPublic` *and* the explicit column list, both of which a code review will catch).
+- **Single chokepoint for authorization.** The `requireRole` helper lives in `apps/web/src/lib/authz.ts` and is the only call site for `auth()` inside route handlers. Future M5+ routes use it; legacy `/api/users` now uses it; this is the start of a v1 convention. A future ADR could make this mandatory via lint, but for now it is convention + review.
+
+**Decisions still open (carry to next session):**
+- Founder review of this PR (per ADR-0013 §41, HIGH-risk security change). Session-level approval was given; per-change approval requested via the PR.
+- M2 smoke test — still pending (Docker is now ready, but the script wasn't run in this session; user can ask any time).
+- M4.2 — CSP header, rate limit, input validation, `security.txt` — next.
+- drizzle-orm + postcss residual advisories — separate PR per founder directive.
+
+**Next session:** Session 016 — founder review of M4.0 PR; on merge, resume M2 smoke test (`docker compose up -d`, `db:migrate`, run auth flow against a real Postgres) and start M4.2 (CSP + rate limit + input validation + `security.txt`).
+
+**Files changed (M4.0):**
+- `packages/core/src/api/index.ts` — projection rewrite + `getUserById` + `checkUserActive` + `UserPublic` type.
+- `packages/core/tests/api-user-public-type.test.ts` — **NEW** type-level test.
+- `apps/web/src/lib/authz.ts` — **NEW** `requireRole` helper.
+- `apps/web/src/app/api/users/route.ts` — uses `requireRole`.
+- `apps/web/src/auth.ts` — per-request `isActive` re-check in `session` callback.
+- `apps/web/vitest.config.ts` — aliases for `@/auth`, `@/lib/*`.
+- `apps/web/tests/authz-require-role.test.ts` — **NEW** 6-case test of the helper.
+- `docs/05-decisions/ADR-0005-auth.md` — Revision 1.
+- `docs/06-sprints/SPRINT-001-production-foundation/evidence/M4-security/M4-0-authz-data-leak.md` — **NEW** spec.
+- `docs/06-sprints/SPRINT-001-production-foundation/evidence/M4-security/audit-after-2.json` — **NEW** re-run audit.
+- `CHANGELOG.md` — M4.0 entries.
+- This file appended.
+
+**Notes for the next agent:**
+- The M4.0 commit is on `fix/m4-authz-data-leak` (off `main` @ `d83fe8f`). No feature work was mixed in. Founder sign-off required before merge per ADR-0013 §41.
+- The P0 is **closed at the SQL + type layers**; if a future refactor drops the explicit column projection, the type test in `api-user-public-type.test.ts` will fail at compile time.
+- The `requireRole` pattern is the v1 convention. If you add a new authenticated route in M5+, use it; do not write inline `if (session.user.role !== 'admin')` blocks.
+- The session-callback `isActive` lookup is one indexed primary-key SELECT per authenticated request. On the 4 GB VPS target with 100s of users it is sub-ms; the v1 SLO budget (`p95 < 500 ms`) is comfortable. If a load test ever pushes this hot path, consider in-process LRU with a 30-60s TTL — but only after measuring, per ADR-0013 §28 (no optimization without measurement).

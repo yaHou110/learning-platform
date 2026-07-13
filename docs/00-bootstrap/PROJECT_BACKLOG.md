@@ -11,33 +11,37 @@
 
 | Field | Value |
 | --- | --- |
-| Session # | 013 |
-| Date opened | 2026-07-12 |
+| Session # | 015 |
+| Date opened | 2026-07-13 |
 | Agent | mavis (orchestrator) |
 | Sprint | SPRINT-001 — Production Foundation |
-| Goal | **(a) Fill the M3 evidence gap from session 012; (b) capture M4 vulnerability audit baseline; (c) draft DoR + spec for the dependency upgrade; (d) re-prioritize the M2 blocker.** |
-| Status | 🔴 **Critical security finding requires founder decision before continuing** |
+| Goal | **(a) Close the M4.0 P0 (password-hash leak + missing role authz) surfaced by a manual security review; (b) reconcile ADR-0005 with the JWT-only Credentials-provider constraint; (c) leave a branch ready for founder review.** |
+| Status | 🟢 **Branch `fix/m4-authz-data-leak` ready for founder review. All 4 quality gates green. PR is the only outstanding action.** |
 
 ---
 
 ## Context
 
-Session 012 landed the executable governance CI (workflow + validator + agent sync) but the M3 evidence directory was empty. This session filled that gap. While preparing for M4, a routine `pnpm audit --prod` surfaced **28 known vulnerabilities** in `next@15.0.3` and `next-auth@5.0.0-beta.25` — including **2 critical** and **8 high** advisories. This is a higher-priority blocker than the M2 PostgreSQL smoke test.
+Sessions 013–014 documented and merged the dependency-upgrade finding (28 → 2 advisories, M4.1). On 2026-07-13, the founder handed the project a manual security review cross-referenced with an external ChatGPT 5 review. The single P0 finding to address: `GET /api/users` returned `passwordHash` to any logged-in user and had no role-based authorization. Secondary finding: ADR-0005 said "DB sessions" but the code uses JWT (the Auth.js Credentials provider only supports JWT).
 
-The M2 PostgreSQL blocker (sessions 009, 010, 011, 012) is **unchanged**: PostgreSQL 16 is not installed on this dev machine; admin privileges are required for the installer. Options:
-
-1. **Run cmd as Administrator** → `winget install PostgreSQL.PostgreSQL.16` or `choco install postgresql16 --params "/Password:hawza /UserName:hawza /dbName:hawza /port:5432"`.
-2. **Install Docker Desktop** (admin needed) → `docker compose up -d` uses the existing `docker-compose.yml`.
-3. **Provide a remote `DATABASE_URL`** in `apps/web/.env` and I'll point the smoke test at it.
-4. **Use a portable PostgreSQL** (e.g. `embedded-postgres` npm or `pg_tmp` style binary) that doesn't need admin install. **Not currently set up** — would need a small spike.
+**PostgreSQL / Docker status (verified 2026-07-13, 03:06 PT):** Docker Desktop is running; WSL2 distro `docker-desktop` is Running v2. The `docker compose up -d` step is unblocked; the M2 smoke test can run as soon as a `DATABASE_URL` is in `apps/web/.env`.
 
 ## What this session delivered
 
-- `evidence/M3-ci/notes.md`, `checklist.md`, `commands.txt` — M3 evidence gap closed.
-- `evidence/M4-security/audit-baseline.json` — full pnpm audit output (28 advisories).
-- `evidence/M4-security/notes.md` — severity breakdown + risk classification.
-- `evidence/M4-security/checklist.md` — pre-work items.
-- `evidence/M4-security/M4-1-dependency-upgrade.md` — DoR + spec + risk matrix for the upgrade. **Awaiting founder approval** (CRITICAL risk per ADR-0013 §42).
+- `evidence/M4-security/M4-0-authz-data-leak.md` — full DoR/DoD/risk matrix/approval per ADR-0013.
+- `evidence/M4-security/audit-after-2.json` — re-run `pnpm audit --prod --json`; same 2 residual advisories, no regressions.
+- Code:
+  - `packages/core/src/api/index.ts` — `listUsers` rewritten with explicit column projection; `getUserById` and `checkUserActive` added; `UserPublic` type added.
+  - `apps/web/src/lib/authz.ts` (NEW) — `requireRole` helper.
+  - `apps/web/src/app/api/users/route.ts` — gates the route on `requireRole(['center_admin', 'super_admin'])`.
+  - `apps/web/src/auth.ts` — per-request `isActive` re-check in the `session` callback (closes the JWT deactivation gap).
+  - `apps/web/vitest.config.ts` — `@/...` aliases added (workspace packages still resolve via pnpm symlinks).
+- Tests:
+  - `packages/core/tests/api-user-public-type.test.ts` (NEW) — type-level guarantee that `UserPublic` cannot have a `passwordHash` field.
+  - `apps/web/tests/authz-require-role.test.ts` (NEW) — 6 cases pinning the helper's contract.
+- ADR:
+  - `docs/05-decisions/ADR-0005-auth.md` — Revision 1 appended (JWT-only with per-request `isActive` re-check).
+- `CHANGELOG.md`, `PROJECT_STATE.md` (v1.7), `PROJECT_BACKLOG.md` (this file), `PROJECT_HANDOVER.md` (Session 015 entry) — updated.
 
 ## Active sprint
 
@@ -46,38 +50,41 @@ The M2 PostgreSQL blocker (sessions 009, 010, 011, 012) is **unchanged**: Postgr
 
 ## What the next agent (you) should do
 
-**Decision needed from founder (in this order):**
+**In priority order:**
 
-1. **Critical:** Approve the dependency upgrade (`next@15.0.3 → 15.5.16+`, `next-auth@5.0.0-beta.25 → 5.0.0-beta.30+`)? Spec in `evidence/M4-security/M4-1-dependency-upgrade.md`. If yes → next session is M4.1: do the bump on a branch, run `pnpm verify` + `pnpm audit`, open PR.
-2. **Important:** Pick a PostgreSQL path for the M2 smoke test. Options above. If (3) (remote URL) → provide it; if (1) or (2) (local install) → confirm you ran it and I'll resume M2.
-3. **If neither (1) nor (2) can proceed this session:** I will work on the next M4 items that don't need a running database:
-   - CSP header (`Content-Security-Policy`) — needs careful tuning; can be drafted as a config + tested against the dev server (no DB required for header-only changes).
-   - Rate limiting middleware (in-memory token bucket) — no DB.
-   - Input validation Zod schemas on `/api/users`, `/api/auth/*` — unit-testable without DB.
-   - `security.txt` at `/.well-known/security.txt` — static file.
+1. **M4.0 review (founder, this turn):** branch `fix/m4-authz-data-leak` is the only outstanding PR. The PR body can use the spec verbatim (`evidence/M4-security/M4-0-authz-data-leak.md` §6 Risk + §7 Evidence). Founder-level approval was given in chat on 2026-07-13 ("do whatever you think is best"); per-change sign-off needed before merge per ADR-0013 §41.
+2. **M2 smoke test (any time the founder asks):** Docker is now ready. Set `AUTH_SECRET` + `DATABASE_URL` in `apps/web/.env`, then `docker compose up -d`, `pnpm --filter @hawza/core db:migrate`, `pnpm --filter @hawza/core db:seed:dev`, `pnpm --filter web dev`, and walk through login → `/api/users` (now 403 as student) → `/api/users` (now 200 as center_admin) → sign-out.
+3. **M4.2 (next sprint work):** CSP header (no DB needed), rate-limit middleware (in-memory token bucket, no DB), input-validation Zod schemas on `/api/users` + `/api/auth/*`, `security.txt` at `/.well-known/security.txt`. No DB required; can run in parallel with M2.
+4. **Follow-up PR for residual advisories:** `drizzle-orm<0.45.2` (HIGH) + transitive `postcss<8.5.10` (MOD). NOT in M4.0 per founder directive ("no mixed changes"). Separate branch when the founder is ready.
 
 ## Done-when checklist (this session)
 
-- [x] M3 evidence gap closed (3 files written)
-- [x] `pnpm audit --prod --json` captured
-- [x] M4 pre-work files written (notes, checklist, DoR+spec)
-- [x] `PROJECT_BACKLOG.md`, `PROJECT_STATE.md`, `CHANGELOG.md`, `PROJECT_HANDOVER.md` updated
-- [ ] **Founder decision on the upgrade** — required before merge of this session's evidence
-- [ ] Commit (run `pnpm verify` first per ADR-0012)
+- [x] Spec + DoR + DoD at `evidence/M4-security/M4-0-authz-data-leak.md`
+- [x] ADR-0005 Revision 1 appended
+- [x] `identity.listUsers` projection (no passwordHash)
+- [x] `requireRole` helper + applied to `/api/users`
+- [x] Per-request `isActive` re-check in `session` callback
+- [x] New tests: 2 (type-level + 6 helper cases)
+- [x] `pnpm verify` green (lint ✓, typecheck ✓, 26/26 tests ✓, build ✓)
+- [x] `pnpm audit --prod` re-captured; no new advisories
+- [x] `CHANGELOG.md`, `PROJECT_STATE.md`, `PROJECT_HANDOVER.md`, `PROJECT_BACKLOG.md` updated
+- [x] Branch `fix/m4-authz-data-leak` created (off `main` @ `d83fe8f`)
+- [ ] Commit on the branch (next step in this turn)
+- [ ] Push + open PR (next step in this turn)
+- [ ] **Founder sign-off on the PR (per ADR-0013 §41)**
 
 ## Out of scope (do NOT do in this session)
 
-- Actually bumping `next`/`next-auth` — needs founder approval first.
-- M2 smoke test — still blocked on PostgreSQL.
+- Actually merging the M4.0 PR — needs founder sign-off first.
+- M2 smoke test — Docker is ready but I didn't run it this session; founder can ask any time.
 - M5+ work — too far ahead; M4 must complete first.
 - New features (Catalog, Learning, etc.) — sprint hard gate still binding.
+- Bumping `drizzle-orm` or `postcss` — separate PR per founder directive.
 
 ## Notes for the next agent
 
-- The dependency upgrade is **CRITICAL** by the audit count, not by ADR-0013 risk matrix alone. Founder approval is mandatory regardless of how easy the bump looks.
-- `pnpm verify` is the pre-commit gate (see `docs/03-development/QUALITY_GATES.md`).
-- **Non-trivial work:** complete DoR (`templates/DEFINITION_OF_READY.md`) and spec/plan before coding (§40).
-- **HIGH/CRITICAL risk or §41 triggers:** obtain founder approval (`templates/HUMAN_APPROVAL_CHECKLIST.md`).
-- If a smoke test fails, STOP. Document the failure. Do not silently retry.
-- The `apps/web/.env` file does not exist yet — must be created in `apps/web/` (not repo root) with at minimum: `AUTH_SECRET=<random-32-byte-base64>`, `DATABASE_URL=postgres://hawza:hawza@localhost:5432/hawza`.
-- PowerShell execution policy blocks `pnpm` directly. Use `cmd /c "pnpm ..."`.
+- The M4.0 commit touches **3 packages** (`core`, `apps/web`, `docs`). The diff is intentionally small: one helper, one type, one route change, one callback addition, one ADR amendment.
+- `pnpm verify` must pass before the commit. Last run: 5/5 core + 8/8 web + 13/13 plugin = 26 tests pass, 7-route build OK, Middleware 46 kB.
+- PowerShell execution policy blocks `pnpm` directly. Use `cmd /c "pnpm ..."`. `gh` is installed and on PATH; use `gh pr create --base main --head fix/m4-authz-data-leak` after pushing.
+- The `apps/web/.env` file does not exist yet — needed only for the M2 smoke test, not for M4.0.
+- The M4.0 PR is a clean revert if needed: `git revert <commit>` + `pnpm install --frozen-lockfile` + redeploy. No migration, no data backfill.

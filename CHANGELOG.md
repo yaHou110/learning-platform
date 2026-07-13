@@ -101,6 +101,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Bump `drizzle-orm` to `>=0.45.2` — needs schema regression check.
   - Track Next.js internal `postcss` for a 15.5.21+ bump (or add `pnpm.overrides`).
 
+### Security (M4.0 P0 — authorization gap + password-hash leak, 2026-07-13)
+- **🔴 Closed `GET /api/users` password-hash leak.** The Drizzle query was a bare `select().from(users)` that returned every column, including `passwordHash`, to any caller with a session. A `student` or `teacher` could have dumped every bcrypt hash in their tenant and started offline cracking. **Now: explicit column projection in `identity.listUsers` and `identity.getUserById`; `passwordHash` is not selected and not in the `UserPublic` return type.** Defense in depth at three layers (SQL, types, JSON).
+- **🔴 Added role-based authorization on `/api/users`.** New helper `requireRole(['center_admin', 'super_admin'])` in `apps/web/src/lib/authz.ts`. `student`/`teacher` → 403; no session → 401. The `requireRole` helper is the single chokepoint for all future authenticated routes; new routes get authorization by going through it.
+- **ADR-0005 (auth) — Revision 1:** ADR said "DB sessions via `@auth/drizzle-adapter`"; implementation uses `session: { strategy: "jwt" }` because the Auth.js Credentials provider only supports JWT (verified against Auth.js v5 docs). The ADR is amended in-place: sessions are JWT-signed; "instant revocation" is delivered by a per-request `isActive` re-check in the Auth.js `session` callback (one indexed primary-key lookup per authenticated request, sub-ms).
+- **New tests:**
+  - `packages/core/tests/api-user-public-type.test.ts` — type-level guarantee that `UserPublic` cannot have a `passwordHash` field (compile-time failure if anyone adds one).
+  - `apps/web/tests/authz-require-role.test.ts` — 6 cases (no session, session without user, role not in allowlist, center_admin, super_admin, teacher explicitly denied).
+- **Spec + DoR + DoD + risk matrix:** `evidence/M4-security/M4-0-authz-data-leak.md`.
+- **Re-run audit:** `evidence/M4-security/audit-after-2.json` — no new advisories; same 2 residual (`drizzle-orm` + transitive `postcss`) from M4.1.
+- **`pnpm verify` on the M4.0 branch:** lint ✓, typecheck ✓, test ✓ (5/5 core + 8/8 web + 13/13 plugins = 26 tests), build ✓ (7 routes, Middleware 46 kB, First Load JS 102 kB).
+
+### Changed (M4.0)
+- `packages/core/src/api/index.ts` — `listUsers` rewritten with explicit column projection; new `getUserById` and `checkUserActive` methods; new `UserPublic` type.
+- `apps/web/src/lib/authz.ts` — **NEW** `requireRole` helper.
+- `apps/web/src/app/api/users/route.ts` — gates the route on `requireRole(['center_admin', 'super_admin'])`.
+- `apps/web/src/auth.ts` — `session` callback now does a per-request `identity.checkUserActive` lookup and returns an empty user on miss/inactive.
+- `apps/web/vitest.config.ts` — added aliases for `@/auth`, `@/lib/env`, `@/lib/authz`, `@/lib/plugins` (workspace packages still resolve via pnpm symlinks + their own `exports` field).
+- `docs/05-decisions/ADR-0005-auth.md` — appended Revision 1 explaining the JWT constraint and the per-request `isActive` pattern.
+
 ---
 
 ## [1.1.0] — 2026-07-11

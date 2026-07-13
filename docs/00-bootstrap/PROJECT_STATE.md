@@ -2,13 +2,13 @@
 
 > **Current snapshot of the project.** This is the *first* file to read after `DEVELOPMENT_GUIDE.md`.
 
-> Last updated: 2026-07-12 (v1.6 — M3 evidence closed; M4 audit reveals 28 vulnerabilities; awaiting founder decision)
+> Last updated: 2026-07-13 (v1.7 — M4.0 P0 closed: authorization gap + password-hash leak; ADR-0005 revised; branch `fix/m4-authz-data-leak` ready for review)
 
 ---
 
 ## One-line status
 
-**Production Foundation Sprint in progress (M1 ✅, M2 partial, M3 ✅, M4 pre-work).** M3 evidence gap closed. **Critical security finding in M4:** 28 known vulnerabilities (2C/8H/14M/4L) in `next@15.0.3` and `next-auth@5.0.0-beta.25`. DoR + spec written; **founder approval required** before merge. PostgreSQL smoke test still blocked. Feature development suspended until M7 sign-off.
+**Production Foundation Sprint in progress (M1 ✅, M2 partial, M3 ✅, M4 in progress: M4.1 merged, M4.0 P0 ready for review, M4.2 next).** The 28-vuln dependency finding was fixed in M4.1 (merged). A **second critical finding** surfaced via a manual code review: `GET /api/users` was leaking `passwordHash` to any logged-in user and had no role-based authorization. M4.0 closes this gap (explicit DB projection, `UserPublic` type, `requireRole` helper, per-request `isActive` re-check) and revises ADR-0005 to match the JWT-only Credentials-provider constraint. Branch `fix/m4-authz-data-leak` is ready for founder review. Feature development remains suspended until M7 sign-off.
 
 ---
 
@@ -24,7 +24,7 @@
 | 4. Development conventions | ✅ done (v1.3) | `ENGINEERING_PROTOCOL.md` v2 (60 rules), `RISK_CLASSIFICATION.md`, ADR-0012/0013. |
 | 5. Source code (Identity & Access) | ✅ done | Migration + Auth.js + middleware + 2 API routes (sessions 005–007). |
 | 5.5. Source code (other features) | ⏸️ paused | Catalog / Learning / Credentials / Localization / Dashboard — parked pending M7. |
-| 6. **Production Foundation Sprint** | 🔵 in progress | M1 ✅, M2 partial (PostgreSQL blocker), M3 ✅ (evidence closed 2026-07-12), M4 pre-work done (audit baseline + upgrade spec, awaiting founder). |
+| 6. **Production Foundation Sprint** | 🔵 in progress | M1 ✅, M2 partial (PostgreSQL blocker — Docker now ready, smoke test pending), M3 ✅ (evidence closed 2026-07-12), **M4.1 ✅ (next/next-auth upgrade, merged 2026-07-12)**, **M4.0 P0 ✅ spec done, code done, branch ready for review**, M4.2 next. |
 | 7. Deployment & CI/CD | ❌ not started | Blocked on sprint M3/M6. |
 
 ---
@@ -75,7 +75,7 @@ Q5 is consumed by SPRINT-001 M6. Q6 affects schema evolution; defer until M6 lan
 | Plan | [`../06-sprints/SPRINT-001-production-foundation/SPRINT-001-production-foundation.md`](../06-sprints/SPRINT-001-production-foundation/SPRINT-001-production-foundation.md) |
 | Evidence | `docs/06-sprints/SPRINT-001-production-foundation/evidence/M{2,3,4}-*/` |
 | Gate | No feature work merged until M7 sign-off |
-| **Critical finding** | 28 vulnerabilities (2C/8H/14M/4L) in `next@15.0.3` + `next-auth@5.0.0-beta.25`. Spec at `evidence/M4-security/M4-1-dependency-upgrade.md`. **Founder approval required** before merging the upgrade. |
+| **Critical finding (M4.0, closed on branch `fix/m4-authz-data-leak`)** | `GET /api/users` returned `passwordHash` to any logged-in user + no role-based authorization. Spec at `evidence/M4-security/M4-0-authz-data-leak.md`. **Founder approval required** before merge (HIGH risk; security change per §41). |
 
 ---
 
@@ -86,7 +86,8 @@ Q5 is consumed by SPRINT-001 M6. Q6 affects schema evolution; defer until M6 lan
 3. **Tool lock-in** — mitigated by Agent-portable `DEVELOPMENT_GUIDE.md` and standard Markdown.
 4. **Premature standardization** — many docs are skeletons. Resist the urge to over-spec before the first code commit.
 5. **Sprint drift** — mitigated by hard gate (no features until M7) and per-milestone evidence requirement.
-6. **🔴 M4 security exposure** — 28 known vulnerabilities in `next` + `next-auth` until the dependency upgrade merges. Mitigated by self-hosted + private network exposure, but still a public-internet attack surface. **Mitigation in progress** — DoR + spec ready, awaiting founder approval.
+6. **🟢 M4.1 dependency exposure — closed** — 28 → 2 advisories after merging `next@15.0.3 → 15.5.20` and `next-auth@5.0.0-beta.25 → 5.0.0-beta.31`. Residual `drizzle-orm` + transitive `postcss` are documented follow-ups; no public attack surface introduced by the fix.
+7. **🟢 M4.0 authorization gap — closed on branch** — `passwordHash` leak + missing role gate on `/api/users`; ADR-0005 revised (JWT-only with per-request `isActive` re-check). Branch `fix/m4-authz-data-leak` is ready for review; not yet merged. **Pre-merge exposure is real** — any logged-in user could have dumped tenant hashes.
 
 ---
 
