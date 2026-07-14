@@ -8,8 +8,11 @@
  * Re-running is safe: `ON CONFLICT DO NOTHING`.
  *
  * Usage: `pnpm --filter @hawza/core db:seed:dev`
+ *
+ * Env loading: `loadEnvOnce()` reads `${repoRoot}/.env` when DATABASE_URL
+ * is not already set (stdlib only, zero dependencies).
  */
-import { config } from "dotenv";
+import { loadEnvOnce } from "./load-env.js";
 import { drizzle } from "drizzle-orm/node-postgres";
 import { eq } from "drizzle-orm";
 import pg from "pg";
@@ -17,7 +20,7 @@ import { sql } from "drizzle-orm";
 import { tenants, users } from "../src/db/schema/identity.js";
 import { hashPassword } from "../src/auth/credentials.js";
 
-config({ path: ".env" });
+loadEnvOnce();
 
 const SEED_TENANT_SLUG = "hawza-demo";
 const SEED_TENANT_NAME = "Hawza Demo Center";

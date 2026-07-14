@@ -5,13 +5,17 @@
  *
  * This script is idempotent. It uses Drizzle's `migrate` helper which
  * tracks applied migrations in the `__drizzle_migrations` table.
+ *
+ * Env loading: `loadEnvOnce()` reads `${repoRoot}/.env` when DATABASE_URL
+ * is not already set (stdlib only, zero dependencies). Explicit
+ * `DATABASE_URL=…` and Node's `--env-file` both take precedence.
  */
-import { config } from "dotenv";
+import { loadEnvOnce } from "./load-env.js";
 import { migrate } from "drizzle-orm/node-postgres/migrator";
 import { drizzle } from "drizzle-orm/node-postgres";
 import pg from "pg";
 
-config({ path: ".env" });
+loadEnvOnce();
 
 async function main(): Promise<void> {
   const connectionString =
