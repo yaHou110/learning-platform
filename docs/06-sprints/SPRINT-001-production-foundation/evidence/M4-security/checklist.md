@@ -25,3 +25,24 @@
 ## Status
 
 🟡 **M4 dependency upgrade — 26 of 28 advisories resolved.** 2 follow-ups documented (`drizzle-orm` bump, `postcss` transitive).
+
+## M4-2 Security Hardening (Session 016, 2026-07-15)
+
+- [x] Spec / DoR / risk drafted (`M4-2-hardening.md`)
+- [x] `Content-Security-Policy` added to `next.config.mjs` `headers()`
+- [x] `apps/web/src/lib/rate-limit.ts` — in-memory token-bucket + `ipKey()`
+- [x] `apps/web/src/lib/validation.ts` — `parseQuery` / `parseBody` Zod guards
+- [x] `/api/users` — rate-limit (30/1·s⁻¹, keyed by admin id) + defensive `parseQuery`
+- [x] `/api/auth/session` — rate-limit (60/1·s⁻¹, keyed by IP)
+- [x] `/.well-known/security.txt` route (RFC 9116)
+- [x] Rebrand scrub: `@hawza/core` → `@learning-platform/core` in `audit-after.json` / `audit-after-2.json` / `audit-baseline.json` (BOM stripped from baseline); repo-wide `git grep hawza` returns none
+- [x] Tests: `tests/rate-limit.test.ts`, `tests/validation.test.ts`
+- [x] `pnpm verify` — EXIT 0 (see `commands.txt`)
+- [x] CHANGELOG + PROJECT_STATE / PROJECT_BACKLOG / PROJECT_HANDOVER updated
+- [x] Commit (Conventional Commits, milestone reference)
+- [ ] Founder review
+
+## Status
+
+🟢 **M4.2 — CSP + rate-limits + input-validation harness + security.txt landed; rebrand audit gap closed.** Follow-ups parked: HSTS (at M6 behind TLS), CSP nonces (per-request infra), external rate-limit store (only if multi-process), real `security.txt` Contact address.
+
