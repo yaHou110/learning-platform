@@ -573,3 +573,117 @@ Each entry has:
 - The P0 is **closed at the SQL + type layers**; if a future refactor drops the explicit column projection, the type test in `api-user-public-type.test.ts` will fail at compile time.
 - The `requireRole` pattern is the v1 convention. If you add a new authenticated route in M5+, use it; do not write inline `if (session.user.role !== 'admin')` blocks.
 - The session-callback `isActive` lookup is one indexed primary-key SELECT per authenticated request. On the 4 GB VPS target with 100s of users it is sub-ms; the v1 SLO budget (`p95 < 500 ms`) is comfortable. If a load test ever pushes this hot path, consider in-process LRU with a 30-60s TTL — but only after measuring, per ADR-0013 §28 (no optimization without measurement).
+
+---
+
+## Session 016 — 2026-07-15 — contributor (M4.2 — security hardening: CSP + rate-limits + input validation + security.txt)
+
+**Goal:** Land the four secret-free M4.2 hardening items (Content-Security-Policy, per-route rate limits, reusable Zod input-validation harness, RFC 9116 `security.txt`) and close the one rebrand-audit straggler (`@hawza/core` in audit-evidence JSON paths).
+
+**Done:**
+- **Content-Security-Policy** added to `apps/web/next.config.mjs` `headers()` (applies to `/(.*)`). v1 strict static policy: `default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self' fonts.gstatic.com; connect-src 'self'; frame-ancestors 'none'; base-uri 'self'; object-src 'none'; form-action 'self'`. `'unsafe-inline'` on styles is required by Next + Tailwind inline style attrs in v1 (per-request nonces parked). HSTS deliberately NOT set yet — valid only over TLS; enable at M6 behind the reverse proxy.
+- **Rate limiting (in-memory token-bucket):** new `apps/web/src/lib/rate-limit.ts` (`rateLimit()` + `ipKey()` + `__resetRateLimitStoreForTests()`). Placed in **Node route handlers**, not middleware — Next.js middleware runs on the Edge runtime (no durable per-instance state / timers), so a bucket there is unreliable; Node handlers keep it dependency-free (OSS-first, single VPS ≤ 4 GB per ARCHITECTURE_CONSTRAINTS C1/C3). Lazy refill, idle-bucket sweep every 60 s. `/api/users` limited per admin (30 burst / 1 req·s⁻¹, keyed by `users:<userId>`); `/api/auth/session` per IP (60 burst / 1 req·s⁻¹, keyed by `session:ip:<xff|anonymous>`). 429 carries `Retry-After`.
+- **Input-validation harness:** new `apps/web/src/lib/validation.ts` (`parseQuery` / `parseBody`) returning the same `{ ok, data } | { ok, response }` discriminated-union shape as `requireRole`, so route handlers early-return one line. Bad query → 400 + Zod issues; bad JSON body → 400; malformed JSON body → 400. `/api/users` validates its query string defensively (`UsersQuerySchema`, strict-empty today) so future pagination params reach the DB only after validation.
+- **`/.well-known/security.txt`** (RFC 9116) served via new route handler `apps/web/src/app/.well-known/security.txt/route.ts` with `Content-Type: text/plain; charset=utf-8` and `Cache-Control: no-store`. `Contact: mailto:security@example.com` is a placeholder pending the founder's real address; `Expires: 2027-07-15`, `Preferred-Languages: fa, en`, `Canonical: /.well-known/security.txt`.
+- **Rebrand audit scrub:** `@hawza/core` → `@learning-platform/core` in `evidence/M4-security/audit-after.json`, `audit-after-2.json`, `audit-baseline.json` (recorded dependency paths); stripped a stale UTF-8 BOM from `audit-baseline.json`. All three still parse as JSON; `git grep -i hawza` across `apps/`, `packages/`, and the audit JSONs returns nothing.
+- **New tests:** `apps/web/tests/rate-limit.test.ts` (4 cases: capacity/429 shape incl. `Retry-After` + `content-type`, lazy refill at configured rate, per-key isolation, non-positive refill rejected) and `apps/web/tests/validation.test.ts` (6 cases: query happy/out-of-range-400/strict-unknown-400, body happy/reject-400/malformed-JSON-400).
+- **Spec / DoR / risk / rollback:** `evidence/M4-security/M4-2-hardening.md` — risk classified MEDIUM per ADR-0013 §42; rollback is `git revert <commit>` (no migration, no data backfill).
+- **Evidence housekeeping:** `evidence/M4-security/checklist.md` (M4-2 checklist appended) and `evidence/M4-security/commands.txt` (exact commands run).
+- **Quality gates (`pnpm verify`):** lint ✓ (zero warnings), typecheck ✓ (8/8 projects), test ✓ (**5/5 core + 18/18 web + 13/13 plugins = 36 tests**), build ✓ (**8 routes** incl. `/.well-known/security.txt`, Middleware 46 kB, First Load JS 102 kB).
+
+**Decisions made:**
+- **Rate limiter in route handlers, not middleware.** Next.js middleware runs on the Edge runtime, which has no durable per-instance `Map` state and no `setTimeout`-based timers — a token-bucket there resets unpredictably and is unreliable. Placing it in Node-runtime route handlers honors C1 (single VPS ≤ 4 GB → one Node process → one effective bucket map) and C3 (OSS-first / self-hosted → no Redis / SaaS). If we ever fan out to multiple Node processes, the `rateLimit()` call-site shape is unchanged — swap the store for a shared (Redis, self-hosted) backend. Recorded as §4.2 of the spec.
+- **Static CSP with `'unsafe-inline'` styles, no nonces, v1.** Next + Tailwind generate inline style attributes/hashes; removing `'unsafe-inline'` breaks layout in v1. Per-request nonces require infra (a headers hook feeding the nonce into the CSP + into React render) that is out of scope for the secret-free M4.2 milestone; parked as a follow-up.
+- **`security.txt` `Contact` is a placeholder.** `mailto:security@example.com` stands until the founder supplies a real address. Captured as a tracked follow-up, not a blocker — the route, Content-Type, and RFC 9116 fields are all correct; only the address value is provisional.
+- **`parseQuery`/`parseBody` built even though the two current routes take no real input.** The backlog explicitly calls for a reusable harness so every *future* route accepting query/body params gets validation "for free" instead of reaching the DB raw. Used defensively on `/api/users` against the day it grows pagination params.
+
+**Decisions still open (carry to next session):**
+- Founder review of this M4.2 change (per ADR-0013 §41, MEDIUM risk — no mandatory approval, but surfaced and recorded).
+- M2 smoke test — Docker is ready; founder can ask any time.
+- Residual advisories `drizzle-orm<0.45.2` (HIGH) + transitive `postcss<8.5.10` (MOD) — separate change per founder directive.
+- `security.txt` real Contact address — pending founder.
+- M5–M7 + Q5/Q6/Q7 (founder decisions) — hosting, multi-tenant model, PWA, deployment/CI/CD.
+
+**Next session:** See `PROJECT_BACKLOG.md` (Session 017): resume M4.3 residual advisories + the long-parked M2 real-Postgres smoke test.
+
+**Files changed (M4.2):**
+- `apps/web/next.config.mjs` — added `Content-Security-Policy` to the `headers()` array.
+- `apps/web/src/app/api/users/route.ts` — accepts `NextRequest`; adds per-admin `rateLimit` + defensive `parseQuery`.
+- `apps/web/src/app/api/auth/session/route.ts` — accepts `NextRequest`; adds per-IP `rateLimit`.
+- `apps/web/src/lib/rate-limit.ts` — **NEW** in-memory token-bucket limiter + `ipKey()` + test reset.
+- `apps/web/src/lib/validation.ts` — **NEW** `parseQuery` / `parseBody` Zod guards.
+- `apps/web/src/app/.well-known/security.txt/route.ts` — **NEW** RFC 9116 route handler.
+- `apps/web/tests/rate-limit.test.ts` — **NEW** 4-case limiter suite.
+- `apps/web/tests/validation.test.ts` — **NEW** 6-case validator suite.
+- `docs/06-sprints/SPRINT-001-production-foundation/evidence/M4-security/M4-2-hardening.md` — **NEW** DoR/spec/risk/rollback.
+- `docs/06-sprints/SPRINT-001-production-foundation/evidence/M4-security/checklist.md` — M4-2 checklist appended.
+- `docs/06-sprints/SPRINT-001-production-foundation/evidence/M4-security/commands.txt` — **NEW** exact commands run.
+- `docs/06-sprints/SPRINT-001-production-foundation/evidence/M4-security/audit-after.json`, `audit-after-2.json`, `audit-baseline.json` — rebranded `@hawza/core` → `@learning-platform/core`; BOM stripped from baseline.
+- `docs/00-bootstrap/PROJECT_STATE.md` — v1.9, M4.2 complete.
+- `docs/00-bootstrap/PROJECT_BACKLOG.md` — Session 017 entry.
+- `CHANGELOG.md` — M4.2 entries.
+- This file appended.
+
+**Notes for the next session:**
+- M4.2 is a clean revert: `git revert <commit>` restores the prior `next.config.mjs`, route handlers, and audit JSON; the four new lib/test/route files are removed by the revert. No DB migration. No data backfill. Worst case: the hardening disappears and the service stays up (it was up pre-M4.2).
+- The `rateLimit` / `parseQuery` / `parseBody` helpers all return the same `{ ok, data } | { ok, response }` shape as `requireRole` — this is now the v1 route-guard convention. New M5+ routes should chain them: `requireRole` → `rateLimit` → `parseQuery`/`parseBody` → business logic.
+- The limiter is per-process and resets on restart/redeploy. v1 deploys one Node process, so this is acceptable; do not assume the budget survives a redeploy.
+- Update `security.txt` `Expires` yearly (next due 2027-07-15) and replace the placeholder `Contact` once the founder gives a real address.
+
+
+---
+
+## Session 016 — 2026-07-15 — contributor (auto) (M4.2 — Security hardening + rebrand audit scrub)
+
+**Goal:** Land the four M4.2 secret-free hardening items (CSP header, per-route rate limits, reusable Zod input-validation harness, `/.well-known/security.txt`) and close the residual `@hawza/core` rebrand gap in the audit-evidence JSONs.
+
+**Done:**
+- **Spec / DoR / risk / rollback:** `evidence/M4-security/M4-2-hardening.md` — MEDIUM risk per ADR-0013 §42 (security-hardening; no schema, no feature, header-behavior change). No founder approval mandatory under §41, but surfaced and recorded; founder directive 2026-07-15 granted full access to auto-proceed at best quality.
+- **Content-Security-Policy** added to `apps/web/next.config.mjs` `headers()` (source `/(.*)` = all routes). Strict v1 static policy: `default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self' fonts.gstatic.com; connect-src 'self'; frame-ancestors 'none'; base-uri 'self'; object-src 'none'; form-action 'self'`. `'unsafe-inline'` on styles is required by Next + Tailwind inline style attrs in v1; per-request nonces parked. HSTS deliberately **not** set yet (valid only over TLS; enable at M6 behind the reverse proxy).
+- **Rate limiting (in-memory token-bucket):** new `apps/web/src/lib/rate-limit.ts` (`rateLimit()` + `ipKey()` + `__resetRateLimitStoreForTests()`). Placed in **Node route handlers**, not middleware — Next.js middleware runs on the Edge runtime (no durable per-instance state / timers), so a bucket there is unreliable; Node handlers keep it dependency-free (OSS-first, single VPS ≤ 4 GB per ARCHITECTURE_CONSTRAINTS C1/C3). Lazy refill (no timers → nothing to clean up on shutdown); stale-bucket sweep every 60 s to bound memory. `/api/users` limited per admin (30 burst / 1·s⁻¹ sustained, keyed by `users:${user.id}`); `/api/auth/session` per IP (60 burst / 1·s⁻¹, keyed by `session:${ipKey(req)}`).
+- **Input-validation harness:** new `apps/web/src/lib/validation.ts` (`parseQuery` / `parseBody`) returning the same `{ ok, data } | { ok, response }` discriminated-union shape as `requireRole`. `/api/users` validates its query string defensively against `UsersQuerySchema` (strict-empty for now) so future pagination params reach the DB only after validation.
+- **`/.well-known/security.txt`** (RFC 9116) served via a new route handler `apps/web/src/app/.well-known/security.txt/route.ts` with `Content-Type: text/plain; charset=utf-8` and `Cache-Control: no-store`. Fields: `Contact: mailto:security@example.com` (placeholder pending a real founder address), `Expires: 2027-07-15T00:00:00.000Z`, `Preferred-Languages: fa, en`, `Canonical: /.well-known/security.txt`.
+- **Rebrand audit scrub:** `@hawza/core` → `@learning-platform/core` in `evidence/M4-security/audit-after.json`, `audit-after-2.json`, `audit-baseline.json` (recorded dependency paths); stripped a stale UTF-8 BOM (U+FEFF) from `audit-baseline.json`. Repo-wide `git grep hawza` now returns nothing (only intentional descriptive mentions in CHANGELOG/checklist/PROJECT_STATE, no code/data paths).
+- **New tests:** `apps/web/tests/rate-limit.test.ts` (4 cases: capacity/429 + Retry-After shape, refill at the configured rate, per-key isolation, reject non-positive refill rate) and `apps/web/tests/validation.test.ts` (6 cases: query happy/reject/strict-unknown-key, body happy/reject/malformed-JSON).
+- **Quality gates (`pnpm verify`):** lint ✓ (zero warnings), typecheck ✓ (8/8 projects), test ✓ **36 tests** (5/5 core + 18/18 web + 13/13 plugins), build ✓ (8 routes incl. `/.well-known/security.txt`, Middleware 46 kB, First Load JS 102 kB).
+
+**Decisions made:**
+- **Rate limiter lives in Node route handlers, not middleware.** Edge-runtime middleware has no durable per-instance `Map` state and no `setTimeout`-based timers, making a token-bucket there unreliable. Node route handlers give a dependency-free limiter that honors OSS-first / single-VPS constraints. The `rateLimit()` call-site shape is unchanged if a shared store is ever needed for multi-process — swap the store, keep the union return.
+- **Strict static CSP for v1; nonces parked.** A per-request nonce infrastructure is real work and solves the `'unsafe-inline'`-on-styles issue, but Next + Tailwind generate inline style attrs in v1. Removing `'unsafe-inline'` breaks layout today. Parked as a follow-up; the strict policy still blocks inline scripts, cross-origin fetch, framing, plugins, and form exfil — the high-value attacks.
+- **HSTS off until TLS.** `Strict-Transport-Security` is only valid over TLS; v1 dev/preview is plain HTTP, so setting it now would either be ignored or pin clients to a scheme they cannot use. Enable at M6 behind the reverse proxy once TLS is live.
+- **Input-validation harness for two routes that take no input today.** Built now (not when the first input-accepting route lands) so the convention exists alongside `requireRole` and future authors reach for it instead of re-implementing validation. `/api/users` uses it defensively against the day it grows pagination.
+- **Rebrand scrub recorded in evidence, not silent.** Per ADR-0013 §57 (repo as source of truth) and the standing rebrand instruction (scrub all Hawza names including history), the three audit JSONs were the last stragglers. The scrub is documented in the CHANGELOG and checklist rather than left as an unstated edit.
+
+**Decisions still open (carry to next session):**
+- **`security.txt` Contact address** is a placeholder (`security@example.com`) — founder needs to supply a real reporting address (and confirm `Expires: 2027-07-15` is acceptable).
+- **HSTS** — enable at M6 behind TLS.
+- **CSP nonces** — per-request infrastructure to remove `'unsafe-inline'` from `style-src`; post-v1.
+- **External rate-limit store** — only if/when v1 fans out to multiple Node processes; v1 deploys one process.
+- **M4.3 residual advisories** — `drizzle-orm<0.45.2` (HIGH) + transitive `postcss<8.5.10` (MOD); separate change per founder directive "no mixed changes".
+- **M2 smoke test** — Docker is ready; founder can ask any time (`docker compose up -d`, `db:migrate`, `db:seed:dev`, walk login → `/api/users`).
+
+**Next session:** Session 017 — founder review / merge of M4.2; then either the M2 real-Postgres smoke test or the M4.3 residual-advisory bump, whichever the founder prioritizes. See `PROJECT_BACKLOG.md`.
+
+**Files changed (M4.2):**
+- `apps/web/next.config.mjs` — added `Content-Security-Policy` to the `headers()` array.
+- `apps/web/src/lib/rate-limit.ts` — **NEW** in-memory token-bucket limiter + `ipKey()`.
+- `apps/web/src/lib/validation.ts` — **NEW** `parseQuery` / `parseBody` Zod guards.
+- `apps/web/src/app/api/users/route.ts` — accepts `NextRequest`; per-admin `rateLimit` + defensive `parseQuery`.
+- `apps/web/src/app/api/auth/session/route.ts` — accepts `NextRequest`; per-IP `rateLimit`.
+- `apps/web/src/app/.well-known/security.txt/route.ts` — **NEW** RFC 9116 security contact.
+- `apps/web/tests/rate-limit.test.ts` — **NEW** 4-case limiter behavior pin.
+- `apps/web/tests/validation.test.ts` — **NEW** 6-case validator behavior pin.
+- `docs/06-sprints/SPRINT-001-production-foundation/evidence/M4-security/M4-2-hardening.md` — **NEW** DoR/spec/risk/rollback.
+- `docs/06-sprints/SPRINT-001-production-foundation/evidence/M4-security/checklist.md` — M4.2 section.
+- `docs/06-sprints/SPRINT-001-production-foundation/evidence/M4-security/commands.txt` — **NEW** exact commands run.
+- `docs/06-sprints/SPRINT-001-production-foundation/evidence/M4-security/audit-after.json`, `audit-after-2.json`, `audit-baseline.json` — rebranded `@hawza/core` → `@learning-platform/core`; BOM stripped.
+- `docs/00-bootstrap/PROJECT_STATE.md` — v1.9, M4.2 complete.
+- `docs/00-bootstrap/PROJECT_BACKLOG.md` — Session 017 entry (M4.3 + M2 smoke test next).
+- `CHANGELOG.md` — M4.2 entries (Security / Changed / Added).
+- This file appended.
+
+**Notes for the next session:**
+- The M4.2 work is secret-free (no schema, no feature, no DB) and parallel-safe with M2/M4.3. Worst-case rollback is `git revert <commit>`; no migration, no data backfill, service stays up (it was up pre-M4.2).
+- Build output now shows **8 routes** (was 7): the new `○ /.well-known/security.txt` is prerendered as static content, 140 B, first-load JS 102 kB — consistent with the other thin route handlers.
+- The limiter bucket map is module-level and per-process; `pnpm test` runs in Vitest with fake timers + `__resetRateLimitStoreForTests()` between cases, so tests are deterministic and independent of wall-clock time.
+- If the founder supplies a real `security.txt` Contact, update both `apps/web/src/app/.well-known/security.txt/route.ts` and the `Expires` field so it stays < 1 year out (RFC 9116 §2.5).

@@ -120,6 +120,32 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `apps/web/vitest.config.ts` — added aliases for `@/auth`, `@/lib/env`, `@/lib/authz`, `@/lib/plugins` (workspace packages still resolve via pnpm symlinks + their own `exports` field).
 - `docs/05-decisions/ADR-0005-auth.md` — appended Revision 1 explaining the JWT constraint and the per-request `isActive` pattern.
 
+### Security (M4.2 — hardening: CSP + rate-limits + input validation + security.txt, 2026-07-15)
+- **Content-Security-Policy** added to `apps/web/next.config.mjs` `headers()`. Strict v1 static policy: `default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self' fonts.gstatic.com; connect-src 'self'; frame-ancestors 'none'; base-uri 'self'; object-src 'none'; form-action 'self'`. `'unsafe-inline'` on styles is required by Next + Tailwind inline style attrs in v1; per-request nonces parked. HSTS deliberately **not** set yet (valid only over TLS; enable at M6 behind the reverse proxy).
+- **Rate limiting (in-memory token-bucket):** new `apps/web/src/lib/rate-limit.ts` (`rateLimit()` + `ipKey()`). Placed in **Node route handlers**, not middleware — Next.js middleware runs on the Edge runtime (no durable per-instance state / timers), so a bucket there is unreliable; Node handlers keep it dependency-free (OSS-first, single VPS ≤ 4 GB). `/api/users` limited per admin (30 burst / 1·s⁻¹); `/api/auth/session` per IP (60 burst / 1·s⁻¹).
+- **Input-validation harness:** new `apps/web/src/lib/validation.ts` (`parseQuery` / `parseBody`) returning the same `{ ok, data } | { ok, response }` discriminated-union shape as `requireRole`. `/api/users` validates its query string defensively (`UsersQuerySchema`, strict-empty for now) so future pagination params reach the DB only after validation.
+- **`/.well-known/security.txt`** (RFC 9116) served via a new route handler `apps/web/src/app/.well-known/security.txt/route.ts` with `Content-Type: text/plain; charset=utf-8`. `Contact` is a placeholder pending a real address from the founder.
+- **Rebrand audit scrub:** `@hawza/core` → `@learning-platform/core` in `evidence/M4-security/audit-after.json`, `audit-after-2.json`, `audit-baseline.json` (dependency paths); stripped a stale UTF-8 BOM from `audit-baseline.json`. `git grep hawza` now returns nothing across tracked files.
+- **New tests:** `apps/web/tests/rate-limit.test.ts` (4 cases: capacity/429 shape, refill, per-key isolation, invalid config) and `apps/web/tests/validation.test.ts` (6 cases: query happy/reject/strict, body happy/reject/malformed-JSON).
+- **Evidence:** `evidence/M4-security/M4-2-hardening.md` (DoR / spec / risk MEDIUM / rollback per ADR-0013) + updated `evidence/M4-security/checklist.md` and `commands.txt`.
+- `pnpm verify` on this work: lint ✓, typecheck ✓, test ✓ (5/5 core + 18/18 web + 13/13 plugins = 36 tests), build ✓.
+- **Follow-ups parked:** HSTS (at M6 behind TLS), CSP nonces (per-request infra), external rate-limit store (only if multi-process), real `security.txt` Contact address.
+
+### Changed (M4.2)
+- `apps/web/next.config.mjs` — added `Content-Security-Policy` to the `headers()` array.
+- `apps/web/src/app/api/users/route.ts` — accepts `NextRequest`; adds per-admin `rateLimit` + defensive `parseQuery`.
+- `apps/web/src/app/api/auth/session/route.ts` — accepts `NextRequest`; adds per-IP `rateLimit`.
+- `docs/00-bootstrap/PROJECT_STATE.md` — v1.9, M4.2 complete.
+- `docs/00-bootstrap/PROJECT_BACKLOG.md` — Session 017 entry.
+- `docs/00-bootstrap/PROJECT_HANDOVER.md` — Session 016 entry (M4.2 handoff).
+
+### Added (M4.2)
+- `apps/web/src/lib/rate-limit.ts` — in-memory token-bucket limiter + `ipKey()`.
+- `apps/web/src/lib/validation.ts` — `parseQuery` / `parseBody` Zod guards.
+- `apps/web/src/app/.well-known/security.txt/route.ts` — RFC 9116 security contact.
+- `apps/web/tests/rate-limit.test.ts`, `apps/web/tests/validation.test.ts`.
+- `docs/06-sprints/SPRINT-001-production-foundation/evidence/M4-security/M4-2-hardening.md` — DoR/spec/risk/rollback.
+
 ---
 
 ## [1.1.0] — 2026-07-11
