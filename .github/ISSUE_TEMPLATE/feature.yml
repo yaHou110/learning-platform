@@ -1,0 +1,82 @@
+name: Feature request
+description: Propose a new capability or enhancement
+title: "[Feature]: "
+labels: ["feature"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Complete this form before implementation. Engineering Protocol requires Definition of Ready (§39).
+        See [`GOVERNANCE_CHECKLIST.md`](../../docs/03-development/GOVERNANCE_CHECKLIST.md).
+
+  - type: textarea
+    id: objective
+    attributes:
+      label: Objective
+      description: What should exist when this is done?
+      placeholder: One clear sentence.
+    validations:
+      required: true
+
+  - type: textarea
+    id: motivation
+    attributes:
+      label: Business or technical motivation
+      description: Why is this needed now?
+    validations:
+      required: true
+
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance criteria
+      description: Expected behavior, non-goals, constraints, edge cases.
+      placeholder: |
+        - [ ] …
+        - Non-goals: …
+    validations:
+      required: true
+
+  - type: dropdown
+    id: risk
+    attributes:
+      label: Risk classification
+      options:
+        - LOW
+        - MEDIUM
+        - HIGH
+        - CRITICAL
+    validations:
+      required: true
+
+  - type: textarea
+    id: dependencies
+    attributes:
+      label: Dependencies
+      description: Blockers, ADRs, other issues, infrastructure.
+    validations:
+      required: true
+
+  - type: textarea
+    id: success_metrics
+    attributes:
+      label: Success metrics
+      description: How will we verify success?
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: adr_check
+    attributes:
+      label: ADR compliance
+      options:
+        - label: I checked relevant ADRs in docs/05-decisions/ — no conflict (§43)
+          required: true
+
+  - type: checkboxes
+    id: sprint_scope
+    attributes:
+      label: Sprint scope
+      options:
+        - label: This work is within the current milestone in PROJECT_BACKLOG.md (or founder approved exception)
+          required: true

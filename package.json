@@ -1,0 +1,31 @@
+{
+  "name": "learning-platform",
+  "version": "1.1.0",
+  "private": true,
+  "description": "Learning Platform — portable, self-hosted, multi-tenant LMS for Islamic seminary families.",
+  "packageManager": "pnpm@9.15.9",
+  "engines": {
+    "node": ">=20.0.0",
+    "pnpm": ">=9.0.0"
+  },
+  "scripts": {
+    "dev": "pnpm --filter web dev",
+    "build": "pnpm --filter web build",
+    "start": "pnpm --filter web start",
+    "lint": "pnpm -r lint",
+    "typecheck": "pnpm -r typecheck",
+    "test": "pnpm -r test",
+    "verify": "pnpm lint && pnpm typecheck && pnpm test && pnpm build",
+    "governance:validate": "node scripts/governance/validate.mjs",
+    "governance:validate:local": "node scripts/governance/validate-local.mjs",
+    "db:generate": "pnpm --filter @learning-platform/core db:generate",
+    "db:migrate": "pnpm --filter @learning-platform/core db:migrate",
+    "db:seed:dev": "pnpm --filter @learning-platform/core db:seed:dev",
+    "format": "prettier --write \"**/*.{ts,tsx,md,json,yaml,yml}\" --ignore-path .gitignore"
+  },
+  "devDependencies": {
+    "@types/node": "^20.12.0",
+    "prettier": "^3.2.5",
+    "typescript": "^5.4.5"
+  }
+}

@@ -1,0 +1,129 @@
+{
+  "actions": [
+    {
+      "action": "review",
+      "module": "drizzle-orm",
+      "resolves": [
+        {
+          "id": 1116251,
+          "path": "apps__web>drizzle-orm",
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        }
+      ]
+    },
+    {
+      "action": "review",
+      "module": "postcss",
+      "resolves": [
+        {
+          "id": 1117015,
+          "path": "apps__web>next>postcss",
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        }
+      ]
+    }
+  ],
+  "advisories": {
+    "1116251": {
+      "findings": [
+        {
+          "version": "0.36.4",
+          "paths": [
+            "apps\\web > @hawza/core@link:../../packages/core > drizzle-orm@0.36.4",
+            "apps\\web > drizzle-orm@0.36.4",
+            "packages\\core > drizzle-orm@0.36.4"
+          ]
+        }
+      ],
+      "found_by": null,
+      "deleted": null,
+      "references": "- https://github.com/drizzle-team/drizzle-orm/security/advisories/GHSA-gpj5-g38j-94v9\n- https://nvd.nist.gov/vuln/detail/CVE-2026-39356\n- https://github.com/advisories/GHSA-gpj5-g38j-94v9",
+      "created": "2026-04-08T00:14:58.000Z",
+      "id": 1116251,
+      "npm_advisory_id": null,
+      "overview": "### Summary\n\nDrizzle ORM improperly escaped quoted SQL identifiers in its dialect-specific `escapeName()` implementations. In affected versions, embedded identifier delimiters were not escaped before the identifier was wrapped in quotes or backticks.\n\nAs a result, applications that pass attacker-controlled input to APIs that construct SQL identifiers or aliases, such as `sql.identifier()`, `.as()`, may allow an attacker to terminate the quoted identifier and inject SQL.\n\n### Affected components\n\nThe issue affects the identifier escaping logic used by the PostgreSQL, MySQL, SQLite, SingleStore, and Gel dialects.\n\n### Impact\n\nThis issue only affects applications that pass untrusted runtime input into identifier or alias construction. Common examples include dynamic sorting, dynamic report builders, and CTE or alias names derived from request parameters.\n\nDepending on the database dialect, query context, and database permissions, successful exploitation may enable blind or direct data disclosure, schema enumeration, query manipulation, privilege escalation, or destructive operations.\n\nApplications that use only static schema objects, or that strictly map user input through an allowlist of known column or alias names, are not affected.\n\n### Details\n\nIn affected versions, `escapeName()` wrapped the identifier but did not escape the quote delimiter inside the identifier value:\n\n- PostgreSQL / SQLite / Gel: `\"` was not doubled to `\"\"`\n- MySQL / SingleStore: `` ` `` was not doubled to `` `` ``\n\nBecause of this, crafted input containing the dialect-specific identifier delimiter could break out of the quoted identifier and be interpreted as SQL syntax.\n\nA representative vulnerable pattern is dynamic sorting using untrusted input:\n\n```ts\nconst sortField = req.query.sort || 'id';\n\nconst rows = await db\n  .select()\n  .from(users)\n  .orderBy(sql.identifier(sortField));",
+      "reported_by": null,
+      "title": "Drizzle ORM has SQL injection via improperly escaped SQL identifiers",
+      "metadata": null,
+      "cves": [
+        "CVE-2026-39356"
+      ],
+      "access": "public",
+      "severity": "high",
+      "module_name": "drizzle-orm",
+      "vulnerable_versions": "<0.45.2",
+      "github_advisory_id": "GHSA-gpj5-g38j-94v9",
+      "recommendation": "Upgrade to version 0.45.2 or later",
+      "patched_versions": ">=0.45.2",
+      "updated": "2026-04-08T00:14:59.000Z",
+      "cvss": {
+        "score": 7.5,
+        "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:N/A:N"
+      },
+      "cwe": [
+        "CWE-89"
+      ],
+      "url": "https://github.com/advisories/GHSA-gpj5-g38j-94v9"
+    },
+    "1117015": {
+      "findings": [
+        {
+          "version": "8.4.31",
+          "paths": [
+            "apps\\web > @hawza/core@link:../../packages/core > next-auth@5.0.0-beta.31 > next@15.5.20 > postcss@8.4.31",
+            "apps\\web > next@15.5.20 > postcss@8.4.31",
+            "apps\\web > next-auth@5.0.0-beta.31 > next@15.5.20 > postcss@8.4.31",
+            "packages\\core > next-auth@5.0.0-beta.31 > next@15.5.20 > postcss@8.4.31"
+          ]
+        }
+      ],
+      "found_by": null,
+      "deleted": null,
+      "references": "- https://github.com/postcss/postcss/security/advisories/GHSA-qx2v-qp2m-jg93\n- https://nvd.nist.gov/vuln/detail/CVE-2026-41305\n- https://github.com/postcss/postcss/releases/tag/8.5.10\n- https://github.com/advisories/GHSA-qx2v-qp2m-jg93",
+      "created": "2026-04-24T15:31:42.000Z",
+      "id": 1117015,
+      "npm_advisory_id": null,
+      "overview": "# PostCSS: XSS via Unescaped `</style>` in CSS Stringify Output\n\n## Summary\n\nPostCSS v8.5.5 (latest) does not escape `</style>` sequences when stringifying CSS ASTs. When user-submitted CSS is parsed and re-stringified for embedding in HTML `<style>` tags, `</style>` in CSS values breaks out of the style context, enabling XSS.\n\n## Proof of Concept\n\n```javascript\nconst postcss = require('postcss');\n\n// Parse user CSS and re-stringify for page embedding\nconst userCSS = 'body { content: \"</style><script>alert(1)</script><style>\"; }';\nconst ast = postcss.parse(userCSS);\nconst output = ast.toResult().css;\nconst html = `<style>${output}</style>`;\n\nconsole.log(html);\n// <style>body { content: \"</style><script>alert(1)</script><style>\"; }</style>\n//\n// Browser: </style> closes the style tag, <script> executes\n```\n\n**Tested output** (Node.js v22, postcss v8.5.5):\n```\nInput: body { content: \"</style><script>alert(1)</script><style>\"; }\nOutput: body { content: \"</style><script>alert(1)</script><style>\"; }\nContains </style>: true\n```\n\n## Impact\n\nImpact non-bundler use cases since bundlers for XSS on their own. Requires some PostCSS plugin to have malware code, which can inject XSS to website.\n\n## Suggested Fix\n\nEscape `</style` in all stringified output values:\n```javascript\noutput = output.replace(/<\\/(style)/gi, '<\\\\/$1');\n```\n\n## Credits\nDiscovered and reported by [Sunil Kumar](https://tharvid.in) ([@TharVid](https://github.com/TharVid))",
+      "reported_by": null,
+      "title": "PostCSS has XSS via Unescaped </style> in its CSS Stringify Output",
+      "metadata": null,
+      "cves": [
+        "CVE-2026-41305"
+      ],
+      "access": "public",
+      "severity": "moderate",
+      "module_name": "postcss",
+      "vulnerable_versions": "<8.5.10",
+      "github_advisory_id": "GHSA-qx2v-qp2m-jg93",
+      "recommendation": "Upgrade to version 8.5.10 or later",
+      "patched_versions": ">=8.5.10",
+      "updated": "2026-04-24T15:31:44.000Z",
+      "cvss": {
+        "score": 6.1,
+        "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:C/C:L/I:L/A:N"
+      },
+      "cwe": [
+        "CWE-79"
+      ],
+      "url": "https://github.com/advisories/GHSA-qx2v-qp2m-jg93"
+    }
+  },
+  "muted": [],
+  "metadata": {
+    "vulnerabilities": {
+      "info": 0,
+      "low": 0,
+      "moderate": 1,
+      "high": 1,
+      "critical": 0
+    },
+    "dependencies": 91,
+    "devDependencies": 0,
+    "optionalDependencies": 0,
+    "totalDependencies": 91
+  }
+}

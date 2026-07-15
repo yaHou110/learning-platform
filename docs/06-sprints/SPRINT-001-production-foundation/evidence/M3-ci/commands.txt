@@ -1,0 +1,21 @@
+# M3 — CI/CD — Commands run
+
+# Local validation (these are the same commands CI runs on a PR)
+
+# 1. Verify the quality gates pass locally
+cmd /c "pnpm install --frozen-lockfile"
+cmd /c "pnpm verify"
+
+# 2. Verify the governance validator runs without error
+cmd /c "pnpm governance:validate:local"
+
+# 3. Verify agent entry-points are in sync
+echo no sync step (single entry point: DEVELOPMENT_GUIDE.md)
+
+# 4. (First-time only) View the workflow file to confirm
+cat .github/workflows/governance.yml
+
+# CI itself runs the equivalent steps on every PR to main.
+# Triggered by:
+#   - pull_request on main
+#   - push to main
