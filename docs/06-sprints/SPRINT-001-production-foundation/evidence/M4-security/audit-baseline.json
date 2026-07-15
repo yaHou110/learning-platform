@@ -1,4 +1,4 @@
-﻿{
+{
   "actions": [
     {
       "action": "review",
@@ -294,7 +294,7 @@
         {
           "version": "15.0.3",
           "paths": [
-            "apps\\web > @hawza/core@link:../../packages/core > next-auth@5.0.0-beta.25 > next@15.0.3",
+            "apps\\web > @learning-platform/core@link:../../packages/core > next-auth@5.0.0-beta.25 > next@15.0.3",
             "apps\\web > next@15.0.3",
             "apps\\web > next-auth@5.0.0-beta.25 > next@15.0.3",
             "packages\\core > next-auth@5.0.0-beta.25 > next@15.0.3"
@@ -406,7 +406,7 @@
         {
           "version": "15.0.3",
           "paths": [
-            "apps\\web > @hawza/core@link:../../packages/core > next-auth@5.0.0-beta.25 > next@15.0.3",
+            "apps\\web > @learning-platform/core@link:../../packages/core > next-auth@5.0.0-beta.25 > next@15.0.3",
             "apps\\web > next@15.0.3",
             "apps\\web > next-auth@5.0.0-beta.25 > next@15.0.3",
             "packages\\core > next-auth@5.0.0-beta.25 > next@15.0.3"
@@ -448,7 +448,7 @@
         {
           "version": "15.0.3",
           "paths": [
-            "apps\\web > @hawza/core@link:../../packages/core > next-auth@5.0.0-beta.25 > next@15.0.3",
+            "apps\\web > @learning-platform/core@link:../../packages/core > next-auth@5.0.0-beta.25 > next@15.0.3",
             "apps\\web > next@15.0.3",
             "apps\\web > next-auth@5.0.0-beta.25 > next@15.0.3",
             "packages\\core > next-auth@5.0.0-beta.25 > next@15.0.3"
@@ -490,7 +490,7 @@
         {
           "version": "15.0.3",
           "paths": [
-            "apps\\web > @hawza/core@link:../../packages/core > next-auth@5.0.0-beta.25 > next@15.0.3",
+            "apps\\web > @learning-platform/core@link:../../packages/core > next-auth@5.0.0-beta.25 > next@15.0.3",
             "apps\\web > next@15.0.3",
             "apps\\web > next-auth@5.0.0-beta.25 > next@15.0.3",
             "packages\\core > next-auth@5.0.0-beta.25 > next@15.0.3"
@@ -532,7 +532,7 @@
         {
           "version": "15.0.3",
           "paths": [
-            "apps\\web > @hawza/core@link:../../packages/core > next-auth@5.0.0-beta.25 > next@15.0.3",
+            "apps\\web > @learning-platform/core@link:../../packages/core > next-auth@5.0.0-beta.25 > next@15.0.3",
             "apps\\web > next@15.0.3",
             "apps\\web > next-auth@5.0.0-beta.25 > next@15.0.3",
             "packages\\core > next-auth@5.0.0-beta.25 > next@15.0.3"
@@ -574,7 +574,7 @@
         {
           "version": "15.0.3",
           "paths": [
-            "apps\\web > @hawza/core@link:../../packages/core > next-auth@5.0.0-beta.25 > next@15.0.3",
+            "apps\\web > @learning-platform/core@link:../../packages/core > next-auth@5.0.0-beta.25 > next@15.0.3",
             "apps\\web > next@15.0.3",
             "apps\\web > next-auth@5.0.0-beta.25 > next@15.0.3",
             "packages\\core > next-auth@5.0.0-beta.25 > next@15.0.3"
@@ -616,7 +616,7 @@
         {
           "version": "5.0.0-beta.25",
           "paths": [
-            "apps\\web > @hawza/core@link:../../packages/core > next-auth@5.0.0-beta.25",
+            "apps\\web > @learning-platform/core@link:../../packages/core > next-auth@5.0.0-beta.25",
             "apps\\web > next-auth@5.0.0-beta.25",
             "packages\\core > next-auth@5.0.0-beta.25"
           ]
@@ -655,7 +655,7 @@
         {
           "version": "15.0.3",
           "paths": [
-            "apps\\web > @hawza/core@link:../../packages/core > next-auth@5.0.0-beta.25 > next@15.0.3",
+            "apps\\web > @learning-platform/core@link:../../packages/core > next-auth@5.0.0-beta.25 > next@15.0.3",
             "apps\\web > next@15.0.3",
             "apps\\web > next-auth@5.0.0-beta.25 > next@15.0.3",
             "packages\\core > next-auth@5.0.0-beta.25 > next@15.0.3"
@@ -695,7 +695,7 @@
         {
           "version": "15.0.3",
           "paths": [
-            "apps\\web > @hawza/core@link:../../packages/core > next-auth@5.0.0-beta.25 > next@15.0.3",
+            "apps\\web > @learning-platform/core@link:../../packages/core > next-auth@5.0.0-beta.25 > next@15.0.3",
             "apps\\web > next@15.0.3",
             "apps\\web > next-auth@5.0.0-beta.25 > next@15.0.3",
             "packages\\core > next-auth@5.0.0-beta.25 > next@15.0.3"
@@ -737,7 +737,7 @@
         {
           "version": "15.0.3",
           "paths": [
-            "apps\\web > @hawza/core@link:../../packages/core > next-auth@5.0.0-beta.25 > next@15.0.3",
+            "apps\\web > @learning-platform/core@link:../../packages/core > next-auth@5.0.0-beta.25 > next@15.0.3",
             "apps\\web > next@15.0.3",
             "apps\\web > next-auth@5.0.0-beta.25 > next@15.0.3",
             "packages\\core > next-auth@5.0.0-beta.25 > next@15.0.3"
@@ -779,7 +779,7 @@
         {
           "version": "15.0.3",
           "paths": [
-            "apps\\web > @hawza/core@link:../../packages/core > next-auth@5.0.0-beta.25 > next@15.0.3",
+            "apps\\web > @learning-platform/core@link:../../packages/core > next-auth@5.0.0-beta.25 > next@15.0.3",
             "apps\\web > next@15.0.3",
             "apps\\web > next-auth@5.0.0-beta.25 > next@15.0.3",
             "packages\\core > next-auth@5.0.0-beta.25 > next@15.0.3"
@@ -822,7 +822,7 @@
         {
           "version": "15.0.3",
           "paths": [
-            "apps\\web > @hawza/core@link:../../packages/core > next-auth@5.0.0-beta.25 > next@15.0.3",
+            "apps\\web > @learning-platform/core@link:../../packages/core > next-auth@5.0.0-beta.25 > next@15.0.3",
             "apps\\web > next@15.0.3",
             "apps\\web > next-auth@5.0.0-beta.25 > next@15.0.3",
             "packages\\core > next-auth@5.0.0-beta.25 > next@15.0.3"
@@ -863,7 +863,7 @@
         {
           "version": "15.0.3",
           "paths": [
-            "apps\\web > @hawza/core@link:../../packages/core > next-auth@5.0.0-beta.25 > next@15.0.3",
+            "apps\\web > @learning-platform/core@link:../../packages/core > next-auth@5.0.0-beta.25 > next@15.0.3",
             "apps\\web > next@15.0.3",
             "apps\\web > next-auth@5.0.0-beta.25 > next@15.0.3",
             "packages\\core > next-auth@5.0.0-beta.25 > next@15.0.3"
@@ -906,7 +906,7 @@
         {
           "version": "15.0.3",
           "paths": [
-            "apps\\web > @hawza/core@link:../../packages/core > next-auth@5.0.0-beta.25 > next@15.0.3",
+            "apps\\web > @learning-platform/core@link:../../packages/core > next-auth@5.0.0-beta.25 > next@15.0.3",
             "apps\\web > next@15.0.3",
             "apps\\web > next-auth@5.0.0-beta.25 > next@15.0.3",
             "packages\\core > next-auth@5.0.0-beta.25 > next@15.0.3"
@@ -948,7 +948,7 @@
         {
           "version": "15.0.3",
           "paths": [
-            "apps\\web > @hawza/core@link:../../packages/core > next-auth@5.0.0-beta.25 > next@15.0.3",
+            "apps\\web > @learning-platform/core@link:../../packages/core > next-auth@5.0.0-beta.25 > next@15.0.3",
             "apps\\web > next@15.0.3",
             "apps\\web > next-auth@5.0.0-beta.25 > next@15.0.3",
             "packages\\core > next-auth@5.0.0-beta.25 > next@15.0.3"
@@ -1050,7 +1050,7 @@
         {
           "version": "0.36.4",
           "paths": [
-            "apps\\web > @hawza/core@link:../../packages/core > drizzle-orm@0.36.4",
+            "apps\\web > @learning-platform/core@link:../../packages/core > drizzle-orm@0.36.4",
             "apps\\web > drizzle-orm@0.36.4",
             "packages\\core > drizzle-orm@0.36.4"
           ]
@@ -1091,7 +1091,7 @@
         {
           "version": "15.0.3",
           "paths": [
-            "apps\\web > @hawza/core@link:../../packages/core > next-auth@5.0.0-beta.25 > next@15.0.3",
+            "apps\\web > @learning-platform/core@link:../../packages/core > next-auth@5.0.0-beta.25 > next@15.0.3",
             "apps\\web > next@15.0.3",
             "apps\\web > next-auth@5.0.0-beta.25 > next@15.0.3",
             "packages\\core > next-auth@5.0.0-beta.25 > next@15.0.3"
@@ -1131,7 +1131,7 @@
         {
           "version": "8.4.31",
           "paths": [
-            "apps\\web > @hawza/core@link:../../packages/core > next-auth@5.0.0-beta.25 > next@15.0.3 > postcss@8.4.31",
+            "apps\\web > @learning-platform/core@link:../../packages/core > next-auth@5.0.0-beta.25 > next@15.0.3 > postcss@8.4.31",
             "apps\\web > next@15.0.3 > postcss@8.4.31",
             "apps\\web > next-auth@5.0.0-beta.25 > next@15.0.3 > postcss@8.4.31",
             "packages\\core > next-auth@5.0.0-beta.25 > next@15.0.3 > postcss@8.4.31"
@@ -1173,7 +1173,7 @@
         {
           "version": "15.0.3",
           "paths": [
-            "apps\\web > @hawza/core@link:../../packages/core > next-auth@5.0.0-beta.25 > next@15.0.3",
+            "apps\\web > @learning-platform/core@link:../../packages/core > next-auth@5.0.0-beta.25 > next@15.0.3",
             "apps\\web > next@15.0.3",
             "apps\\web > next-auth@5.0.0-beta.25 > next@15.0.3",
             "packages\\core > next-auth@5.0.0-beta.25 > next@15.0.3"
@@ -1213,7 +1213,7 @@
         {
           "version": "15.0.3",
           "paths": [
-            "apps\\web > @hawza/core@link:../../packages/core > next-auth@5.0.0-beta.25 > next@15.0.3",
+            "apps\\web > @learning-platform/core@link:../../packages/core > next-auth@5.0.0-beta.25 > next@15.0.3",
             "apps\\web > next@15.0.3",
             "apps\\web > next-auth@5.0.0-beta.25 > next@15.0.3",
             "packages\\core > next-auth@5.0.0-beta.25 > next@15.0.3"
@@ -1255,7 +1255,7 @@
         {
           "version": "15.0.3",
           "paths": [
-            "apps\\web > @hawza/core@link:../../packages/core > next-auth@5.0.0-beta.25 > next@15.0.3",
+            "apps\\web > @learning-platform/core@link:../../packages/core > next-auth@5.0.0-beta.25 > next@15.0.3",
             "apps\\web > next@15.0.3",
             "apps\\web > next-auth@5.0.0-beta.25 > next@15.0.3",
             "packages\\core > next-auth@5.0.0-beta.25 > next@15.0.3"
@@ -1297,7 +1297,7 @@
         {
           "version": "15.0.3",
           "paths": [
-            "apps\\web > @hawza/core@link:../../packages/core > next-auth@5.0.0-beta.25 > next@15.0.3",
+            "apps\\web > @learning-platform/core@link:../../packages/core > next-auth@5.0.0-beta.25 > next@15.0.3",
             "apps\\web > next@15.0.3",
             "apps\\web > next-auth@5.0.0-beta.25 > next@15.0.3",
             "packages\\core > next-auth@5.0.0-beta.25 > next@15.0.3"
@@ -1339,7 +1339,7 @@
         {
           "version": "15.0.3",
           "paths": [
-            "apps\\web > @hawza/core@link:../../packages/core > next-auth@5.0.0-beta.25 > next@15.0.3",
+            "apps\\web > @learning-platform/core@link:../../packages/core > next-auth@5.0.0-beta.25 > next@15.0.3",
             "apps\\web > next@15.0.3",
             "apps\\web > next-auth@5.0.0-beta.25 > next@15.0.3",
             "packages\\core > next-auth@5.0.0-beta.25 > next@15.0.3"
@@ -1381,7 +1381,7 @@
         {
           "version": "15.0.3",
           "paths": [
-            "apps\\web > @hawza/core@link:../../packages/core > next-auth@5.0.0-beta.25 > next@15.0.3",
+            "apps\\web > @learning-platform/core@link:../../packages/core > next-auth@5.0.0-beta.25 > next@15.0.3",
             "apps\\web > next@15.0.3",
             "apps\\web > next-auth@5.0.0-beta.25 > next@15.0.3",
             "packages\\core > next-auth@5.0.0-beta.25 > next@15.0.3"
@@ -1423,7 +1423,7 @@
         {
           "version": "15.0.3",
           "paths": [
-            "apps\\web > @hawza/core@link:../../packages/core > next-auth@5.0.0-beta.25 > next@15.0.3",
+            "apps\\web > @learning-platform/core@link:../../packages/core > next-auth@5.0.0-beta.25 > next@15.0.3",
             "apps\\web > next@15.0.3",
             "apps\\web > next-auth@5.0.0-beta.25 > next@15.0.3",
             "packages\\core > next-auth@5.0.0-beta.25 > next@15.0.3"
@@ -1465,7 +1465,7 @@
         {
           "version": "15.0.3",
           "paths": [
-            "apps\\web > @hawza/core@link:../../packages/core > next-auth@5.0.0-beta.25 > next@15.0.3",
+            "apps\\web > @learning-platform/core@link:../../packages/core > next-auth@5.0.0-beta.25 > next@15.0.3",
             "apps\\web > next@15.0.3",
             "apps\\web > next-auth@5.0.0-beta.25 > next@15.0.3",
             "packages\\core > next-auth@5.0.0-beta.25 > next@15.0.3"
@@ -1507,7 +1507,7 @@
         {
           "version": "15.0.3",
           "paths": [
-            "apps\\web > @hawza/core@link:../../packages/core > next-auth@5.0.0-beta.25 > next@15.0.3",
+            "apps\\web > @learning-platform/core@link:../../packages/core > next-auth@5.0.0-beta.25 > next@15.0.3",
             "apps\\web > next@15.0.3",
             "apps\\web > next-auth@5.0.0-beta.25 > next@15.0.3",
             "packages\\core > next-auth@5.0.0-beta.25 > next@15.0.3"
@@ -1549,7 +1549,7 @@
         {
           "version": "15.0.3",
           "paths": [
-            "apps\\web > @hawza/core@link:../../packages/core > next-auth@5.0.0-beta.25 > next@15.0.3",
+            "apps\\web > @learning-platform/core@link:../../packages/core > next-auth@5.0.0-beta.25 > next@15.0.3",
             "apps\\web > next@15.0.3",
             "apps\\web > next-auth@5.0.0-beta.25 > next@15.0.3",
             "packages\\core > next-auth@5.0.0-beta.25 > next@15.0.3"

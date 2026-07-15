@@ -11,12 +11,12 @@
 
 | Field | Value |
 | --- | --- |
-| Session # | 016 |
+| Session # | 017 |
 | Date opened | 2026-07-15 |
 | Driver | contributor |
 | Sprint | SPRINT-001 — Production Foundation |
-| Goal | **Repository consolidation: finalize M4.0 merge and reconcile project status docs with reality.** |
-| Status | 🟢 **M4.0 merged on `main`. Project status docs updated. M2 smoke test + M4.2 + residual advisories remain.** |
+| Goal | **M4.3 + M2 smoke test.** M4.2 (security hardening) is complete; the next items are the residual `drizzle-orm`/`postcss` advisories and the long-parked M2 real-Postgres smoke test. |
+| Status | 🟢 **M4.2 complete (CSP + per-route rate limits + Zod input-validation harness + `/.well-known/security.txt`); rebrand audit gap closed; committed on `main`.** Remaining: M4.3 residual advisories + M2 smoke test. |
 
 ---
 

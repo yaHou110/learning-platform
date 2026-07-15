@@ -2,13 +2,13 @@
 
 > **Current snapshot of the project.** This is the *first* file to read after `DEVELOPMENT_GUIDE.md`.
 
-> Last updated: 2026-07-15 (v1.8 — M4.0 P0 merged: authorization gap + password-hash leak closed on main; ADR-0005 revised)
+> Last updated: 2026-07-15 (v1.9 — M4.2 complete: CSP + per-route rate limits + input-validation harness + `/.well-known/security.txt`; rebrand audit gap closed)
 
 ---
 
 ## One-line status
 
-**Production Foundation Sprint in progress (M1 ✅, M2 partial, M3 ✅, M4.0 ✅ merged on main, M4.1 ✅ merged, M4.2 next).** The 28-vuln dependency finding was fixed in M4.1. A second critical finding — `GET /api/users` leaking `passwordHash` to any logged-in user with no role-based authorization — is closed: explicit DB projection, a `UserPublic` type, the `requireRole` helper, and a per-request `isActive` re-check now gate the endpoint; ADR-0005 was revised to match the JWT-only Credentials-provider constraint. Feature development remains suspended until M7 sign-off.
+**Production Foundation Sprint in progress (M1 ✅, M2 partial, M3 ✅, M4.0 ✅ merged on main, M4.1 ✅, M4.2 ✅ — security hardening landed, secret-free).** The 28-vuln dependency finding was fixed in M4.1. The M4.0 P0 (password-hash leak + missing role gate) was merged on main. M4.2 added a strict Content-Security-Policy, in-memory (Node) rate limits on `/api/users` + `/api/auth/session`, a reusable Zod `parseQuery`/`parseBody` harness, and `/.well-known/security.txt`; the de-AI/rebrand sweep is now complete (no `@hawza/core` in any tracked file). Feature development remains suspended until M7 sign-off; residual advisories (`drizzle-orm`, transitive `postcss`) and the M2 smoke test are the remaining M4-open items.
 
 ---
 
@@ -24,7 +24,7 @@
 | 4. Development conventions | ✅ done (v1.3) | `ENGINEERING_PROTOCOL.md` v2 (60 rules), `RISK_CLASSIFICATION.md`, ADR-0012/0013. |
 | 5. Source code (Identity & Access) | ✅ done | Migration + Auth.js + middleware + 2 API routes (sessions 005–007). |
 | 5.5. Source code (other features) | ⏸️ paused | Catalog / Learning / Credentials / Localization / Dashboard — parked pending M7. |
-| 6. **Production Foundation Sprint** | 🔵 in progress | M1 ✅, M2 partial (PostgreSQL blocker — Docker now ready, smoke test pending), M3 ✅ (evidence closed 2026-07-12), M4.1 ✅ (next/next-auth upgrade), **M4.0 ✅ merged on main** (authorization + password-hash fix; ADR-0005 Rev 1), M4.2 next. |
+| 6. **Production Foundation Sprint** | 🔵 in progress | M1 ✅, M2 partial (PostgreSQL blocker — Docker now ready, smoke test pending), M3 ✅ (evidence closed 2026-07-12), M4.1 ✅ (next/next-auth upgrade), **M4.0 ✅ merged on main** (authorization + password-hash fix; ADR-0005 Rev 1), **M4.2 ✅** (CSP + per-route rate limits + Zod input validation harness + security.txt; rebrand audit gap closed). |
 | 7. Deployment & CI/CD | ❌ not started | Blocked on sprint M3/M6. |
 
 ---
