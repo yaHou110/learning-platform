@@ -1,0 +1,11 @@
+# M4-2 Security Hardening — exact commands run (Session 016, 2026-07-15)
+
+## Rebrand audit scrub (evidence JSONs)
+sed -i 's/@hawza\/core/@learning-platform\/core/g' audit-after.json audit-after-2.json audit-baseline.json
+# baseline carried a stale UTF-8 BOM (U+FEFF) — stripped:
+tail -c +4 audit-baseline.json > audit-baseline.json.tmp && mv audit-baseline.json.tmp audit-baseline.json
+# validate:
+for f in audit-after.json audit-after-2.json audit-baseline.json; do node -e "JSON.parse(require('fs').readFileSync('$f','utf8')); console.log('OK: $f')"; done
+
+## Quality gate (Git Bash — bare pnpm works; no cmd /c needed here)
+pnpm verify        # lint && typecheck && test && build

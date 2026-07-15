@@ -230,7 +230,7 @@
         {
           "version": "0.36.4",
           "paths": [
-            "apps\\web > @hawza/core@link:../../packages/core > drizzle-orm@0.36.4",
+            "apps\\web > @learning-platform/core@link:../../packages/core > drizzle-orm@0.36.4",
             "apps\\web > drizzle-orm@0.36.4",
             "packages\\core > drizzle-orm@0.36.4"
           ]
@@ -271,7 +271,7 @@
         {
           "version": "8.4.31",
           "paths": [
-            "apps\\web > @hawza/core@link:../../packages/core > next-auth@5.0.0-beta.31 > next@15.5.20 > postcss@8.4.31",
+            "apps\\web > @learning-platform/core@link:../../packages/core > next-auth@5.0.0-beta.31 > next@15.5.20 > postcss@8.4.31",
             "apps\\web > next@15.5.20 > postcss@8.4.31",
             "apps\\web > next-auth@5.0.0-beta.31 > next@15.5.20 > postcss@8.4.31",
             "packages\\core > next-auth@5.0.0-beta.31 > next@15.5.20 > postcss@8.4.31"
