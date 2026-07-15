@@ -27,5 +27,10 @@
     "@types/node": "^20.12.0",
     "prettier": "^3.2.5",
     "typescript": "^5.4.5"
+  },
+  "pnpm": {
+    "overrides": {
+      "postcss": "^8.5.10"
+    }
   }
 }
