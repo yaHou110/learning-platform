@@ -12,8 +12,11 @@ export async function middleware(request: NextRequest) {
   const isAuthPage = request.nextUrl.pathname.startsWith("/login");
   const isApiAuthPage = request.nextUrl.pathname.startsWith("/api/auth");
   const isHealthPage = request.nextUrl.pathname === "/api/health";
+  // RFC 9116 security.txt — public; must not require auth.
+  const isSecurityTxt =
+    request.nextUrl.pathname === "/.well-known/security.txt";
 
-  if (isApiAuthPage || isHealthPage) {
+  if (isApiAuthPage || isHealthPage || isSecurityTxt) {
     return NextResponse.next();
   }
 
