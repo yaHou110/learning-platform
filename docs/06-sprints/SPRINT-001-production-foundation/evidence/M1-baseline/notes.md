@@ -22,15 +22,15 @@ These were **not** silently worked around — each one is recorded so the sprint
 
 ### Issue 2 — Root `pnpm build` script had a broken filter
 
-**Symptom:** `pnpm build` at the root ran `pnpm -r --filter='./packages/*' build`, which pnpm 9 interpreted as "no projects matched" and silently continued. Then it ran `next build` without first compiling `@hawza/core`, so `core/dist/...js` (the package's `exports` target) did not exist.
+**Symptom:** `pnpm build` at the root ran `pnpm -r --filter='./packages/*' build`, which pnpm 9 interpreted as "no projects matched" and silently continued. Then it ran `next build` without first compiling `@learning-platform/core`, so `core/dist/...js` (the package's `exports` target) did not exist.
 
-**Fix:** Changed the root `build` script to `pnpm --filter web build`. Since `transpilePackages` in `next.config.mjs` already tells Next.js to compile the workspace packages from source, no per-package build step is required. The individual package `build` scripts remain available for ad-hoc use (`pnpm --filter @hawza/core build`) but are not part of the default root pipeline.
+**Fix:** Changed the root `build` script to `pnpm --filter web build`. Since `transpilePackages` in `next.config.mjs` already tells Next.js to compile the workspace packages from source, no per-package build step is required. The individual package `build` scripts remain available for ad-hoc use (`pnpm --filter @learning-platform/core build`) but are not part of the default root pipeline.
 
 **Files changed:** `package.json` (root).
 
 ### Issue 3 — `core/package.json` `exports` pointed to `dist/...js` while other packages pointed to source
 
-**Symptom:** Even after the filter fix, `next build` failed with `Module not found: Can't resolve '../db/client.js'`. `@hawza/core` was the only package whose `exports` field targeted the compiled output (`./dist/...js`). All other workspace packages export source (`./src/...ts`).
+**Symptom:** Even after the filter fix, `next build` failed with `Module not found: Can't resolve '../db/client.js'`. `@learning-platform/core` was the only package whose `exports` field targeted the compiled output (`./dist/...js`). All other workspace packages export source (`./src/...ts`).
 
 **Fix:** Updated `packages/core/package.json` so `main`, `types`, and all subpath `exports` point to `./src/...ts`. The TypeScript source uses NodeNext-style `.js` extensions on its imports (e.g. `from '../db/client.js'`), so we also need webpack to map `.js` → `.ts`.
 
@@ -38,7 +38,7 @@ These were **not** silently worked around — each one is recorded so the sprint
 
 ### Issue 4 — Webpack did not map `.js` → `.ts` for NodeNext-style imports
 
-**Symptom:** After fixing the `exports`, `next build` still failed because `@hawza/core/src/api/index.ts` does `from '../db/client.js'`. Webpack looked for an actual `.js` file in `packages/core/src/db/` and did not find one (only `client.ts`).
+**Symptom:** After fixing the `exports`, `next build` still failed because `@learning-platform/core/src/api/index.ts` does `from '../db/client.js'`. Webpack looked for an actual `.js` file in `packages/core/src/db/` and did not find one (only `client.ts`).
 
 **Fix:** Added `extensionAlias` to `apps/web/next.config.mjs`:
 ```js
@@ -53,9 +53,9 @@ This is the canonical pattern for TypeScript NodeNext + Next.js + workspace pack
 
 ### Issue 5 — Native `bcrypt` is unbundlable in the Next.js server build
 
-**Symptom:** After the `.js` → `.ts` fix, `next build` failed again with webpack errors inside `node_modules/.pnpm/bcrypt@5.1.1/.../node-pre-gyp` (HTML files, missing `mock-aws-s3` / `aws-sdk` / `nock`). `@hawza/core` used `bcrypt` (native, C++ bindings) for `hashPassword` / `verifyPassword`. Webpack tried to bundle it and choked.
+**Symptom:** After the `.js` → `.ts` fix, `next build` failed again with webpack errors inside `node_modules/.pnpm/bcrypt@5.1.1/.../node-pre-gyp` (HTML files, missing `mock-aws-s3` / `aws-sdk` / `nock`). `@learning-platform/core` used `bcrypt` (native, C++ bindings) for `hashPassword` / `verifyPassword`. Webpack tried to bundle it and choked.
 
-**Fix:** Switched `@hawza/core` from native `bcrypt` to pure-JS `bcryptjs` (the same package that `apps/web` already uses for Auth.js adapters). Trade-off: ~250ms vs ~80ms per hash at cost 12, which is acceptable for the login flow. Operational win: no native build, no `node-pre-gyp`, no CI matrix pain, no Alpine/musl issues on the production VPS. Rationale documented in the JSDoc header of `credentials.ts`.
+**Fix:** Switched `@learning-platform/core` from native `bcrypt` to pure-JS `bcryptjs` (the same package that `apps/web` already uses for Auth.js adapters). Trade-off: ~250ms vs ~80ms per hash at cost 12, which is acceptable for the login flow. Operational win: no native build, no `node-pre-gyp`, no CI matrix pain, no Alpine/musl issues on the production VPS. Rationale documented in the JSDoc header of `credentials.ts`.
 
 **Files changed:** `packages/core/package.json` (deps), `packages/core/src/auth/credentials.ts` (import + JSDoc).
 

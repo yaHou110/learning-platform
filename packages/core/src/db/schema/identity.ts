@@ -19,7 +19,7 @@ import {
   uuid,
 } from "drizzle-orm/pg-core";
 
-/** A Hawza center — one row per tenant. */
+/** A learning center — one row per tenant. */
 export const tenants = pgTable(
   "tenants",
   {

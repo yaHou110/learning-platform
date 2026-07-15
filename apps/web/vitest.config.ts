@@ -16,7 +16,7 @@ export default defineConfig({
   resolve: {
     alias: [
       // apps/web internal path aliases (mirror tsconfig "paths").
-      // @hawza/* and other workspace packages resolve via pnpm symlinks
+      // @learning-platform/* and other workspace packages resolve via pnpm symlinks
       // + their own `exports` field, so they are NOT aliased here.
       { find: "@/auth", replacement: path.join(webSrc, "auth.ts") },
       { find: "@/lib/env", replacement: path.join(webSrc, "lib/env.ts") },

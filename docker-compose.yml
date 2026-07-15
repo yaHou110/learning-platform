@@ -4,29 +4,29 @@
 # Run: `docker compose up -d`
 #
 # Connection string (matches apps/web/.env.example):
-#   postgres://hawza:hawza@localhost:5432/hawza
+#   postgres://learning_platform:learning_platform@localhost:5432/learning_platform
 services:
   postgres:
     image: postgres:16-alpine
-    container_name: hawza-postgres
+    container_name: lp-postgres
     restart: unless-stopped
     environment:
-      POSTGRES_USER: hawza
-      POSTGRES_PASSWORD: hawza
-      POSTGRES_DB: hawza
+      POSTGRES_USER: learning_platform
+      POSTGRES_PASSWORD: learning_platform
+      POSTGRES_DB: learning_platform
     ports:
       - "5432:5432"
     volumes:
-      - hawza_pg_data:/var/lib/postgresql/data
+      - lp_pg_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U hawza -d hawza"]
+      test: ["CMD-SHELL", "pg_isready -U learning_platform -d learning_platform"]
       interval: 5s
       timeout: 5s
       retries: 10
 
   adminer:
     image: adminer:4.8.1
-    container_name: hawza-adminer
+    container_name: lp-adminer
     restart: unless-stopped
     depends_on:
       postgres:
@@ -37,5 +37,5 @@ services:
       ADMINER_DEFAULT_SERVER: postgres
 
 volumes:
-  hawza_pg_data:
-    name: hawza_pg_data
+  lp_pg_data:
+    name: lp_pg_data

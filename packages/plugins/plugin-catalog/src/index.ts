@@ -1,14 +1,14 @@
 /**
- * `@hawza/plugin-catalog` — Catalog & Content bounded context.
+ * `@learning-platform/plugin-catalog` — Catalog & Content bounded context.
  *
- * The actual `courses` / `lessons` / `media` tables will live in `@hawza/core`
+ * The actual `courses` / `lessons` / `media` tables will live in `@learning-platform/core`
  * (added in a later session). This plugin declares the manifest, permissions,
  * and API routes.
  */
-import type { PluginManifest } from "@hawza/core/plugins";
+import type { PluginManifest } from "@learning-platform/core/plugins";
 
 export const manifest: PluginManifest = {
-  name: "@hawza/plugin-catalog",
+  name: "@learning-platform/plugin-catalog",
   version: "0.1.0",
   description: "Catalog & Content: courses, lessons, media assets.",
   domainEvents: [

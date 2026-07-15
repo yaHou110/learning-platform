@@ -1,4 +1,4 @@
-# ADR-0002: Documentation is AI-native, agent-portable
+# ADR-0002: Documentation is portable
 
 - **Status:** Accepted
 - **Date:** 2026-07-10
@@ -10,10 +10,10 @@
 
 This project's documentation must:
 
-1. Survive a change of model, agent, or tool (ChatGPT → Claude → Codex → Cursor → Gemini → …).
+1. Survive a change of tool (any sequence of development tools).
 2. Not depend on a specific chat history or single AI session.
 3. Be readable in < 5 minutes by a new agent with zero context.
-4. Avoid the "context bloat" problem (oversized `AGENTS.md` files that hurt performance).
+4. Avoid the "context bloat" problem (oversized `DEVELOPMENT_GUIDE.md` files that hurt performance).
 5. Be maintainable by a single human over years.
 
 We considered three approaches.
@@ -22,12 +22,12 @@ We considered three approaches.
 
 ## Decision
 
-**We adopt the "AI Project OS" pattern:**
+**We adopt the "Engineering Protocol" pattern:**
 
-- A small, **router-style `AGENTS.md`** (< 100 lines) that points at deeper docs.
+- A small, **router-style `DEVELOPMENT_GUIDE.md`** (< 100 lines) that points at deeper docs.
 - A set of **modular Markdown docs** organized by concern (bootstrap, product, architecture, development, decisions).
 - **Append-only history** for `CHANGELOG.md`, `PROJECT_HANDOVER.md`, and ADRs.
-- **Tool-agnostic structure** that works in ChatGPT web, Claude Code, Codex CLI, Cursor, Gemini CLI, and any agent that supports the `AGENTS.md` convention.
+- **Tool-agnostic structure** that works in any editor or workflow that supports a short repo-root entry file (such as `DEVELOPMENT_GUIDE.md`), regardless of which specific tooling a contributor uses.
 - **No "super-prompt"** as the source of truth — the repo is.
 
 ---
@@ -36,14 +36,14 @@ We considered three approaches.
 
 ### 1. Avoid context bloat
 
-Recent guidance (and our own experience) shows that stuffing all project knowledge into a single file (super-prompt or oversized `AGENTS.md`) leads to:
+Recent guidance (and our own experience) shows that stuffing all project knowledge into a single file (super-prompt or oversized `DEVELOPMENT_GUIDE.md`) leads to:
 
 - Token waste on every request.
 - Confused model behavior (too many constraints, no clear priority).
 - Higher cost.
 - Lower success rate on agentic tasks.
 
-By contrast, a small `AGENTS.md` + on-demand doc loading keeps each request focused.
+By contrast, a small `DEVELOPMENT_GUIDE.md` + on-demand doc loading keeps each request focused.
 
 ### 2. Survive model migration
 
@@ -62,14 +62,10 @@ We are a single founder. Documentation must be:
 
 Decisions should not silently change. The `PROJECT_HANDOVER.md`, `CHANGELOG.md`, and ADR pattern enforce this: history is preserved, new entries are appended.
 
-### 5. Standard `AGENTS.md` is an emerging convention
+### 5. A short repo-root entry file is an emerging convention
 
-The `AGENTS.md` convention is now supported by:
-- OpenAI Codex (CLI)
-- Cursor (`.cursorrules` compatible)
-- Claude Code
-- Gemini CLI
-- Windsurf, Continue, Aider (with mapping)
+A single short entry file at the repository root (here `DEVELOPMENT_GUIDE.md`) that points at the
+deeper on-demand documentation is a broadly supported practice across many development environments.
 
 By following the convention, we get multi-agent support for free.
 
@@ -80,7 +76,7 @@ By following the convention, we get multi-agent support for free.
 ### Positive
 
 - ✅ Project state is durable and tool-agnostic.
-- ✅ Onboarding a new agent takes < 5 min (read AGENTS.md + 3 bootstrap files).
+- ✅ Onboarding a new contributor takes < 5 min (read DEVELOPMENT_GUIDE.md + 3 bootstrap files).
 - ✅ Cost per session is lower (small context window).
 - ✅ History is preserved and auditable.
 - ✅ Easy to contribute to (good docs = good OSS).
@@ -89,7 +85,7 @@ By following the convention, we get multi-agent support for free.
 
 - ❌ Discipline required: docs must be updated each session, or they rot.
 - ❌ Slight overhead for the founder (writing 1–2 small files per session).
-- ❌ Some agents don't yet support `AGENTS.md` natively → need a symlink or paste.
+- ❌ Some tools don't yet support `DEVELOPMENT_GUIDE.md` natively → need a symlink or paste.
 
 ### Neutral
 
@@ -103,9 +99,9 @@ By following the convention, we get multi-agent support for free.
 | Option | Verdict | Why |
 | --- | --- | --- |
 | **Super-prompt in one chat** | Rejected | Lost on session end; model-specific. |
-| **Single big `AGENTS.md`** | Rejected | Context bloat; violates "small router" best practice. |
+| **Single big `DEVELOPMENT_GUIDE.md`** | Rejected | Context bloat; violates "small router" best practice. |
 | **Wiki (Notion, Confluence)** | Rejected | Not in-repo, not git-versioned, paid, agent-unfriendly. |
-| **AI Project OS (chosen)** | Accepted | All boxes ticked. |
+| **Engineering Protocol (chosen)** | Accepted | All boxes ticked. |
 
 ---
 
@@ -113,7 +109,7 @@ By following the convention, we get multi-agent support for free.
 
 ```
 README.md              → human entry, 1-page summary
-DEVELOPMENT_GUIDE.md   → AI agent router (< 100 lines)
+DEVELOPMENT_GUIDE.md   → contributor router (< 100 lines)
 docs/
   00-bootstrap/        → onboarding (PROJECT_STATE, PROJECT_BACKLOG, PROJECT_HANDOVER, PROJECT_FOUNDATION)
   01-product/          → product truth (BIBLE, REQUIREMENTS, FEATURES, PERSONAS, ROADMAP)
@@ -123,7 +119,7 @@ docs/
 templates/             → copy-paste starters
 ```
 
-> _Updated 2026-07-12: the on-disk filenames use a `PROJECT_*` prefix for the four bootstrap files. The router file is named `DEVELOPMENT_GUIDE.md` for clarity; the rationale of this ADR (small router at repo root, on-demand deep docs, append-only history) is unchanged. The `AGENTS.md` convention name is preserved where the text refers to the broader ecosystem convention; project-internal references to specific files use the current filenames._
+> _Updated 2026-07-12: the on-disk filenames use a `PROJECT_*` prefix for the four bootstrap files. The router file is named `DEVELOPMENT_GUIDE.md` for clarity; the rationale of this ADR (small router at repo root, on-demand deep docs, append-only history) is unchanged. The `DEVELOPMENT_GUIDE.md` convention name is preserved where the text refers to the broader ecosystem convention; project-internal references to specific files use the current filenames._
 
 Each file:
 - Has a single concern.
@@ -151,7 +147,7 @@ Each file:
 ## When to revisit
 
 If:
-- A clear new convention supersedes `AGENTS.md` (e.g. an open standard ratified by a major org).
+- A clear new convention supersedes `DEVELOPMENT_GUIDE.md` (e.g. an open standard ratified by a major org).
 - The OS overhead (writing 1 file per session) becomes a bottleneck.
 - We move to a fully team-based model that needs a different coordination pattern.
 

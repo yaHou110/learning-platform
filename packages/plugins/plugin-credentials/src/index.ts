@@ -1,12 +1,12 @@
 /**
- * `@hawza/plugin-credentials` — Credentials bounded context.
+ * `@learning-platform/plugin-credentials` — Credentials bounded context.
  *
  * Issues and verifies completion certificates. Consumes `course.completed`.
  */
-import type { PluginManifest } from "@hawza/core/plugins";
+import type { PluginManifest } from "@learning-platform/core/plugins";
 
 export const manifest: PluginManifest = {
-  name: "@hawza/plugin-credentials",
+  name: "@learning-platform/plugin-credentials",
   version: "0.1.0",
   description: "Credentials: issuing and verifying completion certificates.",
   domainEvents: [

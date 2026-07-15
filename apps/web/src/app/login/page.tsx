@@ -74,7 +74,7 @@ export default async function LoginPage({
         </button>
       </form>
       <p className="mt-6 text-xs text-gray-500">
-        حساب نمونه: مرکز <code>hawza-demo</code>، ایمیل <code>admin@hawza.local</code>، رمز <code>changeme</code>
+        حساب نمونه: مرکز <code>demo</code>، ایمیل <code>admin@lp.local</code>، رمز <code>changeme</code>
       </p>
     </main>
   );

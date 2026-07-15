@@ -21,7 +21,7 @@
  */
 import { NextResponse } from "next/server";
 import { auth } from "@/auth";
-import type { Role } from "@hawza/core/db/schema";
+import type { Role } from "@learning-platform/core/db/schema";
 
 /** Shape of the authenticated user the routes can rely on. */
 export type AuthzUser = {

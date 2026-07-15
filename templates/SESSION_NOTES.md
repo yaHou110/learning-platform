@@ -10,7 +10,7 @@
 | Field | Value |
 | --- | --- |
 | Date | YYYY-MM-DD |
-| Agent | (e.g. ChatGPT, Claude, Codex, human) |
+| Contributor | (human or tool) |
 | Goal | (one line — copy from PROJECT_BACKLOG.md) |
 | Started at | HH:MM |
 | Finished at | HH:MM |

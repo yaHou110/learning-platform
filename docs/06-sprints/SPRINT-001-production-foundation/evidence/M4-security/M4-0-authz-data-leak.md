@@ -9,7 +9,7 @@
 
 ## 1. Background — the finding
 
-A code review (cross-referenced with the ChatGPT 5.6 "ultra" review of this codebase) surfaced a P0 security gap in the identity surface. The codebase had `pnpm verify` green and 28 dependency CVEs triaged, but no human code review for authorization had been run — exactly the "green CI ≠ production-ready" failure mode the Engineering OS warns about (§36 evidence hierarchy, §22 human-review mindset).
+A code review (cross-referenced with the an external model-assisted "ultra" review of this codebase) surfaced a P0 security gap in the identity surface. The codebase had `pnpm verify` green and 28 dependency CVEs triaged, but no human code review for authorization had been run — exactly the "green CI ≠ production-ready" failure mode the Engineering Protocol warns about (§36 evidence hierarchy, §22 human-review mindset).
 
 ### 1.1 The bug
 
@@ -95,7 +95,7 @@ export type UserPublic = {
 // apps/web/src/lib/authz.ts
 import { auth } from "@/auth";
 import { NextResponse } from "next/server";
-import type { Role } from "@hawza/core/db/schema";
+import type { Role } from "@learning-platform/core/db/schema";
 
 export type AuthzOk = { ok: true; user: { id: string; tenantId: string; role: Role; email: string; name: string } };
 export type AuthzErr = { ok: false; response: NextResponse };
@@ -133,8 +133,8 @@ async session({ session, token }) {
   // Per-request re-validation: confirms the user still exists and is active.
   // Auth.js Credentials provider only supports JWT, so this is how we close
   // the deactivation gap documented in ADR-0005.
-  const { getDb } = await import("@hawza/core/db");
-  const { users } = await import("@hawza/core/db/schema");
+  const { getDb } = await import("@learning-platform/core/db");
+  const { users } = await import("@learning-platform/core/db/schema");
   const { eq, sql } = await import("drizzle-orm");
   const db = getDb();
   const [row] = await db
@@ -189,7 +189,7 @@ Append a "Revision 1 (2026-07-13)" section to `ADR-0005-auth.md`:
 ## 7. Evidence (ADR-0013 §5, §36)
 
 - `evidence/M4-security/audit-after-2.json` — `pnpm audit` after the change (expected: no new advisories, still 2 residual `drizzle-orm` + transitive `postcss` from M4.1).
-- `evidence/M4-security/test-output.txt` — `pnpm --filter web test` and `pnpm --filter @hawza/core test` output.
+- `evidence/M4-security/test-output.txt` — `pnpm --filter web test` and `pnpm --filter @learning-platform/core test` output.
 - `evidence/M4-security/build-output.txt` — `pnpm build` output (expecting the same 7 routes, middleware size unchanged or marginally smaller).
 
 ## 8. Approval

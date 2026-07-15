@@ -1,11 +1,11 @@
-# Hawza Family Learning Platform
+# Learning Platform
 
-> A non-WordPress, AI-native learning platform built for Hawza (Islamic seminary) families — designed to run for years and survive any change of model, agent, or tool.
+> A non-WordPress, portable learning platform built for Islamic seminary families — designed to run for years and survive any change of tool.
 
 [![Status](https://img.shields.io/badge/status-v1.0-blueviolet)](#project-state)
 [![Docs](https://img.shields.io/badge/docs-21%20files-success)](#documentation-map)
 [![License](https://img.shields.io/badge/license-proprietary-lightgrey)](#license)
-[![Agents](https://img.shields.io/badge/agent--ready-yes-brightgreen)](#for-ai-agents)
+[![Contributors](https://img.shields.io/badge/contributor--ready-yes-brightgreen)](#for-contributors)
 
 ---
 
@@ -13,8 +13,8 @@
 
 This repository is **two things at once**:
 
-1. **A real product** — the *Hawza Family Learning Platform* (LPC + Hawza instance), a non-WordPress learning platform.
-2. **A documentation system** — an *AI Project OS* that lets any AI agent (ChatGPT, Claude Code, Codex, Cursor, Gemini CLI, …) pick up the project without re-explaining the context.
+1. **A real product** — the *Learning Platform* (LPC + deployment), a non-WordPress learning platform.
+2. **A documentation system** — an *Engineering Protocol* that lets any contributor pick up the project without re-explaining the context.
 
 It is **not** a 20k-word super-prompt. It is a small, modular, Git-versioned body of knowledge.
 
@@ -25,11 +25,11 @@ It is **not** a 20k-word super-prompt. It is a small, modular, Git-versioned bod
 ```bash
 git clone <this-repo>
 cd <this-repo>
-# Open DEVELOPMENT_GUIDE.md first if you are an AI agent
+# Open DEVELOPMENT_GUIDE.md first if you are a contributor
 # Open README.md if you are a human
 ```
 
-If you are an AI agent, **start here**: [`DEVELOPMENT_GUIDE.md`](./DEVELOPMENT_GUIDE.md) (it is intentionally short — under 100 lines).
+If you are a contributor, **start here**: [`DEVELOPMENT_GUIDE.md`](./DEVELOPMENT_GUIDE.md) (it is intentionally short — under 100 lines).
 
 ---
 
@@ -38,12 +38,12 @@ If you are an AI agent, **start here**: [`DEVELOPMENT_GUIDE.md`](./DEVELOPMENT_G
 ```
 .
 ├── README.md                      ← you are here (human entry)
-├── DEVELOPMENT_GUIDE.md           ← AI agent entry (router, < 100 lines)
+├── DEVELOPMENT_GUIDE.md           ← contributor entry (router, < 100 lines)
 ├── LICENSE
 ├── CHANGELOG.md
 │
 ├── docs/
-│   ├── 00-bootstrap/              ← how to onboard a new agent/session
+│   ├── 00-bootstrap/              ← how to onboard a new contributor/session
 │   │   ├── PROJECT_FOUNDATION.md
 │   │   ├── PROJECT_HANDOVER.md
 │   │   ├── PROJECT_STATE.md
@@ -81,19 +81,19 @@ If you are an AI agent, **start here**: [`DEVELOPMENT_GUIDE.md`](./DEVELOPMENT_G
 
 ## The 30-second version (for humans)
 
-- **Problem**: Hawza families need a structured learning platform. WordPress is a poor fit long-term.
-- **Solution**: A modular, plugin-based, AI-native learning platform with a Persian-first UX.
+- **Problem**: seminary families need a structured learning platform. WordPress is a poor fit long-term.
+- **Solution**: A modular, plugin-based, portable learning platform with a Persian-first UX.
 - **Stack** (locked in [TECH_STACK.md](./docs/03-development/TECH_STACK.md), backed by ADR-0003..0006): Next.js 15 + TypeScript strict + PostgreSQL 16 + Drizzle ORM + Auth.js v5 + pnpm monorepo + internal compile-time plugins.
-- **Status**: v1.1 — documentation OS + first ADR batch + monorepo scaffold (no production deployment yet).
-- **Owner**: single founder, multi-agent team.
+- **Status**: v1.1 — documentation system + first ADR batch + monorepo scaffold (no production deployment yet).
+- **Owner**: single founder, multiple contributors.
 
 For the full story, read [`docs/01-product/PRODUCT_BIBLE.md`](./docs/01-product/PRODUCT_BIBLE.md).
 
 ---
 
-## The 30-second version (for agents)
+## The 30-second version (for contributors)
 
-You are looking at the Hawza Family Learning Platform repo.
+You are looking at the Learning Platform repo.
 
 1. Read `DEVELOPMENT_GUIDE.md` (it's the router — under 100 lines).
 2. Read `docs/00-bootstrap/PROJECT_STATE.md` (what's done, what's next).
@@ -149,10 +149,10 @@ pnpm db:seed:dev
 pnpm dev
 # → http://localhost:3000   (web)
 # → http://localhost:8080   (Adminer — login: System=PostgreSQL, Server=postgres,
-#                            Username=hawza, Password=hawza, Database=hawza)
+#                            Username=learning_platform, Password=learning_platform, Database=learning_platform)
 ```
 
-Default seeded credentials: tenant `hawza-demo`, email `admin@hawza.local`,
+Default seeded credentials: tenant `demo`, email `admin@lp.local`,
 password `changeme`. **Change in production.**
 
 ---

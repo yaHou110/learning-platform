@@ -4,7 +4,7 @@
  * The KEY rule here is `no-restricted-imports`: plugins may not import
  * `drizzle-orm` or `pg` directly. This is the enforcement layer for ADR-0006.
  *
- * If a plugin ever needs DB access, it must go through `@hawza/core/api`.
+ * If a plugin ever needs DB access, it must go through `@learning-platform/core/api`.
  */
 module.exports = {
   root: false,
@@ -21,15 +21,15 @@ module.exports = {
         paths: [
           {
             name: "drizzle-orm",
-            message: "Plugins may not import drizzle-orm directly. Use @hawza/core/api.",
+            message: "Plugins may not import drizzle-orm directly. Use @learning-platform/core/api.",
           },
           {
             name: "drizzle-orm/node-postgres",
-            message: "Plugins may not import drizzle-orm/node-postgres. Use @hawza/core/api.",
+            message: "Plugins may not import drizzle-orm/node-postgres. Use @learning-platform/core/api.",
           },
           {
             name: "pg",
-            message: "Plugins may not import pg directly. Use @hawza/core/api.",
+            message: "Plugins may not import pg directly. Use @learning-platform/core/api.",
           },
         ],
         patterns: ["drizzle-orm/*", "pg/*"],

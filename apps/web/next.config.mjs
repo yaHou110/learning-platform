@@ -2,13 +2,13 @@
 const nextConfig = {
   // Internal workspace packages need transpilation under App Router.
   transpilePackages: [
-    "@hawza/core",
-    "@hawza/contracts",
-    "@hawza/plugin-auth",
-    "@hawza/plugin-catalog",
-    "@hawza/plugin-learning",
-    "@hawza/plugin-credentials",
-    "@hawza/plugin-localization",
+    "@learning-platform/core",
+    "@learning-platform/contracts",
+    "@learning-platform/plugin-auth",
+    "@learning-platform/plugin-catalog",
+    "@learning-platform/plugin-learning",
+    "@learning-platform/plugin-credentials",
+    "@learning-platform/plugin-localization",
   ],
   // Native Node modules used by workspace packages must NOT be bundled
   // by webpack — they are required at runtime.
@@ -38,7 +38,7 @@ const nextConfig = {
   },
   // TypeScript NodeNext convention: source uses `.js` extensions that
   // resolve to `.ts` files. Webpack must alias this for Next.js to
-  // bundle workspace packages that follow that pattern (e.g. @hawza/core).
+  // bundle workspace packages that follow that pattern (e.g. @learning-platform/core).
   webpack: (config) => {
     config.resolve.extensionAlias = {
       ...(config.resolve.extensionAlias ?? {}),

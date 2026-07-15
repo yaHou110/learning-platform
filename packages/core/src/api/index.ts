@@ -1,5 +1,5 @@
 /**
- * Public API surface of `@hawza/core`.
+ * Public API surface of `@learning-platform/core`.
  *
  * Plugins and `apps/web` import from here. They MUST NOT import `drizzle-orm`
  * or `pg` directly. The ESLint `no-restricted-imports` rule in each plugin

@@ -1,4 +1,4 @@
-# @hawza/plugin-credentials
+# @learning-platform/plugin-credentials
 
 Credentials bounded context.
 

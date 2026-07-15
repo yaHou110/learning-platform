@@ -11,10 +11,10 @@
  */
 import NextAuth, { type NextAuthConfig } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
-import { verifyPassword, CredentialsInputSchema } from "@hawza/core/auth";
-import { getDb } from "@hawza/core/db";
-import { identity } from "@hawza/core/api";
-import type { Role } from "@hawza/core/db/schema";
+import { verifyPassword, CredentialsInputSchema } from "@learning-platform/core/auth";
+import { getDb } from "@learning-platform/core/db";
+import { identity } from "@learning-platform/core/api";
+import type { Role } from "@learning-platform/core/db/schema";
 import { env } from "@/lib/env";
 
 declare module "next-auth" {

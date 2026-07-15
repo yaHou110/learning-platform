@@ -1,17 +1,17 @@
 /**
- * `@hawza/plugin-auth` — Identity & Access bounded context.
+ * `@learning-platform/plugin-auth` — Identity & Access bounded context.
  *
  * This plugin owns the *registration surface* (manifest + permissions + API
  * routes). The actual `users`/`tenants` tables and the Drizzle client live in
- * `@hawza/core` (see `packages/core/src/db/schema/identity.ts`).
+ * `@learning-platform/core` (see `packages/core/src/db/schema/identity.ts`).
  *
  * The plugin MUST NOT import `drizzle-orm` or `pg` — the ESLint rule in
  * `.eslintrc.cjs` enforces this.
  */
-import type { PluginManifest } from "@hawza/core/plugins";
+import type { PluginManifest } from "@learning-platform/core/plugins";
 
 export const manifest: PluginManifest = {
-  name: "@hawza/plugin-auth",
+  name: "@learning-platform/plugin-auth",
   version: "0.1.0",
   description: "Identity & Access: tenants, users, roles, sessions.",
   domainEvents: [

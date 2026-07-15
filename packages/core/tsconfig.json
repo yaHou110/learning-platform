@@ -5,8 +5,8 @@
     "rootDir": "src",
     "baseUrl": ".",
     "paths": {
-      "@hawza/contracts": ["../contracts/src/index.ts"],
-      "@hawza/contracts/*": ["../contracts/src/*"]
+      "@learning-platform/contracts": ["../contracts/src/index.ts"],
+      "@learning-platform/contracts/*": ["../contracts/src/*"]
     }
   },
   "include": ["src/**/*"],

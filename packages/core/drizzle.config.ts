@@ -11,7 +11,7 @@ export default defineConfig({
   out: "./src/db/migrations",
   dialect: "postgresql",
   dbCredentials: {
-    url: process.env.DATABASE_URL ?? "postgres://hawza:hawza@localhost:5432/hawza",
+    url: process.env.DATABASE_URL ?? "postgres://learning_platform:learning_platform@localhost:5432/learning_platform",
   },
   strict: true,
   verbose: true,

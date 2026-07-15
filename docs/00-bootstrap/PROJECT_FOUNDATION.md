@@ -1,6 +1,6 @@
 # PROJECT_FOUNDATION.md
 
-> The one-shot prompt + minimal context needed to start working on this project in any new agent / chat / account.
+> The one-shot prompt + minimal context needed to start working on this project in any new contributor / chat / account.
 >
 > _Renamed from `PROJECT_BOOTSTRAP.md` on 2026-07-12._
 
@@ -8,10 +8,10 @@
 
 ## What to copy into a new chat
 
-When you open a new conversation (ChatGPT, Claude, Gemini, etc.) and want to continue this project, paste the following block as your **first message**:
+When you open a new conversation (any development tool) and want to continue this project, paste the following block as your **first message**:
 
 ```text
-We are continuing the Hawza Family Learning Platform project.
+We are continuing the Learning Platform project.
 
 Repository state: see DEVELOPMENT_GUIDE.md (in the repo).
 Immediate task: see docs/00-bootstrap/PROJECT_BACKLOG.md.
@@ -36,7 +36,7 @@ After pasting, attach (or copy-paste the contents of) the **three** files above.
 Every new agent / chat / account starts with zero context. This file exists so that you can:
 
 1. Re-establish full project context in **one paste**.
-2. Switch between ChatGPT, Claude, Codex, Cursor, Gemini without re-explaining the project.
+2. Switch between development tools without re-explaining the project.
 3. Survive a context window reset.
 
 ---

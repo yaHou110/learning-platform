@@ -66,7 +66,7 @@
 ## 3. Tenancy model
 
 - **Strategy:** shared database, shared schema, `tenant_id` column on every tenant-scoped table.
-- **Tenant identification:** subdomain (e.g. `tehran.hawza.app`) in v1; custom domain in v2.
+- **Tenant identification:** subdomain (e.g. `tehran.lp.app`) in v1; custom domain in v2.
 - **Isolation enforcement:** middleware در app server (هیچ query بدون `tenant_id` نباید اجرا شود).
 - **Per-tenant config:** جدول `tenants.config` (JSONB) برای theme, limits, feature flags.
 

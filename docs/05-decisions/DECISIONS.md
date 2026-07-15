@@ -10,13 +10,13 @@
 | # | Title | Status | Date |
 | --- | --- | --- | --- |
 | [ADR-0001](./ADR-0001-no-wordpress.md) | No WordPress — use a custom or framework-native stack | Accepted | 2026-07-10 |
-| [ADR-0002](./ADR-0002-operating-manual.md) | Documentation is AI-native, agent-portable | Accepted | 2026-07-10 |
+| [ADR-0002](./ADR-0002-operating-manual.md) | Documentation is portable | Accepted | 2026-07-10 |
 | [ADR-0003](./ADR-0003-web-framework.md) | Web framework — Next.js 15 (App Router) on Node.js 20 LTS | Accepted | 2026-07-11 |
 | [ADR-0004](./ADR-0004-database.md) | Database — PostgreSQL 16 + Drizzle ORM (no vector DB in v1) | Accepted | 2026-07-11 |
 | [ADR-0005](./ADR-0005-auth.md) | Auth — Auth.js v5 Credentials + bcrypt + JWT sessions + per-request `isActive` re-check (Revision 1, 2026-07-13: DB-session mechanism amended to JWT-only) | Accepted | 2026-07-11 |
 | [ADR-0006](./ADR-0006-plugin-architecture.md) | Plugin architecture — pnpm monorepo + compile-time typed manifest | Accepted | 2026-07-11 |
 | [ADR-0012](./ADR-0012-engineering-protocol.md) | Mandatory engineering protocol — quality gates, DoD, agent constraints | Accepted | 2026-07-12 |
-| [ADR-0013](./ADR-0013-engineering-protocol-v2.md) | Engineering Protocol v2 — EOS extension (§39–§60), chapters, DoR, spec-first, risk matrix | Accepted | 2026-07-12 |
+| [ADR-0013](./ADR-0013-engineering-protocol-v2.md) | Engineering Protocol v2 (§39–§60), chapters, DoR, spec-first, risk matrix | Accepted | 2026-07-12 |
 
 ---
 

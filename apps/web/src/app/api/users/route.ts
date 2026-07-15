@@ -1,4 +1,4 @@
-import { identity } from "@hawza/core/api";
+import { identity } from "@learning-platform/core/api";
 import { requireRole } from "@/lib/authz";
 import { NextResponse } from "next/server";
 

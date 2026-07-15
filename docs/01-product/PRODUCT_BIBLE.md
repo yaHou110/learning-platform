@@ -23,7 +23,7 @@
 
 ## 2. Vision (English, summary)
 
-A **structured, native, long-term learning platform** for Hawza (Islamic seminary) families.
+A **structured, native, long-term learning platform** for Islamic seminary families.
 
 The platform addresses:
 - Scattered learning resources (booklets, audio, classes, books) with no unified view.
@@ -32,10 +32,10 @@ The platform addresses:
 - Dependency on external tools (YouTube, WordPress, Moodle) that are not designed for this audience or that take data ownership away.
 
 We are building our own. It will be:
-- **Native** — designed for Hawza's language, culture, and pedagogy.
+- **Native** — designed for the language, culture, and pedagogy.
 - **Durable** — usable and maintainable 10 years from now.
 - **Owned by us** — no dependency on a third-party platform.
-- **Extensible** — every Hawza center can run its own customized instance.
+- **Extensible** — every learning center can run its own customized instance.
 
 ---
 
@@ -107,7 +107,7 @@ We are building our own. It will be:
 - ❌ یک LMS عمومی مثل Moodle که فقط skin حوزوی روی آن است.
 - ❌ یک اپ بسته که فقط روی یک مرکز خاص کار می‌کند.
 - ❌ یک محصول که برای کار کردن به اینترنت پرسرعت و ابزارهای خارجی وابسته باشد.
-- ❌ یک پروژه که با رفتن بنیان‌گذار، نگهداری‌اش متوقف شود. (این دلیل اصلی استفاده از AI Project OS است.)
+- ❌ یک پروژه که با رفتن بنیان‌گذار، نگهداری‌اش متوقف شود. (این دلیل اصلی استفاده از Engineering Protocol است.)
 
 ---
 

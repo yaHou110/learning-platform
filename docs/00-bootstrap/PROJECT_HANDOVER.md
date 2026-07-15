@@ -25,21 +25,21 @@ Each entry has:
 
 ## Session 001 — 2026-07-10 — bootstrap / founder
 
-**Goal:** Establish AI Project OS v1.0 (documentation skeleton) and lock meta-decisions.
+**Goal:** Establish Engineering Protocol v1.0 (documentation skeleton) and lock meta-decisions.
 
 **Done:**
-- Created `README.md`, `AGENTS.md`, `LICENSE`, `CHANGELOG.md`, `.gitignore`.
+- Created `README.md`, `DEVELOPMENT_GUIDE.md`, `LICENSE`, `CHANGELOG.md`, `.gitignore`.
 - Created `docs/00-bootstrap/`: `PROJECT_BOOTSTRAP.md`, `PROJECT_STATE.md`, `NEXT_SESSION.md`, this file.
 - Created `docs/01-product/`: `PRODUCT_BIBLE.md`, `REQUIREMENTS.md`, `FEATURE_CATALOG.md`, `PERSONAS.md`, `ROADMAP.md`.
 - Created `docs/02-architecture/`: `SYSTEM_ARCHITECTURE.md`, `DATA_MODEL.md`, `PLUGIN_MATRIX.md`, `PERMISSION_MATRIX.md`.
 - Created `docs/03-development/TECH_STACK.md` (stub).
-- Created `docs/05-decisions/`: `DECISIONS.md`, `ADR-0001-no-wordpress.md`, `ADR-0002-ai-project-os.md`.
+- Created `docs/05-decisions/`: `DECISIONS.md`, `ADR-0001-no-wordpress.md`, `ADR-0002-operating-manual.md`.
 - Created `templates/`: `HANDOFF_TEMPLATE.md`, `SESSION_NOTES.md`, `ADR_TEMPLATE.md`, `FEATURE_REQUEST.md`.
 - Verified `git status` is clean on `main` against `origin/main`.
 
 **Decisions:**
 - ADR-0001: No WordPress. Use a custom (or framework-native) stack instead.
-- ADR-0002: Documentation is AI-native, agent-portable. Short `AGENTS.md`, modular docs, append-only history.
+- ADR-0002: Documentation is portable. Short `DEVELOPMENT_GUIDE.md`, modular docs, append-only history.
 
 **Open questions:**
 - Web framework, database, auth, plugin architecture, hosting, multi-tenancy, PWA — see `PROJECT_STATE.md`.
@@ -160,7 +160,7 @@ Each entry has:
 - Installed `tailwindcss@3`, `postcss`, `autoprefixer` in `apps/web`
 - Fixed root `.eslintrc.json`: unquoted `argsIgnorePattern` key (invalid JSON, caused `next lint` to crash)
 - Fixed login page: removed unnecessary `LoginPage`/`LoginInner` async split, removed `void redirect` hack
-- Fixed all 5 plugin vitest configs: added resolve aliases for `@hawza/core` and `@hawza/contracts` (tests were failing with "Failed to load url")
+- Fixed all 5 plugin vitest configs: added resolve aliases for `@learning-platform/core` and `@learning-platform/contracts` (tests were failing with "Failed to load url")
 - All tests pass: `pnpm -r test` — 15 tests across 7 packages
 - All typechecks pass: `pnpm -r typecheck`
 - All lint checks pass: `pnpm -r lint`
@@ -231,8 +231,8 @@ Each entry has:
 
 **Done:**
 - Verified `docker compose up -d` starts Postgres 16 + Adminer on local machine
-- `pnpm --filter @hawza/core db:migrate` applied first migration idempotently (RLS policies active)
-- `pnpm --filter @hawza/core db:seed:dev` created demo tenant `hawza-demo` + super_admin `admin@hawza.local` / `changeme`
+- `pnpm --filter @learning-platform/core db:migrate` applied first migration idempotently (RLS policies active)
+- `pnpm --filter @learning-platform/core db:seed:dev` created demo tenant `demo` + super_admin `admin@lp.local` / `changeme`
 - `pnpm --filter web dev` started Next.js 15 on `http://localhost:3000` without errors
 - `curl /api/health` → `{"status":"ok","db":true,"timestamp":...}`
 - `curl /login` → 200 with Persian login form
@@ -275,9 +275,9 @@ Each entry has:
 - Fixed five real issues surfaced by the build pipeline (see `notes.md`):
   1. `next/no-page-custom-font` warning → converted to `next/font/google`.
   2. Broken root `pnpm build` filter → simplified to `pnpm --filter web build`.
-  3. `@hawza/core` exports pointed to `dist/...js` → aligned to source (`./src/...ts`).
+  3. `@learning-platform/core` exports pointed to `dist/...js` → aligned to source (`./src/...ts`).
   4. Webpack `.js` → `.ts` alias missing → added `extensionAlias` to `next.config.mjs`.
-  5. Native `bcrypt` unbundlable in Next.js → switched `@hawza/core` to pure-JS `bcryptjs`.
+  5. Native `bcrypt` unbundlable in Next.js → switched `@learning-platform/core` to pure-JS `bcryptjs`.
 - Re-ran lint, typecheck, test, build after each fix to confirm each step was clean.
 - Wrote `commands.txt`, `checklist.md`, `notes.md` under `evidence/M1-baseline/`.
 - Updated `CHANGELOG.md` `[Unreleased]` with the full M1 delta.
@@ -354,7 +354,7 @@ Each entry has:
 
 ---
 
-## Session 010 — 2026-07-12 — Cursor / Auto (Engineering Protocol — ADR-0012)
+## Session 010 — 2026-07-12 — contributor (auto) (Engineering Protocol — ADR-0012)
 
 **Goal:** Implement and document the mandatory Engineering Protocol (38 rules + planning / DoD extensions) for all architectural, implementation, refactoring, and deployment work.
 
@@ -363,7 +363,7 @@ Each entry has:
 - `docs/03-development/QUALITY_GATES.md` — gate definitions and CI alignment.
 - `docs/05-decisions/ADR-0012-engineering-protocol.md` — **NEW** binding ADR.
 - `docs/05-decisions/DECISIONS.md` — ADR-0012 indexed.
-- `.cursor/rules/engineering-protocol.mdc` — always-on Cursor enforcement.
+- `docs/03-development/ENGINEERING_PROTOCOL.md` — always-on canonical reference.
 - `templates/IMPLEMENTATION_PLAN.md`, `templates/DEFINITION_OF_DONE.md` — **NEW** templates.
 - `scripts/quality-gates.ps1`, `scripts/quality-gates.sh` — reproducible gate runners.
 - `package.json` — `pnpm verify` script added.
@@ -388,7 +388,7 @@ Each entry has:
 
 ---
 
-## Session 011 — 2026-07-12 — Cursor / Auto (Engineering OS v2 — ADR-0013)
+## Session 011 — 2026-07-12 — contributor (auto) (Engineering Protocol v2 — ADR-0013)
 
 **Goal:** Extend Engineering Protocol to v2 (rules §39–§60) with thematic chapters, Spec-Driven Development alignment, and enterprise governance — without removing existing rules.
 
@@ -400,12 +400,12 @@ Each entry has:
 - `templates/DEFINITION_OF_READY.md` — **NEW** DoR checklist (§39).
 - `templates/HUMAN_APPROVAL_CHECKLIST.md` — **NEW** approval workflow (§41).
 - `templates/DEFINITION_OF_DONE.md`, `templates/IMPLEMENTATION_PLAN.md` — updated for §60, §39.
-- `.cursor/rules/engineering-protocol.mdc` — v2 enforcement (DoR, spec-first, §47 priority, §59).
+- `docs/03-development/ENGINEERING_PROTOCOL.md` — v2 enforcement (DoR, spec-first, §47 priority, §59).
 - `docs/00-bootstrap/PROJECT_STATE.md` — v1.4, ADR-0013 locked.
 - `CHANGELOG.md` — ADR-0013 entries.
 
 **Decisions made:**
-- ADR-0013: Engineering Protocol v2 / EOS extension (see above).
+- ADR-0013: Engineering Protocol v2 (see above).
 
 **Decisions still open:**
 - PostgreSQL not installed — M2 smoke test still blocked (unchanged).
@@ -414,15 +414,15 @@ Each entry has:
 **Next session:** Resume M2 smoke test once PostgreSQL is available. For any non-trivial task: DoR → spec → risk classify → implement.
 
 **Notes for the next agent:**
-- Full EOS: `docs/03-development/ENGINEERING_PROTOCOL.md` (60 rules, 13 chapters).
+- Full protocol: `docs/03-development/ENGINEERING_PROTOCOL.md` (60 rules, 13 chapters).
 - Rule priority: Security → Human approval → ADRs → Protocol → Docs → Sprint → Preference (§47).
 - Governance before generation (§59): load constraints, check ADRs, get approval if HIGH/CRITICAL.
 
 ---
 
-## Session 012 — 2026-07-12 — Cursor / Auto (Executable governance — CI enforcement)
+## Session 012 — 2026-07-12 — contributor (auto) (Executable governance — CI enforcement)
 
-**Goal:** Transform Engineering OS from documentation into executable governance (PR template, issue templates, CI, ADR compliance scripts, agent sync) without new protocol rules or ADR edits.
+**Goal:** Transform Engineering Protocol from documentation into executable governance (PR template, issue templates, CI, ADR compliance scripts, contributor file sync) without new protocol rules or ADR edits.
 
 **Done:**
 - `.github/workflows/governance.yml` — **NEW** runs `pnpm verify` + `pnpm governance:validate` on PR/push to `main`.
@@ -430,9 +430,9 @@ Each entry has:
 - `.github/ISSUE_TEMPLATE/feature.yml`, `bug.yml`, `config.yml` — **NEW** issue templates.
 - `scripts/governance/validate.mjs` + libs — **NEW** PR body, ADR, CHANGELOG enforcement.
 - `docs/03-development/GOVERNANCE_CHECKLIST.md` — **NEW** session checklist (Phase A/B/C).
-- `AGENTS.md`, `CLAUDE.md`, `.github/copilot-instructions.md` — **NEW** synchronized via `pnpm sync:agents`.
-- `.cursor/rules/agent-router.mdc` — **NEW** Cursor agent router.
-- `package.json` — `governance:validate`, `governance:validate:local`, `sync:agents`.
+- `DEVELOPMENT_GUIDE.md` — single entry point.
+- (no per-tool router files).
+- `package.json` — `governance:validate`, `governance:validate:local`.
 - `DEVELOPMENT_GUIDE.md`, `QUALITY_GATES.md`, `CHANGELOG.md`, `PROJECT_STATE.md` v1.5 — updated.
 
 **Decisions made:**
@@ -445,7 +445,7 @@ Each entry has:
 
 **Notes for the next agent:**
 - Local pre-PR: `pnpm governance:validate:local` then fill PR template before opening PR.
-- Agent sync: edit `AGENTS.md` only, then `pnpm sync:agents`.
+- Edit no sync step (single entry point).
 
 ---
 
@@ -454,7 +454,7 @@ Each entry has:
 **Goal:** Close the M3 evidence gap from session 012; surface and document any pre-M4 work; do not block on the M2 PostgreSQL blocker (still real, but lower priority than a critical security finding).
 
 **Done:**
-- `evidence/M3-ci/notes.md`, `checklist.md`, `commands.txt` — M3 evidence gap closed. The work itself (governance.yml, validate.mjs, PR + issue templates, agent sync) was already merged in session 012; this session only wrote the evidence files the founder directive requires.
+- `evidence/M3-ci/notes.md`, `checklist.md`, `commands.txt` — M3 evidence gap closed. The work itself (governance.yml, validate.mjs, PR + issue templates, contributor file sync) was already merged in session 012; this session only wrote the evidence files the founder directive requires.
 - `evidence/M4-security/audit-baseline.json` — `pnpm audit --prod --json` captured. **28 advisories** (2 critical, 8 high, 14 moderate, 4 low) in `next@15.0.3` and `next-auth@5.0.0-beta.25`; transitive `postcss@8.5.10`.
 - `evidence/M4-security/notes.md` — severity breakdown + risk classification.
 - `evidence/M4-security/checklist.md` — pre-work checklist.
@@ -525,7 +525,7 @@ Each entry has:
 
 ## Session 015 — 2026-07-13 — mavis (orchestrator) (M4.0 P0 — authorization gap + password-hash leak)
 
-**Goal:** Founder handed the project a manual security review (cross-referenced with a ChatGPT-5 "ultra" review). The single P0 finding to address: `GET /api/users` returned `passwordHash` to any logged-in user, with no role-based authorization. A secondary ADR mismatch (ADR-0005 says "DB sessions" but the code uses JWT) was also surfaced. Founder directive 2026-07-13: "do whatever you think is best, no rush, don't break engineering principles."
+**Goal:** Founder handed the project a manual security review (cross-referenced with a an external model-assisted "ultra" review). The single P0 finding to address: `GET /api/users` returned `passwordHash` to any logged-in user, with no role-based authorization. A secondary ADR mismatch (ADR-0005 says "DB sessions" but the code uses JWT) was also surfaced. Founder directive 2026-07-13: "do whatever you think is best, no rush, don't break engineering principles."
 
 **Done:**
 - Wrote the spec first: `evidence/M4-security/M4-0-authz-data-leak.md` (DoR per §39, spec per §40, risk matrix per §42, roll-back per §30/§55, approval per §41).

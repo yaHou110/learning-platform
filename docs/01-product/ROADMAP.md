@@ -7,7 +7,7 @@
 
 ## Time horizons
 
-- **Now (0–3 months)**: documentation OS + first deployable skeleton.
+- **Now (0–3 months)**: documentation system + first deployable skeleton.
 - **Next (3–9 months)**: MVP — minimum usable product for the first tenant.
 - **Later (9–18 months)**: multi-tenant beta + first 3 tenants.
 - **Future (18+ months)**: plugin ecosystem + advanced features.
@@ -16,11 +16,11 @@
 
 ## Milestones
 
-### M0 — AI Project OS v1.0 ✅ (shipped: 2026-07-10)
+### M0 — Engineering Protocol v1.0 ✅ (shipped: 2026-07-10)
 
-- ایجاد ساختار مستندات AI-native
+- ایجاد ساختار مستندات portable
 - اتصال بین DEVELOPMENT_GUIDE.md و سایر فایل‌ها
-- تصمیمات binding: no-WordPress, AI-native docs
+- تصمیمات binding: no-WordPress, portable docs
 
 ### M1 — Stack Lock + Repo Bootstrap (Now → ~2026-08)
 
@@ -34,7 +34,7 @@
 - [ ] CI pipeline (lint, test, build) — basic
 - [ ] Hello world در production deploy
 
-**Definition of done:** یک صفحه "Hello, Hawza" روی subdomain آزمایشی، با README درست.
+**Definition of done:** یک صفحه "Hello, seminary" روی subdomain آزمایشی، با README درست.
 
 ### M2 — Multi-tenant + Auth MVP (~2026-09 → 2026-10)
 

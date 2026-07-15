@@ -2,7 +2,7 @@
 
 ## What we did
 
-Implemented **executable governance CI** for the Hawza Family Learning Platform. The GitHub Actions workflow is the canonical source of truth for "is this PR mergeable" — it runs the four quality gates (`pnpm verify`: install → lint → typecheck → test → build) **and** validates governance rules (PR body sections, ADR index integrity, ADR-0001 WordPress ban, CHANGELOG requirement).
+Implemented **executable governance CI** for the Learning Platform. The GitHub Actions workflow is the canonical source of truth for "is this PR mergeable" — it runs the four quality gates (`pnpm verify`: install → lint → typecheck → test → build) **and** validates governance rules (PR body sections, ADR index integrity, ADR-0001 WordPress ban, CHANGELOG requirement).
 
 ## What was added
 
@@ -35,21 +35,21 @@ Node script that enforces:
 - **PR template** — required sections must be present and non-empty on `pull_request` events.
 
 ### 5. `docs/03-development/GOVERNANCE_CHECKLIST.md`
-Session-level Phase A / B / C checklist that every AI agent (or human) must walk through. Mirrors `templates/IMPLEMENTATION_PLAN.md` and `templates/DEFINITION_OF_DONE.md`.
+Session-level Phase A / B / C checklist that every contributor must walk through. Mirrors `templates/IMPLEMENTATION_PLAN.md` and `templates/DEFINITION_OF_DONE.md`.
 
 ### 6. Agent sync
-- `AGENTS.md`, `CLAUDE.md`, `.github/copilot-instructions.md` — synchronized via `pnpm sync:agents`.
-- `.cursor/rules/agent-router.mdc` — Cursor-specific router pointing at `AGENTS.md`.
-- Single source of truth is `AGENTS.md`; the others are derived.
+- `DEVELOPMENT_GUIDE.md` — single entry point.
+- `DEVELOPMENT_GUIDE.md` is the single entry point.
+- `DEVELOPMENT_GUIDE.md` is the single source of truth and entry point.
 
 ### 7. Root scripts
 - `pnpm governance:validate` — full validation (needs PR env).
 - `pnpm governance:validate:local` — local dry-run (sets `SKIP_PR_BODY=1`).
-- `pnpm sync:agents` — propagates `AGENTS.md` to the agent entry points.
+- No multi-file sync; `DEVELOPMENT_GUIDE.md` is the only entry point.
 
 ## Why executable (not just docs)?
 
-The Engineering Protocol (ADR-0012) and Engineering OS v2 (ADR-0013) were powerful on paper but **not enforceable** until M3. With M3 landed:
+The Engineering Protocol (ADR-0012) and Engineering Protocol v2 (ADR-0013) were powerful on paper but **not enforceable** until M3. With M3 landed:
 - A PR cannot be merged if any quality gate fails.
 - A PR cannot be merged if it lacks a Risk / DoD / ADR / Rollback / Evidence section.
 - A PR cannot introduce a WordPress dependency (per ADR-0001) or a new ADR without the required sections.

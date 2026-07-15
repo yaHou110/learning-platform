@@ -1,7 +1,7 @@
 # ENGINEERING_PROTOCOL.md
 
-> **Engineering Operating System (EOS)** — binding governance for all architectural, implementation,
-> refactoring, and deployment work. Applies to humans and AI agents equally.
+> **Engineering Protocol** — binding governance for all architectural, implementation,
+> refactoring, and deployment work. Applies to all contributors equally.
 >
 > **Status:** Accepted (ADR-0012, extended by ADR-0013)
 > **Version:** 2.0 — 60 rules in 10 thematic chapters
@@ -13,7 +13,7 @@
 
 - Read after `DEVELOPMENT_GUIDE.md` when the task touches code, architecture, infrastructure, or deployment.
 - For sprint work, also read the active sprint plan under `docs/06-sprints/`.
-- Cursor enforces a condensed subset via `.cursor/rules/engineering-protocol.mdc`.
+- A condensed subset lives at `docs/03-development/ENGINEERING_PROTOCOL.md`.
 - Quality gate commands: [`QUALITY_GATES.md`](./QUALITY_GATES.md)
 - Risk levels: [`RISK_CLASSIFICATION.md`](./RISK_CLASSIFICATION.md)
 
@@ -38,7 +38,7 @@ When rules overlap thematically, each numbered rule remains authoritative.
 | 10 | [Contracts, Rollback & Release Engineering](#chapter-10-contracts-rollback--release-engineering) | §25, §26, §30, §55, §14, §31, §32, §52 |
 | 11 | [Root Cause, Assumptions & Evidence](#chapter-11-root-cause-assumptions--evidence) | §33, §35, §49, §50, §34, §36, §56 |
 | 12 | [Documentation & Decisions](#chapter-12-documentation--decisions) | §9, §13, §15 |
-| 13 | [AI Agent Governance](#chapter-13-ai-agent-governance) | §18, §38, §58 |
+| 13 | [Contributor Governance](#chapter-13-contributor-governance) | §18, §38, §58 |
 
 ---
 
@@ -669,7 +669,7 @@ Evidence should be collected in the following priority:
 4. Logs
 5. Manual testing
 
-Manual verification alone is insufficient when automation is possible. Restates §36 for EOS v2 emphasis.
+Manual verification alone is insufficient when automation is possible. Restates §36 for v2 emphasis.
 
 ---
 
@@ -693,17 +693,17 @@ If confidence drops **below 90%**, **stop** and seek clarification. Never procee
 
 ---
 
-## Chapter 13: AI Agent Governance
+## Chapter 13: Contributor Governance
 
 ### §18. Professional AI usage
 
-AI agents and contributors must **not** introduce AI-generated signatures, filler comments, distinctive naming styles, invented APIs/config/files, or auto-generated commit messages.
+Contributors must **not** introduce automated signatures, filler comments, distinctive naming styles, invented APIs/config/files, or auto-generated commit messages.
 
 Write to senior-engineer standard. When uncertain: read, search, ask.
 
-### §38. AI agent constraints
+### §38. contributor constraints
 
-AI agents must **not**:
+Contributors must **not**:
 
 - Invent APIs, configuration, files, architecture, framework capabilities, dependencies, or conventions
 - Skip the read order in **§1**
@@ -712,9 +712,9 @@ AI agents must **not**:
 
 When uncertain: **read → search → ask**.
 
-### §58. AI agent constraints
+### §58. contributor constraints
 
-The AI assistant must **not**:
+Contributors must **not**:
 
 - Invent APIs, configuration, architecture, dependencies, framework capabilities, project conventions, or undocumented behavior
 

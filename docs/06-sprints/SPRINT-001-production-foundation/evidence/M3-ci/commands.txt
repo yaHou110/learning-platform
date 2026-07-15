@@ -10,7 +10,7 @@ cmd /c "pnpm verify"
 cmd /c "pnpm governance:validate:local"
 
 # 3. Verify agent entry-points are in sync
-cmd /c "pnpm sync:agents"
+echo no sync step (single entry point: DEVELOPMENT_GUIDE.md)
 
 # 4. (First-time only) View the workflow file to confirm
 cat .github/workflows/governance.yml

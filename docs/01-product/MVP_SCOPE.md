@@ -7,7 +7,7 @@
 
 ## Problem
 
-Hawza (Islamic seminary) families have no unified, native tool for structured learning. Resources are scattered (booklets, audio, live classes, books) with no shared view; there is no clear per-level learning path; no tool tracks a student's progress across years; and reliance on external, non-native tools (YouTube, WordPress, Moodle) either misfits the audience or removes data ownership. See `PRODUCT_BIBLE.md §1–3` for the full narrative.
+Islamic seminary families have no unified, native tool for structured learning. Resources are scattered (booklets, audio, live classes, books) with no shared view; there is no clear per-level learning path; no tool tracks a student's progress across years; and reliance on external, non-native tools (YouTube, WordPress, Moodle) either misfits the audience or removes data ownership. See `PRODUCT_BIBLE.md §1–3` for the full narrative.
 
 ## Target users
 
@@ -23,14 +23,14 @@ Detailed goals, pains, and journeys: [`PERSONAS.md`](./PERSONAS.md).
 
 ## Product goals
 
-- **Native** — built for Hawza language, culture, and pedagogy.
+- **Native** — built for seminary communities language, culture, and pedagogy.
 - **Durable** — maintainable and usable 10 years out.
 - **Owned by us** — no dependency on a third-party platform.
 - **Extensible** — each center can run its own customized instance.
 
 ## In scope (v1)
 
-- **Tenant (center) onboarding** — a new Hawza center becomes a usable tenant.
+- **Tenant (center) onboarding** — a new learning center becomes a usable tenant.
 - **Authentication** — simple email + password sign-in (SMS/OTP deferred).
 - **User & role management** — students, teachers, center admins, super admin; basic RBAC.
 - **Course & lesson management** — create, edit, publish, archive courses and their lessons.

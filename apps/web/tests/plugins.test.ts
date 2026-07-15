@@ -6,11 +6,11 @@ describe("plugin registry (apps/web)", () => {
     const reg = getPluginRegistry();
     const names = reg.list().map((p) => p.name).sort();
     expect(names).toEqual([
-      "@hawza/plugin-auth",
-      "@hawza/plugin-catalog",
-      "@hawza/plugin-credentials",
-      "@hawza/plugin-learning",
-      "@hawza/plugin-localization",
+      "@learning-platform/plugin-auth",
+      "@learning-platform/plugin-catalog",
+      "@learning-platform/plugin-credentials",
+      "@learning-platform/plugin-learning",
+      "@learning-platform/plugin-localization",
     ]);
   });
 

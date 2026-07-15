@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Executable governance validator (Engineering OS).
+ * Executable governance validator (Engineering Protocol).
  * Used locally and in .github/workflows/governance.yml
  *
  * Env:

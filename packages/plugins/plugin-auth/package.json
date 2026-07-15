@@ -1,5 +1,5 @@
 {
-  "name": "@hawza/plugin-auth",
+  "name": "@learning-platform/plugin-auth",
   "version": "0.1.0",
   "private": true,
   "type": "module",
@@ -15,7 +15,7 @@
     "build": "tsc -p tsconfig.build.json"
   },
   "dependencies": {
-    "@hawza/contracts": "workspace:*"
+    "@learning-platform/contracts": "workspace:*"
   },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^7.18.0",

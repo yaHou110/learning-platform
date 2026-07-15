@@ -29,7 +29,7 @@ export const env = {
   AUTH_SECRET: requireEnv("AUTH_SECRET", "dev-secret-change-in-production"),
   DATABASE_URL: requireEnv(
     "DATABASE_URL",
-    "postgres://hawza:hawza@localhost:5432/hawza"
+    "postgres://learning_platform:learning_platform@localhost:5432/learning_platform"
   ),
   AUTH_TRUST_HOST: process.env.AUTH_TRUST_HOST ?? "true",
   NEXTAUTH_URL: process.env.NEXTAUTH_URL ?? "http://localhost:3000",

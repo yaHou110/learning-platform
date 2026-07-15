@@ -26,12 +26,12 @@
 
 ## Supporting docs
 - [x] `docs/03-development/GOVERNANCE_CHECKLIST.md`
-- [x] `AGENTS.md` ↔ `CLAUDE.md` ↔ `.github/copilot-instructions.md` synced
+- [x] `DEVELOPMENT_GUIDE.md` ↔ `DEVELOPMENT_GUIDE.md` ↔ `DEVELOPMENT_GUIDE.md` synced
 
 ## Root scripts
 - [x] `pnpm governance:validate`
 - [x] `pnpm governance:validate:local`
-- [x] `pnpm sync:agents`
+- [x] no sync step (single entry point)
 
 ## Local validation
 - [x] `pnpm governance:validate:local` runs without error

@@ -2,7 +2,7 @@
  * Auth.js v5 helpers (Credentials provider + bcryptjs) used by `apps/web`.
  *
  * Uses `bcryptjs` (pure-JS) rather than native `bcrypt` so that the
- * Next.js server build can bundle `@hawza/core` without native-binary
+ * Next.js server build can bundle `@learning-platform/core` without native-binary
  * pain. The cost is ~250ms vs ~80ms per hash at cost 12, which is
  * acceptable for the login flow.
  *

@@ -1,8 +1,8 @@
 import { describe, expect, it } from "vitest";
 import { manifest } from "../index.js";
-import { PluginManifestSchema } from "@hawza/core/plugins";
+import { PluginManifestSchema } from "@learning-platform/core/plugins";
 
-describe("@hawza/plugin-localization manifest", () => {
+describe("@learning-platform/plugin-localization manifest", () => {
   it("validates", () => {
     expect(() => PluginManifestSchema.parse(manifest)).not.toThrow();
   });

@@ -6,7 +6,7 @@ body:
   - type: markdown
     attributes:
       value: |
-        Complete this form before implementation. Engineering OS requires Definition of Ready (§39).
+        Complete this form before implementation. Engineering Protocol requires Definition of Ready (§39).
         See [`GOVERNANCE_CHECKLIST.md`](../../docs/03-development/GOVERNANCE_CHECKLIST.md).
 
   - type: textarea

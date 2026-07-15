@@ -8,7 +8,7 @@
 
 ## Context
 
-We need a content + learning platform for Hawza families.
+We need a content + learning platform for seminary families.
 The path of least resistance historically has been WordPress + a LMS plugin (LearnDash, TutorLMS, LearnPress).
 
 WordPress was considered for the following reasons:
@@ -69,7 +69,7 @@ WordPress themes & plugins are often English-first. Farsi/RTL support in popular
 
 ### 7. Team velocity
 
-The team (founder + AI agents) is TypeScript-fluent. PHP/WordPress is a productivity tax.
+The team (founder + contributors) is TypeScript-fluent. PHP/WordPress is a productivity tax.
 
 ---
 
@@ -103,7 +103,7 @@ The team (founder + AI agents) is TypeScript-fluent. PHP/WordPress is a producti
 | Option | Verdict | Why |
 | --- | --- | --- |
 | **WordPress + LearnDash** | Rejected | All issues above. |
-| **Moodle** | Rejected | Outdated UX, not designed for Hawza, multi-tenant is a hack. |
+| **Moodle** | Rejected | Outdated UX, not designed for seminary communities, multi-tenant is a hack. |
 | **Headless WP + custom frontend** | Rejected | Still inherits WP plugin problems; doubles the stack. |
 | **Existing SaaS (Teachable, Thinkific)** | Rejected | Data ownership, no Farsi-first, no multi-tenant for centers. |
 | **Custom (chosen)** | Accepted | Best fit for vision, scope, and ownership. |
@@ -115,7 +115,7 @@ The team (founder + AI agents) is TypeScript-fluent. PHP/WordPress is a producti
 This decision should be revisited **only** if:
 
 - The custom stack proves unsustainable (M7+ evaluation).
-- A binding new requirement (e.g. "must integrate with the official Hawza website which is on WP") appears.
+- A binding new requirement (e.g. "must integrate with the official seminary website which is on WP") appears.
 - The team composition changes to be PHP-fluent.
 
 A new ADR is required to overturn this one.

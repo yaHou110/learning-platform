@@ -7,13 +7,13 @@ package consumed by it.
 
 Plugins are registered at module load time in `src/lib/plugins.ts`. Each
 plugin exports a typed `manifest`; we register all of them with
-`@hawza/core`'s `PluginRegistry`. There is no runtime loader.
+`@learning-platform/core`'s `PluginRegistry`. There is no runtime loader.
 
 ## Auth
 
 `src/auth.ts` builds the Auth.js v5 config. It uses the Drizzle adapter
 (pointing at the same Postgres) and a Credentials provider that delegates
-to `@hawza/core/auth/credentials.verifyPassword`.
+to `@learning-platform/core/auth/credentials.verifyPassword`.
 
 ## Local dev
 
@@ -33,4 +33,4 @@ to `@hawza/core/auth/credentials.verifyPassword`.
 4. Visit `http://localhost:3000`:
    - `/api/health` — DB health check
    - `/login` — login form
-   - default credentials: tenant `hawza-demo`, email `admin@hawza.local`, password `changeme`
+   - default credentials: tenant `demo`, email `admin@lp.local`, password `changeme`

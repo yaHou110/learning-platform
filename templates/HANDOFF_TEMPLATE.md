@@ -54,7 +54,7 @@ Did some stuff. Updated docs. Next: more stuff.
 ### ✅ Good
 
 ```markdown
-## Session 005 — 2026-07-10 — ChatGPT
+## Session 005 — 2026-07-10 — contributor
 
 **Goal:** Lock the technology stack (ADR-0003..0006).
 

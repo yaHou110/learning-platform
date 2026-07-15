@@ -19,7 +19,7 @@ let _pool: pg.Pool | null = null;
 function pool(): pg.Pool {
   if (_pool) return _pool;
   const connectionString =
-    process.env.DATABASE_URL ?? "postgres://hawza:hawza@localhost:5432/hawza";
+    process.env.DATABASE_URL ?? "postgres://learning_platform:learning_platform@localhost:5432/learning_platform";
   _pool = new Pool({ connectionString, max: 10 });
   return _pool;
 }

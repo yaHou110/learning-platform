@@ -4,8 +4,8 @@ import path from "path";
 export default defineConfig({
   resolve: {
     alias: {
-      "@hawza/core": path.resolve(__dirname, "../../core/src"),
-      "@hawza/contracts": path.resolve(__dirname, "../../contracts/src"),
+      "@learning-platform/core": path.resolve(__dirname, "../../core/src"),
+      "@learning-platform/contracts": path.resolve(__dirname, "../../contracts/src"),
     },
   },
   test: {

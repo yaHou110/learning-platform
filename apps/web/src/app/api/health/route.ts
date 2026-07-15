@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { health } from "@hawza/core/api";
+import { health } from "@learning-platform/core/api";
 
 export const dynamic = "force-dynamic";
 

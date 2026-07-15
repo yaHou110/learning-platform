@@ -1,5 +1,5 @@
 /**
- * ESLint config for `@hawza/core`.
+ * ESLint config for `@learning-platform/core`.
  *
  * Note: this package is the ONLY one allowed to import `drizzle-orm` and `pg`.
  * The "no-restricted-imports" rule is intentionally absent here.

@@ -1,10 +1,10 @@
 /**
- * `@hawza/plugin-learning` — Learning & Progress bounded context.
+ * `@learning-platform/plugin-learning` — Learning & Progress bounded context.
  */
-import type { PluginManifest } from "@hawza/core/plugins";
+import type { PluginManifest } from "@learning-platform/core/plugins";
 
 export const manifest: PluginManifest = {
-  name: "@hawza/plugin-learning",
+  name: "@learning-platform/plugin-learning",
   version: "0.1.0",
   description: "Learning & Progress: enrollment, lesson progress, learning paths.",
   domainEvents: [

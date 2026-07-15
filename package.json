@@ -1,8 +1,8 @@
 {
-  "name": "hawza-learning-platform",
+  "name": "learning-platform",
   "version": "1.1.0",
   "private": true,
-  "description": "Hawza Family Learning Platform — AI-native, self-hosted, multi-tenant LMS for Hawza (Islamic seminary) families.",
+  "description": "Learning Platform — portable, self-hosted, multi-tenant LMS for Islamic seminary families.",
   "packageManager": "pnpm@9.15.9",
   "engines": {
     "node": ">=20.0.0",
@@ -18,10 +18,9 @@
     "verify": "pnpm lint && pnpm typecheck && pnpm test && pnpm build",
     "governance:validate": "node scripts/governance/validate.mjs",
     "governance:validate:local": "node scripts/governance/validate-local.mjs",
-    "sync:agents": "node scripts/sync-agents.mjs",
-    "db:generate": "pnpm --filter @hawza/core db:generate",
-    "db:migrate": "pnpm --filter @hawza/core db:migrate",
-    "db:seed:dev": "pnpm --filter @hawza/core db:seed:dev",
+    "db:generate": "pnpm --filter @learning-platform/core db:generate",
+    "db:migrate": "pnpm --filter @learning-platform/core db:migrate",
+    "db:seed:dev": "pnpm --filter @learning-platform/core db:seed:dev",
     "format": "prettier --write \"**/*.{ts,tsx,md,json,yaml,yml}\" --ignore-path .gitignore"
   },
   "devDependencies": {

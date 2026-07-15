@@ -16,7 +16,7 @@
 
 | Phase | Status | Notes |
 | --- | --- | --- |
-| 0. Research & architecture | ✅ done | AI-native docs decision made. |
+| 0. Research & architecture | ✅ done | portable docs decision made. |
 | 1. Repository skeleton | ✅ done | This file, `DEVELOPMENT_GUIDE.md`, README, etc. |
 | 2. Product documentation | ✅ done (skeleton) | Bible, requirements, features, personas, roadmap. |
 | 3. Architecture documentation | ✅ done (skeleton) | System arch, data model, plugin & permission matrices. |
@@ -34,17 +34,17 @@
 | Decision | File | Status |
 | --- | --- | --- |
 | No WordPress, ever | `ADR-0001` | ✅ binding |
-| AI-native, agent-portable docs | `ADR-0002` | ✅ binding |
+| portable docs | `ADR-0002` | ✅ binding |
 | Repo root language for code/IDs: English | `DEVELOPMENT_GUIDE.md` | ✅ binding |
 | Repo narrative language for product: Farsi (Persian) | `DEVELOPMENT_GUIDE.md` | ✅ binding |
-| Single-product repo (LPC + Hawza instance in one repo) | `PRODUCT_BIBLE.md` | ✅ binding |
+| Single-product repo (LPC + deployment in one repo) | `PRODUCT_BIBLE.md` | ✅ binding |
 | Append-only history (CHANGELOG, handoffs, ADRs) | `DEVELOPMENT_GUIDE.md` | ✅ binding |
 | Next.js 15 (App Router) + Node 20 LTS + TS strict | `ADR-0003` | ✅ binding |
 | PostgreSQL 16 + Drizzle ORM (no vector DB v1) | `ADR-0004` | ✅ binding |
 | Auth.js v5 Credentials + bcrypt + server sessions | `ADR-0005` | ✅ binding |
 | pnpm monorepo + compile-time typed plugin manifest | `ADR-0006` | ✅ binding |
 | **Mandatory engineering protocol** (quality gates, DoD, agent constraints) | `ADR-0012` | ✅ binding |
-| **Engineering OS v2** (DoR, spec-first, human approval, risk matrix, §39–§60) | `ADR-0013` | ✅ binding |
+| **Engineering Protocol v2** (DoR, spec-first, human approval, risk matrix, §39–§60) | `ADR-0013` | ✅ binding |
 | **No new business features until M7 sign-off** | SPRINT-001 (founder directive 2026-07-11) | 🚧 active gate |
 
 ---

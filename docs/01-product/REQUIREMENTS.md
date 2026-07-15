@@ -82,7 +82,7 @@
 | FR-050 | MUST | هر CenterAdmin فقط به tenant خودش دسترسی دارد |
 | FR-051 | MUST | SuperAdmin به همه tenantها دسترسی دارد |
 | FR-052 | MUST | داده‌های هر tenant کاملاً جدا (data isolation) |
-| FR-053 | SHOULD | subdomain اختصاصی برای هر tenant (مثلاً `tehran.hawza.app`) |
+| FR-053 | SHOULD | subdomain اختصاصی برای هر tenant (مثلاً `tehran.lp.app`) |
 | FR-054 | COULD | theme اختصاصی برای هر tenant (لوگو، رنگ) |
 
 ### Plugin system

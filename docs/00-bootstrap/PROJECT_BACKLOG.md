@@ -22,7 +22,7 @@
 
 ## Context
 
-Sessions 013–014 documented and merged the dependency-upgrade finding (28 → 2 advisories, M4.1). On 2026-07-13, the founder handed the project a manual security review cross-referenced with an external ChatGPT 5 review. The single P0 finding to address: `GET /api/users` returned `passwordHash` to any logged-in user and had no role-based authorization. Secondary finding: ADR-0005 said "DB sessions" but the code uses JWT (the Auth.js Credentials provider only supports JWT).
+Sessions 013–014 documented and merged the dependency-upgrade finding (28 → 2 advisories, M4.1). On 2026-07-13, the founder handed the project a manual security review cross-referenced with an an external model-assisted review. The single P0 finding to address: `GET /api/users` returned `passwordHash` to any logged-in user and had no role-based authorization. Secondary finding: ADR-0005 said "DB sessions" but the code uses JWT (the Auth.js Credentials provider only supports JWT).
 
 **PostgreSQL / Docker status (verified 2026-07-13, 03:06 PT):** Docker Desktop is running; WSL2 distro `docker-desktop` is Running v2. The `docker compose up -d` step is unblocked; the M2 smoke test can run as soon as a `DATABASE_URL` is in `apps/web/.env`.
 
@@ -53,7 +53,7 @@ Sessions 013–014 documented and merged the dependency-upgrade finding (28 → 
 **In priority order:**
 
 1. **M4.0 review (founder, this turn):** branch `fix/m4-authz-data-leak` is the only outstanding PR. The PR body can use the spec verbatim (`evidence/M4-security/M4-0-authz-data-leak.md` §6 Risk + §7 Evidence). Founder-level approval was given in chat on 2026-07-13 ("do whatever you think is best"); per-change sign-off needed before merge per ADR-0013 §41.
-2. **M2 smoke test (any time the founder asks):** Docker is now ready. Set `AUTH_SECRET` + `DATABASE_URL` in `apps/web/.env`, then `docker compose up -d`, `pnpm --filter @hawza/core db:migrate`, `pnpm --filter @hawza/core db:seed:dev`, `pnpm --filter web dev`, and walk through login → `/api/users` (now 403 as student) → `/api/users` (now 200 as center_admin) → sign-out.
+2. **M2 smoke test (any time the founder asks):** Docker is now ready. Set `AUTH_SECRET` + `DATABASE_URL` in `apps/web/.env`, then `docker compose up -d`, `pnpm --filter @learning-platform/core db:migrate`, `pnpm --filter @learning-platform/core db:seed:dev`, `pnpm --filter web dev`, and walk through login → `/api/users` (now 403 as student) → `/api/users` (now 200 as center_admin) → sign-out.
 3. **M4.2 (next sprint work):** CSP header (no DB needed), rate-limit middleware (in-memory token bucket, no DB), input-validation Zod schemas on `/api/users` + `/api/auth/*`, `security.txt` at `/.well-known/security.txt`. No DB required; can run in parallel with M2.
 4. **Follow-up PR for residual advisories:** `drizzle-orm<0.45.2` (HIGH) + transitive `postcss<8.5.10` (MOD). NOT in M4.0 per founder directive ("no mixed changes"). Separate branch when the founder is ready.
 

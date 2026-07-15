@@ -4,12 +4,12 @@
  * Add a new plugin by importing its manifest and registering it here.
  * There is no filesystem walk, no `require()`, no dynamic loader.
  */
-import { createPluginRegistry, type PluginRegistry } from "@hawza/core/plugins";
-import { manifest as pluginAuth } from "@hawza/plugin-auth";
-import { manifest as pluginCatalog } from "@hawza/plugin-catalog";
-import { manifest as pluginLearning } from "@hawza/plugin-learning";
-import { manifest as pluginCredentials } from "@hawza/plugin-credentials";
-import { manifest as pluginLocalization } from "@hawza/plugin-localization";
+import { createPluginRegistry, type PluginRegistry } from "@learning-platform/core/plugins";
+import { manifest as pluginAuth } from "@learning-platform/plugin-auth";
+import { manifest as pluginCatalog } from "@learning-platform/plugin-catalog";
+import { manifest as pluginLearning } from "@learning-platform/plugin-learning";
+import { manifest as pluginCredentials } from "@learning-platform/plugin-credentials";
+import { manifest as pluginLocalization } from "@learning-platform/plugin-localization";
 
 let _registry: PluginRegistry | null = null;
 

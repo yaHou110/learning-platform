@@ -1,7 +1,7 @@
 /**
  * Apply pending Drizzle migrations to the database.
  *
- * Usage: `pnpm --filter @hawza/core db:migrate`
+ * Usage: `pnpm --filter @learning-platform/core db:migrate`
  *
  * This script is idempotent. It uses Drizzle's `migrate` helper which
  * tracks applied migrations in the `__drizzle_migrations` table.
@@ -19,7 +19,7 @@ loadEnvOnce();
 
 async function main(): Promise<void> {
   const connectionString =
-    process.env.DATABASE_URL ?? "postgres://hawza:hawza@localhost:5432/hawza";
+    process.env.DATABASE_URL ?? "postgres://learning_platform:learning_platform@localhost:5432/learning_platform";
   const pool = new pg.Pool({ connectionString });
   const db = drizzle(pool);
   console.log("Applying migrations…");

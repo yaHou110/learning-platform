@@ -1,14 +1,14 @@
 /**
- * `@hawza/plugin-localization` — Localization (cross-cutting).
+ * `@learning-platform/plugin-localization` — Localization (cross-cutting).
  *
  * Stateless: Persian-first formatting, Shamsi (Jalali) dates, RTL helpers,
  * translation lookup. Owns no tenant data, no DB tables, no API routes of
  * its own — but it does declare the helper surface the other plugins use.
  */
-import type { PluginManifest } from "@hawza/core/plugins";
+import type { PluginManifest } from "@learning-platform/core/plugins";
 
 export const manifest: PluginManifest = {
-  name: "@hawza/plugin-localization",
+  name: "@learning-platform/plugin-localization",
   version: "0.1.0",
   description:
     "Localization (cross-cutting): Persian-first formatting, Shamsi dates, RTL helpers, translation lookup.",

@@ -1,11 +1,11 @@
-# @hawza/core
+# @learning-platform/core
 
 The product. Owns the database, the auth wiring, the plugin registry, and the
 public API surface that plugins and the web app call into.
 
 ## Rule
 
-**`@hawza/core` is the only package in the monorepo that may import
+**`@learning-platform/core` is the only package in the monorepo that may import
 `drizzle-orm` or `pg`.** Every other package reaches the database only through
 the typed functions exported from `./api` (see ADR-0006).
 
@@ -29,13 +29,13 @@ scripts/
 
 ## Scripts
 
-- `pnpm --filter @hawza/core typecheck`
-- `pnpm --filter @hawza/core test`
-- `pnpm --filter @hawza/core db:generate`  — generate SQL from schema changes
-- `pnpm --filter @hawza/core db:migrate`   — apply pending migrations
-- `pnpm --filter @hawza/core db:seed:dev` — seed a dev tenant + super admin
+- `pnpm --filter @learning-platform/core typecheck`
+- `pnpm --filter @learning-platform/core test`
+- `pnpm --filter @learning-platform/core db:generate`  — generate SQL from schema changes
+- `pnpm --filter @learning-platform/core db:migrate`   — apply pending migrations
+- `pnpm --filter @learning-platform/core db:seed:dev` — seed a dev tenant + super admin
 
 ## Environment
 
-Set `DATABASE_URL` (defaults to `postgres://hawza:hawza@localhost:5432/hawza`
+Set `DATABASE_URL` (defaults to `postgres://learning_platform:learning_platform@localhost:5432/learning_platform`
 which matches the root `docker-compose.yml`).

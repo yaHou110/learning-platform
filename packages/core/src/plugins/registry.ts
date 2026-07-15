@@ -6,7 +6,7 @@
  *  - `apps/web` imports each manifest and registers it with `createPluginRegistry()`.
  *  - There is no runtime loader, no marketplace, no third-party plugins in v1.
  *
- * Plugins may NOT declare DDL migrations in v1. DDL is owned by `@hawza/core`.
+ * Plugins may NOT declare DDL migrations in v1. DDL is owned by `@learning-platform/core`.
  * Plugins contribute only `jsonb` Zod schemas (via `metadataSchemas`) and event
  * payload types.
  */

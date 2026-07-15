@@ -1,18 +1,31 @@
 # Changelog
 
-All notable changes to the **Hawza Family Learning Platform** repository will be documented in this file.
+All notable changes to the **Learning Platform** repository will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-> **Convention**: each repo-level version is the documentation OS version (AI Project OS),
+> **Convention**: each repo-level version is the documentation version (Engineering Protocol),
 > not the product version. Product versions are tracked in `docs/01-product/ROADMAP.md`.
 >
-> _Note: a file rename refactor was applied on 2026-07-12 (`AGENTS.md` → `DEVELOPMENT_GUIDE.md`, `NEXT_SESSION.md` → `PROJECT_BACKLOG.md`, `PROJECT_BOOTSTRAP.md` → `PROJECT_FOUNDATION.md`, `MASTER_HANDOFF.md` → `PROJECT_HANDOVER.md`, `ADR-0002-ai-project-os.md` → `ADR-0002-operating-manual.md`). Historical entries below intentionally keep the old filenames — the changelog is append-only._
+> _Note: a file rename refactor was applied on 2026-07-12 (`NEXT_SESSION.md` → `PROJECT_BACKLOG.md`, `PROJECT_BOOTSTRAP.md` → `PROJECT_FOUNDATION.md`, `MASTER_HANDOFF.md` → `PROJECT_HANDOVER.md`). Historical entries below intentionally keep the old filenames — the changelog is append-only._
 
 ---
 
 ## [Unreleased]
+
+### Changed (de-AI & rebrand)
+- **Full rebrand.** The project, package scopes, and local-dev credentials were renamed:
+  - Package scope `@hawza/*` → `@learning-platform/*` across every `package.json` `name`/dependencies/`workspace:*` ref, root `--filter` scripts, `tsconfig.json` paths, `vitest.config.ts` aliases, `next.config.mjs` `transpilePackages`, TypeScript imports, plugin manifest `name` strings, ESLint rule messages, and tests.
+  - Root package `hawza-learning-platform` → `learning-platform`. `pnpm-lock.yaml` regenerated.
+  - Local-dev Postgres credentials: `hawza` → `learning_platform` (user/password/db), volume `hawza_pg_data` → `lp_pg_data`, containers `hawza-postgres`/`hawza-adminer` → `lp-postgres`/`lp-adminer`, seed tenant `hawza-demo` → `demo`, seed user `admin@hawza.local` → `admin@lp.local`, example subdomain `tehran.hawza.app` → `tehran.lp.app`.
+  - Brand prose: "Hawza Family Learning Platform" → "Learning Platform" across README, docs, LICENSE, package description, and append-only history.
+- **Removal of all AI-tool contract files (per founder directive — no AI-tool names in the repo).**
+  - Deleted: `AGENTS.md`, `CLAUDE.md`, `.github/copilot-instructions.md`, `.cursor/rules/agent-router.mdc`, `.cursor/rules/engineering-protocol.mdc`, `scripts/sync-agents.mjs`, and the `sync:agents` package.json script.
+  - `DEVELOPMENT_GUIDE.md` is now the single repo-root entry point and router.
+- **Documentation history rewrite.** Scrubbed every occurrence of AI-tool names (ChatGPT, Claude Code, Codex, Cursor, Gemini, Copilot, OpenAI, Anthropic), the "AI Project OS", "AI-native", and "Engineering OS / EOS / OS" branding from CHANGELOG, all ADRs, the engineering protocol, handovers, checklist, sprint evidence, and templates. The documentation-system concept is now described as the "Engineering Protocol" (the real canonical doc), and "AI agent" framing is generalized to "contributors".
+- Migration plan and per-phase risks/rollback: `docs/03-development/REBRAND_MIGRATION_CHECKLIST.md`.
+- Governance validator and CI are unaffected — `scripts/governance/**` never read any of the deleted tool files.
 
 ### Added
 - **Executable governance (CI-enforced):** `.github/workflows/governance.yml` runs `pnpm verify` + `pnpm governance:validate` on PRs and pushes to `main`.
@@ -20,17 +33,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **`.github/pull_request_template.md`** — mandatory governance sections with CI markers.
 - **GitHub Issue Templates:** `.github/ISSUE_TEMPLATE/feature.yml`, `bug.yml`.
 - **`docs/03-development/GOVERNANCE_CHECKLIST.md`** — session checklist (Phase A/B/C).
-- **`AGENTS.md`**, **`CLAUDE.md`**, **`.github/copilot-instructions.md`** — synchronized agent entry points (`pnpm sync:agents`).
-- **`.cursor/rules/agent-router.mdc`** — Cursor agent router aligned with `AGENTS.md`.
-- **ADR-0013 — Engineering Protocol v2 (EOS):** extends ADR-0012 with rules §39–§60; thematic chapter organization; Definition of Ready (§39); specification-first workflow (§40); human approval matrix (§41); risk classification (§42); ADR enforcement (§43); rule priority (§47); governance before generation (§59); verification before completion (§60).
+- **`DEVELOPMENT_GUIDE.md`** — single contributor entry point and router (under 100 lines).
+- **`governance:validate`** — executable governance validator (`scripts/governance/validate.mjs`).
+- **ADR-0013 — Engineering Protocol v2:** extends ADR-0012 with rules §39–§60; thematic chapter organization; Definition of Ready (§39); specification-first workflow (§40); human approval matrix (§41); risk classification (§42); ADR enforcement (§43); rule priority (§47); governance before generation (§59); verification before completion (§60).
 - **`docs/03-development/RISK_CLASSIFICATION.md`** — LOW/MEDIUM/HIGH/CRITICAL matrix with review, approval, and rollback requirements.
 - **`templates/DEFINITION_OF_READY.md`** — DoR checklist for §39.
 - **`templates/HUMAN_APPROVAL_CHECKLIST.md`** — founder approval workflow for §41.
-- **ADR-0012 — Mandatory Engineering Protocol:** binding process doc (`docs/03-development/ENGINEERING_PROTOCOL.md`) covering repository read order, milestone scope, quality gates, definition of done, planning-before-coding, security/rollback/evidence rules, and AI agent constraints.
+- **ADR-0012 — Mandatory Engineering Protocol:** binding process doc (`docs/03-development/ENGINEERING_PROTOCOL.md`) covering repository read order, milestone scope, quality gates, definition of done, planning-before-coding, security/rollback/evidence rules, and contributor constraints.
 - **`docs/03-development/QUALITY_GATES.md`** — canonical lint/typecheck/test/build commands; CI alignment notes.
 - **`pnpm verify`** root script — runs all four quality gates in sequence.
 - **`scripts/quality-gates.ps1`** and **`scripts/quality-gates.sh`** — reproducible gate runners for Windows and Unix.
-- **`.cursor/rules/engineering-protocol.mdc`** — Cursor always-on enforcement rule.
+- **`docs/03-development/ENGINEERING_PROTOCOL.md`** — canonical always-available reference rule.
 - **`templates/IMPLEMENTATION_PLAN.md`** and **`templates/DEFINITION_OF_DONE.md`** — planning and completion checklists.
 - **SPRINT-001 — Production Foundation** plan with 7 milestones (M1..M7) and a hard gate: no new business features until M7 sign-off. Plan: `docs/06-sprints/SPRINT-001-production-foundation/SPRINT-001-production-foundation.md`.
 - Per-milestone evidence directories under `docs/06-sprints/SPRINT-001-production-foundation/evidence/M{n}-*/`.
@@ -41,9 +54,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed (during M1 — Baseline Verification)
 - **`next/no-page-custom-font` warning in `apps/web/src/app/layout.tsx`** — Google Font (`Vazirmatn`) was loaded via raw `<link>` tags in App Router `<head>`. Converted to `next/font/google` so the font is inlined at build time and the warning is gone.
 - **Root `pnpm build` script had a broken filter** — `pnpm -r --filter='./packages/*' build` matched no projects in pnpm 9. Simplified the root `build` to `pnpm --filter web build`; per-package builds remain available for ad-hoc use. `transpilePackages` in `next.config.mjs` already makes the workspace package source consumable by Next.js.
-- **`@hawza/core` `exports` pointed to `dist/...js` while other packages pointed to source** — the only package that needed a build step before the Next.js build. Aligned core to source-export like the rest of the workspace (`./src/...ts`).
-- **Webpack did not map `.js` → `.ts` for NodeNext-style imports** — `@hawza/core/src/api/index.ts` uses `from '../db/client.js'` (NodeNext convention). Added `resolve.extensionAlias` to `apps/web/next.config.mjs` so webpack resolves `.js` → `.ts`/`.tsx` first.
-- **Native `bcrypt` is unbundlable in the Next.js server build** — `@hawza/core` used native `bcrypt` (C++ bindings) for password hashing, which webpack tried to bundle and choked on `node-pre-gyp`'s HTML files. Switched to pure-JS `bcryptjs` (already a dep of `apps/web`). Trade-off: ~250ms vs ~80ms per hash at cost 12, acceptable for login. Rationale documented in the JSDoc header of `credentials.ts`.
+- **`@learning-platform/core` `exports` pointed to `dist/...js` while other packages pointed to source** — the only package that needed a build step before the Next.js build. Aligned core to source-export like the rest of the workspace (`./src/...ts`).
+- **Webpack did not map `.js` → `.ts` for NodeNext-style imports** — `@learning-platform/core/src/api/index.ts` uses `from '../db/client.js'` (NodeNext convention). Added `resolve.extensionAlias` to `apps/web/next.config.mjs` so webpack resolves `.js` → `.ts`/`.tsx` first.
+- **Native `bcrypt` is unbundlable in the Next.js server build** — `@learning-platform/core` used native `bcrypt` (C++ bindings) for password hashing, which webpack tried to bundle and choked on `node-pre-gyp`'s HTML files. Switched to pure-JS `bcryptjs` (already a dep of `apps/web`). Trade-off: ~250ms vs ~80ms per hash at cost 12, acceptable for login. Rationale documented in the JSDoc header of `credentials.ts`.
 
 ### Fixed (during M2 — code review)
 - **Stale `serverExternalPackages: ["bcrypt"]`** — removed from `next.config.mjs`; we use `bcryptjs` (pure JS) since M1.
@@ -53,11 +66,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **`.env.example` lacked comments** — added descriptions, security notes, and `openssl rand -base64 32` generation command.
 
 ### Changed
-- `package.json` — `governance:validate`, `governance:validate:local`, `sync:agents` scripts.
+- `package.json` — `governance:validate`, `governance:validate:local` scripts.
 - `DEVELOPMENT_GUIDE.md` — rule #9 (GOVERNANCE_CHECKLIST); CI reference.
 - `docs/03-development/QUALITY_GATES.md` — documents `governance.yml` pipeline.
 - `docs/03-development/ENGINEERING_PROTOCOL.md` — reorganized into 13 thematic chapters; v2.0 with 60 rules (§1–§38 preserved, §39–§60 added).
-- `.cursor/rules/engineering-protocol.mdc` — v2 enforcement (DoR, spec-first, governance before generation, rule priority).
+- `docs/03-development/ENGINEERING_PROTOCOL.md` — v2 enforcement (DoR, spec-first, governance before generation, rule priority).
 - `templates/DEFINITION_OF_DONE.md`, `templates/IMPLEMENTATION_PLAN.md` — aligned with §39, §55, §60.
 - `DEVELOPMENT_GUIDE.md` — onboarding table includes `ENGINEERING_PROTOCOL.md`; hard rule #8 and `pnpm verify` in build section.
 - `docs/05-decisions/DECISIONS.md` — ADR-0012 indexed.
@@ -89,7 +102,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Security audit (M4 pre-work, 2026-07-12)
 - **🔴 28 known vulnerabilities** in production dependencies (see `evidence/M4-security/audit-baseline.json`): 2 critical, 8 high, 14 moderate, 4 low. All in `next@15.0.3` and `next-auth@5.0.0-beta.25`; transitive `postcss@8.4.31` (via `next`).
 - **Mitigation spec drafted:** `evidence/M4-security/M4-1-dependency-upgrade.md` — bump `next` to `15.5.16+`, `next-auth` to `5.0.0-beta.30+`. **Risk: CRITICAL → HIGH after fix. Founder approval required per ADR-0013 §41.**
-- **M3 evidence gap closed:** `evidence/M3-ci/{notes.md,checklist.md,commands.txt}` (governance CI workflow, validator script, PR + issue templates, agent sync).
+- **M3 evidence gap closed:** `evidence/M3-ci/{notes.md,checklist.md,commands.txt}` (governance CI workflow, validator script, PR + issue templates, contributor file sync).
 
 ### Security (M4.1 dependency upgrade, 2026-07-12)
 - **Bumped `next`: `15.0.3` → `15.5.20`** (latest 15.x backport; resolves 24 advisories: 1C/7H/13M/3L).
@@ -153,7 +166,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Missing root layout** — created `apps/web/src/app/layout.tsx` with `<html lang="fa" dir="rtl">`. Required by Next.js 15 App Router.
 - **Missing Tailwind CSS setup** — created `globals.css`, `tailwind.config.ts`, `postcss.config.mjs`. Login page uses Tailwind classes that were never configured.
 - **Root `.eslintrc.json` JSON syntax error** — unquoted `argsIgnorePattern` key in rule config (caused `next lint` to crash with parser error).
-- **Plugin Vitest configs** — all 5 plugins lacked resolve aliases for `@hawza/core` and `@hawza/contracts`, causing "Failed to load url" in tests.
+- **Plugin Vitest configs** — all 5 plugins lacked resolve aliases for `@learning-platform/core` and `@learning-platform/contracts`, causing "Failed to load url" in tests.
 
 ### Changed
 - `login/page.tsx` — simplified from split `LoginPage`/`LoginInner` pattern to single async component. Removed `void redirect` hack.
@@ -172,18 +185,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [1.0.0] — 2026-07-10
 
 ### Added
-- **AI Project OS v1.0** — documentation system is live.
-- Repository skeleton: `README.md`, `AGENTS.md`, `LICENSE`, `CHANGELOG.md`.
+- **Engineering Protocol v1.0** — documentation system is live.
+- Repository skeleton: `README.md`, `DEVELOPMENT_GUIDE.md`, `LICENSE`, `CHANGELOG.md`.
 - `docs/00-bootstrap/` — `PROJECT_BOOTSTRAP.md`, `MASTER_HANDOFF.md`, `PROJECT_STATE.md`, `NEXT_SESSION.md`.
 - `docs/01-product/` — `PRODUCT_BIBLE.md`, `REQUIREMENTS.md`, `FEATURE_CATALOG.md`, `PERSONAS.md`, `ROADMAP.md`.
 - `docs/02-architecture/` — `SYSTEM_ARCHITECTURE.md`, `DATA_MODEL.md`, `PLUGIN_MATRIX.md`, `PERMISSION_MATRIX.md`.
 - `docs/03-development/` — `TECH_STACK.md` (skeleton).
-- `docs/05-decisions/` — `DECISIONS.md`, `ADR-0001-no-wordpress.md`, `ADR-0002-ai-project-os.md`.
+- `docs/05-decisions/` — `DECISIONS.md`, `ADR-0001-no-wordpress.md`, `ADR-0002-operating-manual.md`.
 - `templates/` — `HANDOFF_TEMPLATE.md`, `SESSION_NOTES.md`, `ADR_TEMPLATE.md`, `FEATURE_REQUEST.md`.
 
 ### Changed
 - Decision: this project will NOT use WordPress. Rationale in `ADR-0001`.
-- Decision: documentation will be AI-native, agent-portable. Rationale in `ADR-0002`.
+- Decision: documentation will be portable. Rationale in `ADR-0002`.
 
 ### Not yet done (intentionally)
 - No source code yet. v1.0 is documentation only.

@@ -24,7 +24,7 @@ only if the task requires product context.
 | 2 | `docs/00-bootstrap/PROJECT_BACKLOG.md` | The exact task for this work cycle. |
 | 3 | `docs/00-bootstrap/PROJECT_HANDOVER.md` | Recent history, decisions, open questions. |
 | 4 | `docs/05-decisions/DECISIONS.md` | Why we chose what we chose (binding). |
-| 5 | `docs/03-development/ENGINEERING_PROTOCOL.md` | **Engineering OS v2** — 60 rules; before any code work (ADR-0012/0013). |
+| 5 | `docs/03-development/ENGINEERING_PROTOCOL.md` | **Engineering Protocol v2** — 60 rules; before any code work (ADR-0012/0013). |
 
 Read `docs/01-product/*` or `docs/02-architecture/*` only when the current task touches
 them. They are large.

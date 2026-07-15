@@ -1,6 +1,6 @@
 # GOVERNANCE_CHECKLIST.md
 
-> **Executable session checklist.** Complete for every implementation session (human or AI agent).
+> **Executable session checklist.** Complete for every implementation session (contributor).
 > CI enforces PR sections via `.github/workflows/governance.yml` + `pnpm governance:validate`.
 >
 > Last updated: 2026-07-12
@@ -128,16 +128,10 @@ pnpm governance:validate:local
 
 ---
 
-## Agent entry points (synchronized)
+## Contributor entry points
 
-| Tool | File |
-| --- | --- |
-| Universal | `AGENTS.md` (source) |
-| Claude Code | `CLAUDE.md` |
-| GitHub Copilot | `.github/copilot-instructions.md` |
-| Cursor | `.cursor/rules/agent-router.mdc` |
-
-Run `pnpm sync:agents` after editing `AGENTS.md`.
+The single entry point and router is `DEVELOPMENT_GUIDE.md` (under 100 lines, at repo root).
+All contributors — regardless of editor or workflow — start there. No multi-file sync step is required.
 
 ---
 

@@ -2,12 +2,12 @@
  * Idempotent dev seed.
  *
  * Creates:
- *   - one tenant (`slug=hawza-demo`, name="Hawza Demo Center")
- *   - one super_admin user (`email=admin@hawza.local`, password=`changeme`)
+ *   - one tenant (`slug=demo`, name="Learning Platform Demo")
+ *   - one super_admin user (`email=admin@lp.local`, password=`changeme`)
  *
  * Re-running is safe: `ON CONFLICT DO NOTHING`.
  *
- * Usage: `pnpm --filter @hawza/core db:seed:dev`
+ * Usage: `pnpm --filter @learning-platform/core db:seed:dev`
  *
  * Env loading: `loadEnvOnce()` reads `${repoRoot}/.env` when DATABASE_URL
  * is not already set (stdlib only, zero dependencies).
@@ -22,15 +22,15 @@ import { hashPassword } from "../src/auth/credentials.js";
 
 loadEnvOnce();
 
-const SEED_TENANT_SLUG = "hawza-demo";
-const SEED_TENANT_NAME = "Hawza Demo Center";
-const SEED_USER_EMAIL = "admin@hawza.local";
+const SEED_TENANT_SLUG = "demo";
+const SEED_TENANT_NAME = "Learning Platform Demo";
+const SEED_USER_EMAIL = "admin@lp.local";
 const SEED_USER_PASSWORD = "changeme";
 const SEED_USER_NAME = "Super Admin";
 
 async function main(): Promise<void> {
   const connectionString =
-    process.env.DATABASE_URL ?? "postgres://hawza:hawza@localhost:5432/hawza";
+    process.env.DATABASE_URL ?? "postgres://learning_platform:learning_platform@localhost:5432/learning_platform";
   const pool = new pg.Pool({ connectionString });
   const db = drizzle(pool, { schema: { tenants, users } });
 
