@@ -1,0 +1,41 @@
+# Local dev infrastructure.
+#
+# Brings up Postgres 16 and Adminer on a private network.
+# Run: `docker compose up -d`
+#
+# Connection string (matches apps/web/.env.example):
+#   postgres://learning_platform:learning_platform@localhost:5432/learning_platform
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: lp-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: learning_platform
+      POSTGRES_PASSWORD: learning_platform
+      POSTGRES_DB: learning_platform
+    ports:
+      - "5432:5432"
+    volumes:
+      - lp_pg_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U learning_platform -d learning_platform"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  adminer:
+    image: adminer:4.8.1
+    container_name: lp-adminer
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    ports:
+      - "8080:8080"
+    environment:
+      ADMINER_DEFAULT_SERVER: postgres
+
+volumes:
+  lp_pg_data:
+    name: lp_pg_data

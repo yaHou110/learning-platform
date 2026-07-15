@@ -1,0 +1,54 @@
+# M2 — Production Build Validation — Commands
+
+## Pre-flight
+```bash
+# Verify .next/BUILD_ID exists
+Test-Path "apps\web\.next\BUILD_ID"  # → True
+
+# Verify required-server-files.json exists
+Test-Path "apps\web\.next\required-server-files.json"  # → True
+
+# Check build directory contents
+Get-ChildItem "apps\web\.next" | Select-Object Name
+# → cache, diagnostics, server, static, types, app-build-manifest.json,
+#   app-path-routes-manifest.json, build-manifest.json, BUILD_ID, ...
+```
+
+## Quality gates (post code-review fixes)
+```bash
+pnpm -r typecheck  # → exit 0, all 8 packages clean
+pnpm -r lint       # → exit 0, zero warnings
+pnpm -r test       # → exit 0, 18 tests pass across 7 packages
+pnpm --filter web build  # → exit 0, 7 routes compiled, middleware 42.7 kB
+```
+
+## PostgreSQL status
+```bash
+netstat -an | Select-String ":5432"  # → no output (PostgreSQL not running)
+Get-Service -Name "postgresql*"      # → no output (PostgreSQL not installed)
+winget list PostgreSQL               # → "No installed package found"
+```
+
+## Docker status
+```bash
+cmd /c "docker compose ps"  # → 'docker' is not recognized (Docker not installed)
+```
+
+## Blocker
+PostgreSQL 16 is not installed on this machine, and installation requires admin
+privileges (winget/choco both fail with access denied). The `next start` smoke
+test cannot proceed without a running PostgreSQL instance.
+
+Commands attempted:
+- `winget install PostgreSQL.PostgreSQL.16` — timed out (interactive installer)
+- `choco install postgresql16` — "Access to the path ... is denied" (no admin)
+
+## Code review fixes applied (before smoke test)
+1. Removed stale `serverExternalPackages: ["bcrypt"]` (we use bcryptjs now)
+2. Added security headers via `next.config.mjs` `headers()` (X-Content-Type-Options, X-Frame-Options, X-XSS-Protection, Referrer-Policy, Permissions-Policy)
+3. Added `poweredByHeader: false` to next.config.mjs
+4. Created `apps/web/src/lib/env.ts` — centralized env validation with production throw + dev warning
+5. Updated `auth.ts` and `middleware.ts` to use shared `env` helper
+6. Fixed health route: `db` field now returns boolean (was string "ok"/"fail")
+7. Added `dir="rtl"` to login page `<main>` for consistency with dashboard
+8. Enhanced `.env.example` with comments and stronger AUTH_SECRET placeholder

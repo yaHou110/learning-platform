@@ -1,0 +1,6 @@
+pnpm install --frozen-lockfile
+pnpm install                              # only after deps change in M1
+pnpm -r lint
+pnpm -r typecheck
+pnpm -r test
+pnpm build

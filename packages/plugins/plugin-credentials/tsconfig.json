@@ -1,0 +1,13 @@
+{
+  "extends": "../../../tsconfig.base.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@learning-platform/core/*": ["../../core/src/*"],
+      "@learning-platform/contracts": ["../../contracts/src/index.ts"],
+      "@learning-platform/contracts/*": ["../../contracts/src/*"]
+    }
+  },
+  "include": ["src/**/*", "../../core/src/**/*.ts", "../../contracts/src/**/*.ts"],
+  "exclude": ["node_modules", "dist"]
+}

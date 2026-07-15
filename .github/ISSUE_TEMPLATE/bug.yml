@@ -1,0 +1,78 @@
+name: Bug report
+description: Report incorrect behavior or a regression
+title: "[Bug]: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use structured debugging (§11). Do not implement fixes without verification.
+        See [`GOVERNANCE_CHECKLIST.md`](../../docs/03-development/GOVERNANCE_CHECKLIST.md).
+
+  - type: textarea
+    id: summary
+    attributes:
+      label: Summary
+      description: What is broken?
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. …
+        2. …
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior
+    validations:
+      required: true
+
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      placeholder: OS, Node version, pnpm version, PostgreSQL yes/no
+    validations:
+      required: true
+
+  - type: dropdown
+    id: risk
+    attributes:
+      label: Risk classification (for the fix)
+      options:
+        - LOW
+        - MEDIUM
+        - HIGH
+        - CRITICAL
+    validations:
+      required: true
+
+  - type: textarea
+    id: hypothesis
+    attributes:
+      label: Root cause hypothesis
+      description: Plan → Hypothesis → Verify before coding (§11, §50)
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: regression
+    attributes:
+      label: Fix quality
+      options:
+        - label: I will add or update a regression test when a code fix is needed
+          required: false
