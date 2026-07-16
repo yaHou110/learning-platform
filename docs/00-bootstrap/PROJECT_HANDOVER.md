@@ -755,3 +755,32 @@ Each entry has:
 - The `pnpm audit` endpoint is gone; future audits need a substitute. One-day follow-up: pick a substitute (`osv-scanner` is a good first try — it's open source, no API key, works with `pnpm-lock.yaml`).
 - On Windows, `cmd /c "set DATABASE_URL=… && pnpm …"` corrupts the URL with a trailing space. Set env vars in PowerShell (`$env:DATABASE_URL='…'`) before invoking `cmd /c "pnpm …"` (the env var is inherited). The `cmd set` form should not be used for URLs.
 - The dev server crashes when `next build` overwrites `.next/` mid-flight. Run `pnpm verify` and `pnpm dev` in separate windows, or use `pnpm start` against a pre-built bundle.
+
+---
+
+## Session 018 — 2026-07-16 — contributor (governance: precedence + Product Vision + AI-instruction policy)
+
+**Goal:** Establish repository governance for future architectural decisions — bring Product Vision into the precedence model, make the AI-instruction policy explicit, and refresh drifted docs. Documentation-only; no architecture/code changes (per founder directive).
+
+**Done:**
+- `DEVELOPMENT_GUIDE.md` — "Tooling notes" retitled "Tooling notes (agent-portable governance)" + explicit **tool-neutral policy**: do not create `CLAUDE.md` / `AGENTS.md` / `.cursorrules` / Windsurf / Codex instruction files. Canonical AI-instruction surface = `DEVELOPMENT_GUIDE.md` + `ENGINEERING_PROTOCOL.md` + `GOVERNANCE_CHECKLIST.md`. Any future per-tool file only as a pointer, and only after an ADR.
+- `docs/03-development/ENGINEERING_PROTOCOL.md` §47 — precedence table rewritten to founder-approved order: **Security > Product Vision > Accepted ADRs > Engineering Protocol / Guardrails > Architecture Documentation > Development Guide > Sprint Documents > Historical Documents**. Added two binding clarifications: *Security precedence scope* (security priority 1 applies only to actual security constraints, not a general override) and *Historical documents are context only* (on conflict: report, preserve history, update references only after approval, never auto-revert implementation). Added a note that §41 (human approval) is a gate, not a precedence level, and remains fully binding.
+- `README.md` — stale documentation map refreshed to list every tracked doc: all `00-bootstrap` (incl. `PROJECT_PRINCIPLES`), `01-product` (incl. `MVP_SCOPE`), `02-architecture` (incl. `BOUNDED_CONTEXTS`/`PLUGIN_MATRIX`/`ARCHITECTURE_CONSTRAINTS`), `03-development` (incl. `ENGINEERING_PROTOCOL`/`GOVERNANCE_CHECKLIST`/`QUALITY_GATES`/`RISK_CLASSIFICATION`), all 8 ADRs (0001–0006, 0012, 0013), the `06-sprints` folder, and all 8 templates.
+- `docs/05-decisions/DECISIONS.md` — Proposed-ADR target column refreshed (old "before M3" was stale; M3/M4 closed). Now: ADR-0007 → "before M6 of SPRINT-001 (Q5)", ADR-0008 → "before schema freeze / before M6 (Q6)", ADR-0009/0010 → "parked until M7 sign-off", ADR-0011 unchanged. Realigns with `PROJECT_STATE.md` Q5/Q6. Index is non-historical (ADR-0002 append-only applies to past ADRs/handovers/CHANGELOG, not the index).
+- `PROJECT_STATE.md` and `PROJECT_BACKLOG.md` — not modified this session (no milestone change; backlog already queued Session 018).
+
+**Decisions:**
+- None new. Precedence clarification is under existing ADR-0013 (§47), not a new ADR — it sharpens the existing rule, it does not make a new architectural decision. Per §43/§47, this is a non-binding governance clarification recorded here, not an ADR.
+
+**Open questions:**
+- none (all four edits approved at decision points; `pnpm governance:validate:local` PASSED).
+
+**Verification:**
+- `pnpm governance:validate:local` → **PASSED** (12 changed-files view; 4 working-tree `.md` modifications).
+- `pnpm verify` not required: changes are documentation-only (`.md`), exempt from `PRODUCT_CODE_PATTERNS` / `CHANGELOG` requirement.
+
+**Rollback:** Pure documentation — `git checkout -- DEVELOPMENT_GUIDE.md README.md docs/03-development/ENGINEERING_PROTOCOL.md docs/05-decisions/DECISIONS.md`. No code/schema/config/CI behavioral change.
+
+**Notes for the next session:**
+- Governance closure is done. Next sprint milestone work still gated until M7 sign-off (`PROJECT_STATE.md`). Do not start M5+ without an approved plan.
+- If a per-tool AI-instruction file (`CLAUDE.md` etc.) is later genuinely needed, it must be (a) a pointer only — re-states nothing — and (b) approved as a new ADR first. Track this in `PROJECT_BACKLOG.md` if it comes up.
