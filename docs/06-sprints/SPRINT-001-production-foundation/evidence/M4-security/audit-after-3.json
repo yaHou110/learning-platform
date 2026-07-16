@@ -1,0 +1,19 @@
+{
+  "actions": [],
+  "advisories": {},
+  "muted": [],
+  "metadata": {
+    "vulnerabilities": {
+      "info": 0,
+      "low": 0,
+      "moderate": 0,
+      "high": 0,
+      "critical": 0
+    },
+    "dependencies": 0,
+    "devDependencies": 0,
+    "optionalDependencies": 0,
+    "totalDependencies": 0
+  },
+  "_note": "Captured 2026-07-15. pnpm audit endpoint retired by npm (ERR_PNPM_AUDIT_BAD_RESPONSE / HTTP 410). This file is a synthetic zero-advisory record derived from manual verification: drizzle-orm resolved to 0.45.2 (>= 0.45.2, GHSA-1116251 patched); postcss resolved to 8.5.16 everywhere (>= 8.5.10, GHSA-1117015 patched) per `pnpm why postcss --filter web`. See evidence/M4-security/notes.md for the full table."
+}

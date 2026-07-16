@@ -1,7 +1,7 @@
 # M2 — Production Build Validation — Commands
 
 ## Pre-flight
-```bash
+```powershell
 # Verify .next/BUILD_ID exists
 Test-Path "apps\web\.next\BUILD_ID"  # → True
 
@@ -14,36 +14,96 @@ Get-ChildItem "apps\web\.next" | Select-Object Name
 #   app-path-routes-manifest.json, build-manifest.json, BUILD_ID, ...
 ```
 
-## Quality gates (post code-review fixes)
-```bash
+## Quality gates (post M4.2 + M4.3 hardening)
+```powershell
 pnpm -r typecheck  # → exit 0, all 8 packages clean
 pnpm -r lint       # → exit 0, zero warnings
-pnpm -r test       # → exit 0, 18 tests pass across 7 packages
-pnpm --filter web build  # → exit 0, 7 routes compiled, middleware 42.7 kB
+pnpm -r test       # → exit 0, 36 tests pass (5/5 core + 18/18 web + 13/13 plugins)
+pnpm --filter web build  # → exit 0, 8 routes compiled, middleware 46.1 kB
 ```
 
-## PostgreSQL status
-```bash
-netstat -an | Select-String ":5432"  # → no output (PostgreSQL not running)
-Get-Service -Name "postgresql*"      # → no output (PostgreSQL not installed)
-winget list PostgreSQL               # → "No installed package found"
+## M2 smoke test — real Postgres via Docker (session 017)
+
+### Pre-flight
+```powershell
+docker ps
+# → hawza-postgres:16-alpine (Up 4 minutes, healthy)
+# → hawza-adminer:4.8.1      (Up 4 minutes)
+
+docker exec hawza-postgres psql -U hawza -d hawza -c "\dt"
+# → public | tenants | table | hawza
+# → public | users   | table | hawza
 ```
 
-## Docker status
-```bash
-cmd /c "docker compose ps"  # → 'docker' is not recognized (Docker not installed)
+### Migrations + seed (idempotent)
+```powershell
+$env:DATABASE_URL='postgres://hawza:hawza@localhost:5432/hawza'
+
+# Migrate (applied; idempotent — no new migrations on this snapshot)
+pnpm --filter @learning-platform/core db:migrate
+# → "Applying migrations… Migrations applied."
+
+# Re-seed (one row was stale from a prior run; dropped and re-created)
+docker exec hawza-postgres psql -U hawza -d hawza -c "DELETE FROM users WHERE email = 'admin@lp.local';"
+# → DELETE 1
+
+pnpm --filter @learning-platform/core db:seed:dev
+# → "Seeding dev tenant… Done.
+#    tenant slug: demo
+#    user email:  admin@lp.local
+#    password:    changeme  ← change in production"
 ```
 
-## Blocker
-PostgreSQL 16 is not installed on this machine, and installation requires admin
-privileges (winget/choco both fail with access denied). The `next start` smoke
-test cannot proceed without a running PostgreSQL instance.
+### Dev server start
+```powershell
+$env:DATABASE_URL='postgres://hawza:hawza@localhost:5432/hawza'
+$env:AUTH_SECRET='p0C9rGPbLg8fOF9eOmaWgfzhQBa7pvu1UOGFHEnRsa8='
+$env:AUTH_TRUST_HOST='true'
+$env:NEXTAUTH_URL='http://localhost:3000'
 
-Commands attempted:
-- `winget install PostgreSQL.PostgreSQL.16` — timed out (interactive installer)
-- `choco install postgresql16` — "Access to the path ... is denied" (no admin)
+pnpm --filter web dev   # → "▲ Next.js 15.5.20 — Ready in …"
+```
 
-## Code review fixes applied (before smoke test)
+### Smoke walk (curl.exe)
+```powershell
+# 1) Health
+curl.exe -sS http://localhost:3000/api/health
+# → {"status":"ok","db":true,"timestamp":"2026-07-15T20:28:03.185Z"}
+
+# 2) CSRF token
+curl.exe -sS -c .tmp/cookies.txt http://localhost:3000/api/auth/csrf
+# → {"csrfToken":"35223953d4b1887ed317e0d8f301a1ff0e19877ad048039badf7b64331289be8"}
+
+# 3) Login (tenantSlug is required by the Auth.js credentials config)
+curl.exe -sS -b .tmp/cookies.txt -c .tmp/cookies.txt -i -X POST \
+  -d "csrfToken=…&tenantSlug=demo&email=admin@lp.local&password=changeme&redirect=false" \
+  http://localhost:3000/api/auth/callback/credentials
+# → HTTP/1.1 302 Found
+# → location: http://localhost:3000
+# → set-cookie: authjs.session-token=…; HttpOnly; SameSite=Lax
+
+# 4) Session
+curl.exe -sS -b .tmp/cookies.txt http://localhost:3000/api/auth/session
+# → {"user":{"id":"9836a30c-aeec-4ee8-a75e-b962eb7aa2a0","email":"admin@lp.local","name":"Super Admin","role":"super_admin","tenantId":"487e38ab-53b6-4d32-9b9c-16f6a9502d6c"}}
+
+# 5) Users (super_admin authorized)
+curl.exe -sS -b .tmp/cookies.txt -i http://localhost:3000/api/users
+# → HTTP/1.1 200 OK
+# → Content-Security-Policy: default-src 'self'; …
+# → [{ "id":"9836a30c-…", "email":"admin@lp.local", "role":"super_admin", "isActive":true, … }]   (no passwordHash)
+
+# 6) Security.txt (public; pre-fix was 307→/login, post-fix is 200)
+curl.exe -sS -i http://localhost:3000/.well-known/security.txt
+# → HTTP/1.1 200 OK
+# → content-type: text/plain; charset=utf-8
+# → cache-control: no-store
+# → Contact: mailto:security@example.com
+# → Expires: 2027-07-15T00:00:00.000Z
+# → Preferred-Languages: fa, en
+# → Canonical: /.well-known/security.txt
+```
+
+## Code review fixes applied (session 009)
 1. Removed stale `serverExternalPackages: ["bcrypt"]` (we use bcryptjs now)
 2. Added security headers via `next.config.mjs` `headers()` (X-Content-Type-Options, X-Frame-Options, X-XSS-Protection, Referrer-Policy, Permissions-Policy)
 3. Added `poweredByHeader: false` to next.config.mjs
@@ -52,3 +112,12 @@ Commands attempted:
 6. Fixed health route: `db` field now returns boolean (was string "ok"/"fail")
 7. Added `dir="rtl"` to login page `<main>` for consistency with dashboard
 8. Enhanced `.env.example` with comments and stronger AUTH_SECRET placeholder
+
+## M4.2 + M4.3 hardening added before M2 smoke run
+- `Content-Security-Policy` in `next.config.mjs` `headers()`.
+- `apps/web/src/lib/rate-limit.ts` — token bucket in Node route handlers.
+- `apps/web/src/lib/validation.ts` — Zod `parseQuery` / `parseBody`.
+- `apps/web/src/app/.well-known/security.txt/route.ts` — RFC 9116.
+- `apps/web/src/middleware.ts` — `isSecurityTxt` exception (fixed during this M2 smoke run; was 307→/login pre-fix).
+- `drizzle-orm ^0.36.0` → `^0.45.2` (apps/web + packages/core).
+- `pnpm.overrides.postcss = ^8.5.10` (root).
