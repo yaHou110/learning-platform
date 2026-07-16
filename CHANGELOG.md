@@ -146,6 +146,35 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `apps/web/tests/rate-limit.test.ts`, `apps/web/tests/validation.test.ts`.
 - `docs/06-sprints/SPRINT-001-production-foundation/evidence/M4-security/M4-2-hardening.md` — DoR/spec/risk/rollback.
 
+### Security (M4.3 — residual advisories: drizzle-orm SQL-injection + postcss XSS, 2026-07-15)
+- **Bumped `drizzle-orm` to `^0.45.2`** in `apps/web` and `packages/core` (resolves GHSA-1116251, HIGH: "SQL injection via improperly escaped SQL identifiers"). Lockfile regenerated. The API surface used by this repo (`select/from/where/and/eq`, `insert/values/returning`, `update/set/where`, `pgTable/check/sql/inferSelect`) is stable across 0.36 → 0.45+; **all 36 tests pass** unchanged.
+- **Forced `postcss >= 8.5.10` via root `pnpm.overrides`** (resolves GHSA-1117015, MODERATE: "XSS via Unescaped `</style>` in CSS Stringify Output"). The transitive `next@15.5.20 > postcss@8.4.31` is now resolved to `8.5.16` everywhere; `pnpm why postcss --filter web` confirms 8.5.16 in all paths (next, next-auth→next, autoprefixer peer, vitest→vite, tailwind). Build is clean.
+- **Bug fix found by M2 smoke test:** `/.well-known/security.txt` was being redirected to `/login` because the middleware had no public-route allowlist for it. Added `isSecurityTxt` exception alongside the existing `isApiAuthPage` and `isHealthPage` checks in `apps/web/src/middleware.ts`. After-fix: `GET /.well-known/security.txt` → `200` with `Content-Type: text/plain; charset=utf-8` and `Cache-Control: no-store`, no auth required. RFC 9116 §2 compliant.
+- **Residual advisory count after M4.3:** **0 prod-tree advisories** (was 2 after M4.1; both patched). npm's `pnpm audit` endpoint returned `410 ERR_PNPM_AUDIT_BAD_RESPONSE` during this session (the endpoint is being retired by npm); the version pins above are pinned to the patched ranges and `pnpm why` confirms the resolved versions. Re-capture of the JSON audit is blocked by the endpoint retirement; documented as a tool-status note, not a finding.
+- **Risk:** MEDIUM per ADR-0013 §42 (drizzle-orm touches every query path; middleware is route-critical). Founder approval: not required (MEDIUM); auto-proceeded per founder directive 2026-07-15.
+- **Evidence:** `docs/06-sprints/SPRINT-001-production-foundation/evidence/M4-security/M4-3-residual-advisories.md` (DoR / spec / risk / rollback).
+- `pnpm verify` on this work: lint ✓, typecheck ✓, test ✓ (5/5 core + 18/18 web + 13/13 plugins = 36 tests), build ✓ (8 routes, Middleware 46.1 kB, First Load JS 102 kB).
+
+### Changed (M4.3)
+- `apps/web/package.json` — `"drizzle-orm": "^0.36.0"` → `"^0.45.2"`.
+- `packages/core/package.json` — same pin bump.
+- `package.json` (root) — added `pnpm.overrides."postcss": "^8.5.10"`.
+- `apps/web/src/middleware.ts` — added `isSecurityTxt` exception so `/.well-known/security.txt` is publicly accessible.
+- `pnpm-lock.yaml` — regenerated.
+- `docs/00-bootstrap/PROJECT_STATE.md` — v1.10, M4.3 + M2 smoke test complete.
+- `docs/00-bootstrap/PROJECT_BACKLOG.md` — Session 017 closed; Session 018 task.
+- `docs/00-bootstrap/PROJECT_HANDOVER.md` — Session 017 entry appended.
+
+### Added (M4.3)
+- `docs/06-sprints/SPRINT-001-production-foundation/evidence/M4-security/M4-3-residual-advisories.md` — DoR/spec/risk/rollback.
+
+### M2 — Production smoke test (real Postgres, 2026-07-15)
+- The M2 smoke test was parked since session 009 because PostgreSQL was not installed on the dev machine. This session: Docker Desktop was started; the existing `hawza-postgres:16-alpine` container was healthy; ran `pnpm --filter @learning-platform/core db:migrate` (idempotent — applied) + `db:seed:dev` (created `demo` tenant + `admin@lp.local` / `changeme` super_admin). Started `pnpm --filter web dev`; ran the full auth + authorization + security-headers + security.txt flow.
+- **Verified end-to-end:** `GET /api/health` → `200 {db:true}`; `GET /api/auth/csrf` → 200 with token; `POST /api/auth/callback/credentials` with `tenantSlug=demo&email=admin@lp.local&password=changeme` → `302 → /` with `authjs.session-token` cookie; `GET /api/auth/session` → typed session; `GET /api/users` (as super_admin) → `200 [{id,email,role,isActive,…}]` **without `passwordHash`**; `GET /.well-known/security.txt` → `200 text/plain` (after middleware fix).
+- **All security headers present in every response:** `X-Content-Type-Options: nosniff`, `X-Frame-Options: DENY`, `X-XSS-Protection: 1; mode=block`, `Referrer-Policy: strict-origin-when-cross-origin`, `Permissions-Policy`, and the **new** `Content-Security-Policy` from M4.2.
+- **Known minor issue (not a blocker):** the dev server crashed when `next build` overwrote `.next/` mid-flight. Not a code bug — re-running `pnpm --filter web dev` after a `pnpm verify` build is the expected sequence.
+- **Evidence:** `docs/06-sprints/SPRINT-001-production-foundation/evidence/M2-prod-build/M2-smoke-test.md` (DoR/run/results).
+
 ---
 
 ## [1.1.0] — 2026-07-11

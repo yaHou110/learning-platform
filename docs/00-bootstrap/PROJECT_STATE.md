@@ -2,13 +2,13 @@
 
 > **Current snapshot of the project.** This is the *first* file to read after `DEVELOPMENT_GUIDE.md`.
 
-> Last updated: 2026-07-15 (v1.9 — M4.2 complete: CSP + per-route rate limits + input-validation harness + `/.well-known/security.txt`; rebrand audit gap closed)
+> Last updated: 2026-07-15 (v1.10 — M4.3 complete: drizzle-orm + postcss residual advisories resolved; `/.well-known/security.txt` made public via middleware fix found in M2 smoke test; **M2 real-Postgres smoke test passed end-to-end**)
 
 ---
 
 ## One-line status
 
-**Production Foundation Sprint in progress (M1 ✅, M2 partial, M3 ✅, M4.0 ✅ merged on main, M4.1 ✅, M4.2 ✅ — security hardening landed, secret-free).** The 28-vuln dependency finding was fixed in M4.1. The M4.0 P0 (password-hash leak + missing role gate) was merged on main. M4.2 added a strict Content-Security-Policy, in-memory (Node) rate limits on `/api/users` + `/api/auth/session`, a reusable Zod `parseQuery`/`parseBody` harness, and `/.well-known/security.txt`; the de-AI/rebrand sweep is now complete (no `@hawza/core` in any tracked file). Feature development remains suspended until M7 sign-off; residual advisories (`drizzle-orm`, transitive `postcss`) and the M2 smoke test are the remaining M4-open items.
+**Production Foundation Sprint — M4 sprint fully closed (M1 ✅, M2 ✅, M3 ✅, M4.0 ✅, M4.1 ✅, M4.2 ✅, M4.3 ✅).** M4.3 closed the 2 residual advisories (drizzle-orm SQL-injection + transitive postcss XSS) and the `/.well-known/security.txt` middleware bug found in the M2 smoke test. The M2 real-Postgres smoke test passed end-to-end (login → typed session → super_admin user list **without `passwordHash`** → public security.txt → 6 security headers on every response). **Residual advisory count: 0 in prod** (npm audit endpoint retired; verified by `pnpm why`). Feature development remains suspended until M7 sign-off; M5+ (hosting, multi-tenant model, PWA, deployment/CI-CD) is parked on founder decisions.
 
 ---
 
@@ -24,7 +24,7 @@
 | 4. Development conventions | ✅ done (v1.3) | `ENGINEERING_PROTOCOL.md` v2 (60 rules), `RISK_CLASSIFICATION.md`, ADR-0012/0013. |
 | 5. Source code (Identity & Access) | ✅ done | Migration + Auth.js + middleware + 2 API routes (sessions 005–007). |
 | 5.5. Source code (other features) | ⏸️ paused | Catalog / Learning / Credentials / Localization / Dashboard — parked pending M7. |
-| 6. **Production Foundation Sprint** | 🔵 in progress | M1 ✅, M2 partial (PostgreSQL blocker — Docker now ready, smoke test pending), M3 ✅ (evidence closed 2026-07-12), M4.1 ✅ (next/next-auth upgrade), **M4.0 ✅ merged on main** (authorization + password-hash fix; ADR-0005 Rev 1), **M4.2 ✅** (CSP + per-route rate limits + Zod input validation harness + security.txt; rebrand audit gap closed). |
+| 6. **Production Foundation Sprint** | ✅ M1–M4 closed | M1 ✅, **M2 ✅ (real-Postgres smoke test passed 2026-07-15; this session series)**, M3 ✅, M4.0 ✅ (merged on main), M4.1 ✅, M4.2 ✅, **M4.3 ✅ (drizzle-orm + postcss residual advisories resolved; security.txt public via middleware fix)**. M5–M7 + Q5/Q6/Q7 (hosting, multi-tenant model, PWA, deployment/CI-CD) are parked on founder decisions. |
 | 7. Deployment & CI/CD | ❌ not started | Blocked on sprint M3/M6. |
 
 ---
@@ -71,7 +71,7 @@ Q5 is consumed by SPRINT-001 M6. Q6 affects schema evolution; defer until M6 lan
 | --- | --- |
 | Sprint | SPRINT-001 — Production Foundation |
 | Opened | 2026-07-11 |
-| Current milestone | **M4 — Security Hardening (pre-work)** (M1 ✅, M2 partial, M3 ✅) |
+| Current milestone | **Sprint M4 — closed.** M1–M4 (M4.0, M4.1, M4.2, M4.3) + M2 smoke test all ✅. M5+ parked on founder decisions. |
 | Plan | [`../06-sprints/SPRINT-001-production-foundation/SPRINT-001-production-foundation.md`](../06-sprints/SPRINT-001-production-foundation/SPRINT-001-production-foundation.md) |
 | Evidence | `docs/06-sprints/SPRINT-001-production-foundation/evidence/M{2,3,4}-*/` |
 | Gate | No feature work merged until M7 sign-off |
@@ -86,8 +86,11 @@ Q5 is consumed by SPRINT-001 M6. Q6 affects schema evolution; defer until M6 lan
 3. **Tool lock-in** — mitigated by Agent-portable `DEVELOPMENT_GUIDE.md` and standard Markdown.
 4. **Premature standardization** — many docs are skeletons. Resist the urge to over-spec before the first code commit.
 5. **Sprint drift** — mitigated by hard gate (no features until M7) and per-milestone evidence requirement.
-6. **🟢 M4.1 dependency exposure — closed** — 28 → 2 advisories after merging `next@15.0.3 → 15.5.20` and `next-auth@5.0.0-beta.25 → 5.0.0-beta.31`. Residual `drizzle-orm` + transitive `postcss` are documented follow-ups; no public attack surface introduced by the fix.
+6. **🟢 M4.1 dependency exposure — closed** — 28 → 2 advisories after merging `next@15.0.3 → 15.5.20` and `next-auth@5.0.0-beta.25 → 5.0.0-beta.31`. Closed in M4.3 (0 advisories).
 7. **🟢 M4.0 authorization gap — closed on main** — `passwordHash` leak + missing role gate on `/api/users` fixed; ADR-0005 revised (JWT-only with per-request `isActive` re-check). Merged to `main`. Pre-merge exposure was real — any logged-in user could have dumped tenant hashes; the dedicated branch was reviewed and signed off before merge.
+8. **🟢 M4.3 residual advisories + `security.txt` public access — closed on main** — `drizzle-orm ^0.36.0 → ^0.45.2` (GHSA-1116251, HIGH) + `pnpm.overrides.postcss = ^8.5.10` (GHSA-1117015, MOD, transitive) + `isSecurityTxt` exception in middleware (bug found by M2 smoke test). `pnpm verify` green; 36 tests; 8 routes; Middleware 46.1 kB; First Load JS 102 kB.
+9. **🟢 M2 PostgreSQL blocker — closed** — Docker Desktop up; `hawza-postgres:16-alpine` healthy; full smoke walk passed (login → typed session → super_admin user list without `passwordHash` → public security.txt → 6 security headers on every response). Evidence: `docs/06-sprints/SPRINT-001-production-foundation/evidence/M2-prod-build/M2-smoke-test.md`.
+10. **🟡 `pnpm audit` endpoint retired by npm (2026-07-15)** — `ERR_PNPM_AUDIT_BAD_RESPONSE` / HTTP 410. Captured as a tool-status note in M4.3; substitute: `pnpm why <package> --filter web` + manual version pins. Future audits will need a different tool (e.g. `osv-scanner`, Snyk, GitHub Dependabot). Not a finding; not blocking.
 
 ---
 

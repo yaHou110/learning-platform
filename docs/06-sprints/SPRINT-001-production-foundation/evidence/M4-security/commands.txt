@@ -1,11 +1,108 @@
-# M4-2 Security Hardening — exact commands run (Session 016, 2026-07-15)
+# M4 — Security Hardening — exact commands run
 
-## Rebrand audit scrub (evidence JSONs)
-sed -i 's/@hawza\/core/@learning-platform\/core/g' audit-after.json audit-after-2.json audit-baseline.json
-# baseline carried a stale UTF-8 BOM (U+FEFF) — stripped:
-tail -c +4 audit-baseline.json > audit-baseline.json.tmp && mv audit-baseline.json.tmp audit-baseline.json
-# validate:
-for f in audit-after.json audit-after-2.json audit-baseline.json; do node -e "JSON.parse(require('fs').readFileSync('$f','utf8')); console.log('OK: $f')"; done
+## Session 013: baseline audit
+```
+pnpm audit --prod --json > audit-baseline.json
+# → 28 advisories (2C / 8H / 14M / 4L) in next@15.0.3 + next-auth@5.0.0-beta.25
+```
 
-## Quality gate (Git Bash — bare pnpm works; no cmd /c needed here)
-pnpm verify        # lint && typecheck && test && build
+## Session 014: M4.1 dependency upgrade
+```
+git checkout -b fix/m4-dependency-upgrade
+# bumps: next 15.0.3 → 15.5.20; next-auth 5.0.0-beta.25 → 5.0.0-beta.31;
+#        eslint-config-next 15.0.3 → 15.5.20; packages/core next-auth aligned
+pnpm install
+pnpm verify          # EXIT 0
+pnpm audit --prod --json > audit-after.json
+# → 2 advisories (0C / 1H / 1M / 0L) — drizzle-orm<0.45.2 + postcss<8.5.10 (transitive)
+```
+
+## Session 015: M4.0 authorization gap (P0)
+```
+git checkout -b the-M4.0-change
+# packages/core: listUsers rewritten with explicit column projection;
+#                getUserById + checkUserActive + UserPublic added
+# apps/web/src/lib/authz.ts: NEW requireRole helper
+# apps/web/src/app/api/users/route.ts: gates on requireRole(['center_admin','super_admin'])
+# apps/web/src/auth.ts: per-request isActive re-check in session callback
+# apps/web/tests: NEW authz-require-role.test.ts (6 cases)
+# packages/core/tests: NEW api-user-public-type.test.ts (type-level)
+# docs/05-decisions/ADR-0005-auth.md: appended Revision 1
+pnpm verify
+pnpm audit --prod --json > audit-after-2.json
+# → same 2 advisories; no regressions
+# commit: M4.0 → main (founder-reviewed, merged)
+```
+
+## Session 016: M4.2 security hardening
+```
+git checkout -b fix/m4-2-security-hardening
+# apps/web/next.config.mjs: add Content-Security-Policy
+# apps/web/src/lib/rate-limit.ts: NEW in-memory token-bucket + ipKey()
+# apps/web/src/lib/validation.ts: NEW parseQuery / parseBody Zod guards
+# apps/web/src/app/api/users/route.ts: per-admin rateLimit + defensive parseQuery
+# apps/web/src/app/api/auth/session/route.ts: per-IP rateLimit
+# apps/web/src/app/.well-known/security.txt/route.ts: NEW RFC 9116 route handler
+# apps/web/tests/rate-limit.test.ts + validation.test.ts: NEW 4 + 6 test cases
+# rebrand scrub: @hawza/core → @learning-platform/core in audit-{after,after-2,baseline}.json
+#                strip UTF-8 BOM from audit-baseline.json
+pnpm verify   # lint ✓ typecheck ✓ test ✓ (5/5 core + 18/18 web + 13/13 plugins = 36) build ✓
+git commit -m "feat(web): M4.2 security hardening — CSP + rate limits + input validation + security.txt"
+# commit: M4.2 → main (this session series)
+```
+
+## Session 017: M4.3 residual advisories + M2 real-Postgres smoke test
+```
+git checkout -b fix/m4-3-residual-advisories
+
+# Bumps
+# apps/web/package.json:     drizzle-orm ^0.36.0 → ^0.45.2
+# packages/core/package.json: same
+# package.json (root):       pnpm.overrides.postcss = ^8.5.10
+
+pnpm install
+pnpm verify  # EXIT 0
+
+# Bug found by M2 smoke: /.well-known/security.txt was 307→/login
+# Fix: apps/web/src/middleware.ts — add isSecurityTxt to public-route allowlist
+#      alongside isApiAuthPage + isHealthPage
+
+pnpm verify  # EXIT 0 again
+
+# pnpm audit endpoint retired (HTTP 410 from npm registry)
+# pnpm audit --prod  # → ERR_PNPM_AUDIT_BAD_RESPONSE
+# Replaced with manual version-pin verification:
+pnpm why postcss --filter web
+# → postcss 8.5.16 (≥ 8.5.10 ✓) in all paths
+#   next / next-auth→next / autoprefixer peer / vitest→vite / tailwind
+# → drizzle-orm resolved: 0.45.2 (≥ 0.45.2 ✓)
+
+# commit: M4.3 → main
+
+# M2 real-Postgres smoke test
+docker ps                                         # hawza-postgres healthy
+$env:DATABASE_URL='postgres://hawza:hawza@localhost:5432/hawza'
+pnpm --filter @learning-platform/core db:migrate   # applied (idempotent)
+docker exec hawza-postgres psql -U hawza -d hawza -c \
+  "DELETE FROM users WHERE email = 'admin@lp.local';"
+pnpm --filter @learning-platform/core db:seed:dev  # demo tenant + admin@lp.local/changeme
+
+$env:AUTH_SECRET='p0C9rGPbLg8fOF9eOmaWgfzhQBa7pvu1UOGFHEnRsa8='
+$env:AUTH_TRUST_HOST='true'
+$env:NEXTAUTH_URL='http://localhost:3000'
+pnpm --filter web dev   # ▲ Next.js 15.5.20
+
+# Smoke walk — see evidence/M2-prod-build/M2-smoke-test.md for the full output
+curl.exe -sS http://localhost:3000/api/health                                    # 200 {db:true}
+curl.exe -sS -c .tmp/cookies.txt http://localhost:3000/api/auth/csrf             # 200 + token
+curl.exe -sS -b .tmp/cookies.txt -c .tmp/cookies.txt -X POST \
+  -d "csrfToken=…&tenantSlug=demo&email=admin@lp.local&password=changeme" \
+  http://localhost:3000/api/auth/callback/credentials                            # 302 + cookie
+curl.exe -sS -b .tmp/cookies.txt http://localhost:3000/api/auth/session          # 200 typed session
+curl.exe -sS -b .tmp/cookies.txt http://localhost:3000/api/users                 # 200 no passwordHash
+curl.exe -sS http://localhost:3000/.well-known/security.txt                      # 200 text/plain
+```
+
+## Status
+
+All M4.x and M2 evidence is now captured. Sprint M4 is fully closed; M5+ remains parked on founder decisions.
