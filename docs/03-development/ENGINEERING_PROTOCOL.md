@@ -49,14 +49,42 @@ When rules conflict, apply this precedence (highest first):
 | Priority | Source |
 | --- | --- |
 | 1 | **Security** (§12, §29, §41 security items) |
-| 2 | **Human approval** (§41) |
+| 2 | **Product Vision** (`docs/01-product/PRODUCT_BIBLE.md`) |
 | 3 | **Accepted ADRs** (§43) |
-| 4 | **Engineering Protocol** (this document) |
-| 5 | **Repository documentation** (bootstrap, sprint, architecture docs) |
-| 6 | **Sprint / milestone scope** (§2) |
-| 7 | **Implementation preference** (contributor or agent judgment) |
+| 4 | **Engineering Protocol / Guardrails** (this document; §59 enforces "governance before generation") |
+| 5 | **Architecture Documentation** (`docs/02-architecture/*`) |
+| 6 | **Development Guide** (`DEVELOPMENT_GUIDE.md`) |
+| 7 | **Sprint Documents** (`docs/06-sprints/*`, milestone scope per §2) |
+| 8 | **Historical Documents** (past handovers, superseded ADRs — context only) |
 
 Lower-priority rules must **never** override higher-priority ones.
+
+> **Note on Human approval (§41):** The human-approval matrix is a *gate*, not a precedence
+> level. It determines *which changes need sign-off before proceeding*, independent of which
+> precedence row wins a content conflict. A change that needs human approval still needs it,
+> even if its contentual precedence is otherwise clear. Removing the prior "human approval"
+> row from this table does not weaken §41 — it remains fully binding.
+
+### Security precedence scope (binding)
+
+Security precedence (priority 1) applies **only to actual security constraints** —
+authentication, authorization, validation, secret management, and items flagged in the
+security review checklist (§29). It must **not** be used as a general override mechanism
+to bypass Product Vision or Accepted ADRs for unrelated product decisions. When a change
+is framed as "security" but is really a product or architectural preference, it follows
+its true precedence level.
+
+### Historical documents are context only (binding)
+
+Historical documents (priority 8) exist to preserve context. They **must never override**
+current accepted decisions (Product Vision, Accepted ADRs, Guardrails, Architecture Docs).
+
+If historical documentation conflicts with current Product Vision or Accepted ADRs:
+
+1. **Report the conflict** — record it in `PROJECT_HANDOVER.md` or sprint `notes.md`.
+2. **Preserve history** — never edit past ADRs, past handovers, or `CHANGELOG.md` (append-only per ADR-0002).
+3. **Update references only after approval** — never modify code or architecture to match outdated documentation.
+4. **Never revert implementation automatically** — the current accepted decision wins; outdated documentation does not.
 
 ---
 

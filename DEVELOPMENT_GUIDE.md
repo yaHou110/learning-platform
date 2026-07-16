@@ -77,12 +77,31 @@ The documentation is the source of truth.
 
 ---
 
-## Tooling notes
+## Tooling notes (agent-portable governance)
 
 - This guide follows a standard project structure supported across major editors and
   automation tooling (VS Code, JetBrains, CLI workflows).
 - The repository is versioned and self-documenting on purpose so any contributor or
   automation working against it reads the same files without re-explaining context.
+
+### No per-tool AI instruction files
+
+This repository is **tool-neutral**. The governance surface for AI agents is this file
+plus `docs/03-development/ENGINEERING_PROTOCOL.md` and `docs/03-development/GOVERNANCE_CHECKLIST.md`.
+
+**Do not create** per-tool instruction files such as `CLAUDE.md`, `AGENTS.md`,
+`.cursorrules`, `copilot-instructions.md`, Windsurf rules, or Codex instructions.
+
+Rationale:
+
+- A single router (this file) + a single protocol (ENGINEERING_PROTOCOL) keeps
+  governance in one place and prevents the drift that per-tool files inevitably cause.
+- Adding a per-tool file duplicates and can contradict the canonical sources,
+  reintroducing context rot (the exact risk the protocol exists to prevent).
+
+If a per-tool file is ever required for a genuine, tool-specific need, it must be added
+as a **pointer** (it re-states nothing — it only links to `DEVELOPMENT_GUIDE.md` and
+`ENGINEERING_PROTOCOL.md`) and must be approved as an ADR first.
 
 ---
 
