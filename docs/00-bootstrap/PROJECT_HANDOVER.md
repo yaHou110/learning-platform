@@ -784,3 +784,30 @@ Each entry has:
 **Notes for the next session:**
 - Governance closure is done. Next sprint milestone work still gated until M7 sign-off (`PROJECT_STATE.md`). Do not start M5+ without an approved plan.
 - If a per-tool AI-instruction file (`CLAUDE.md` etc.) is later genuinely needed, it must be (a) a pointer only — re-states nothing — and (b) approved as a new ADR first. Track this in `PROJECT_BACKLOG.md` if it comes up.
+
+---
+
+## Session 019 — 2026-07-18 — contributor (governance: agent progress-log — fold into existing artifacts, single source of truth)
+
+**Goal:** Resolve the founder question of where an agent's "where am I right now" pointer should live, so that progress survives a closed/mangled terminal without re-reading chat history or scrolling logs. Decision: fold the pointer into existing artifacts rather than adding three new files under `.ai/`. Documentation-only; no architecture/code changes.
+
+**Done:**
+- `DEVELOPMENT_GUIDE.md` — added "**After every meaningful milestone**" rider to the "When you finish a work cycle" section: keep the **In-flight task** section at the top of `PROJECT_STATE.md` current (three labels only: *Current task* / *Blocked by* / *Next*), as the agent's live pointer that survives a closed terminal. Added a **Single source of truth** note that explicitly forbids creating a separate AI session-log file (`.ai/SESSION_LOG.md`, `TODO.md`, `HANDOFF.md`) — `PROJECT_STATE.md` = current snapshot, `PROJECT_BACKLOG.md` = next concrete task, `PROJECT_HANDOVER.md` = session history; one artifact per kind of information per `ENGINEERING_PROTOCOL.md` §47.
+- `docs/00-bootstrap/PROJECT_STATE.md` — added an **In-flight task** section directly below "One-line status" (current task / blocked by / next), pointed at as the live progress pointer. `Last updated` header line intentionally **not** bumped — the milestone status (M4 closed, advisory count 0) is unchanged; this edit adds a section without altering the v1.10 milestone snapshot.
+- `PROJECT_BACKLOG.md` — not modified this session (no new task queued; backlog already reflects the parked M5+/M7 state).
+
+**Decisions:**
+- None new. This is a non-binding governance clarification under existing **ADR-0013 (§47)** (single source of truth / one artifact per kind of information), not an architectural decision — recorded here, not as an ADR. Explicitly *declined* the alternative of a new `.ai/` directory with `SESSION_LOG.md` / `TODO.md` / `HANDOFF.md` because it would duplicate three governance artifacts that already exist and would create a per-tool-flavored footprint against the tool-neutral policy established in Session 018.
+
+**Open questions:**
+- none (plan reviewed and approved by founder before execution).
+
+**Verification:**
+- `pnpm governance:validate:local` → **PASSED** (intended; run before commit).
+- `pnpm verify` not required: changes are documentation-only (`.md`), exempt from `PRODUCT_CODE_PATTERNS` / `CHANGELOG` requirement.
+
+**Rollback:** Pure documentation — `git checkout -- DEVELOPMENT_GUIDE.md docs/00-bootstrap/PROJECT_STATE.md`. No code/schema/config/CI behavioral change.
+
+**Notes for the next session:**
+- The In-flight task section is now the canonical "where are we right now" pointer. Keep it current after meaningful milestones; full history lives in this append-only file.
+- The PR for this branch (`docs/governance-precedence-vision-ai-policy`) was not yet opened this session — next step on a fresh session is the repository consistency review across the governance docs, then open the PR per the In-flight task pointer.

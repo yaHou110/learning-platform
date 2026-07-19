@@ -75,6 +75,20 @@ anything unfamiliar.
 
 The documentation is the source of truth.
 
+### After every meaningful milestone
+
+Keep the **In-flight task** section at the top of `docs/00-bootstrap/PROJECT_STATE.md`
+current — three labels only: *Current task*, *Blocked by*, *Next*. This is the agent's live
+pointer to where the work is right now; it survives a closed terminal without re-reading chat
+history or scrolling log output. In-flight task holds the *current* state only; the durable
+record of what was done lives in the append-only `PROJECT_HANDOVER.md`.
+
+> **Single source of truth.** Do **not** create a separate AI session-log file (e.g.
+> `.ai/SESSION_LOG.md`, `TODO.md`, `HANDOFF.md`). `PROJECT_STATE.md` holds the current
+> snapshot, `PROJECT_BACKLOG.md` holds the next concrete task, and `PROJECT_HANDOVER.md`
+> holds the session history — one artifact per kind of information, per
+> `ENGINEERING_PROTOCOL.md` §47.
+
 ---
 
 ## Tooling notes (agent-portable governance)
