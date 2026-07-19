@@ -842,3 +842,36 @@ Each entry has:
 **Notes for the next session:**
 - Branch is ahead of `origin/docs/governance-precedence-vision-ai-policy` by the governance commits on this branch — push or open the PR per the branch's stated purpose (governance precedence + Vision + AI-instruction policy).
 - Keep the In-flight task section in `PROJECT_STATE.md` current; full history lives in this append-only file.
+
+---
+
+## Session 021 — 2026-07-19 — contributor (ADRs for Q5 + Q6 — hosting/deployment & multi-tenant isolation)
+
+**Goal:** Author the two ADRs ADR-0014 reserved but left unbuilt — **ADR-0007 (hosting & deployment model, Q5)** and **ADR-0008 (multi-tenant data isolation, Q6)** — grounded in the repo's already-decided mechanics, scoped narrow per ADR-0014's capability-vs-operation split, and folded as YAGNI-scoped future considerations the genuinely-new ideas surfaced during a multi-AI architecture review the founder ran in chat. Documentation-only; no code/schema/config change.
+
+**Done:**
+- `docs/05-decisions/ADR-0007-hosting-deployment-model.md` (new, Accepted) — v1 deploys as one self-hosted dedicated deployment on a single VPS (~4 GB) under C1/C3/C6, operated by one founder. Deployment shape kept abstract: identical artifact, customer identity in configuration not code (extending ADR-0014 §1/§2 to the deployment layer), so SaaS / licensed / managed / dedicated-per-customer delivery remain reachable without a rewrite. No multi-instance control plane built in v1 (deferred). Includes escalation triggers (bake customer identity into deployment / lock single model at code layer / premature control plane / fork artifact per customer). One decision per ADR.
+- `docs/05-decisions/ADR-0008-multi-tenant-isolation.md` (new, Accepted) — confirms the already-decided v1 isolation: shared DB + shared schema + `tenant_id` on every tenant-scoped table (`SYSTEM_ARCHITECTURE.md` §3 / `DATA_MODEL.md`), enforced at **three layers** — application query-builder default in `core` (ADR-0006 chokepoint), Postgres Row-Level Security (`current_setting('app.tenant_id')::uuid`), integration tests — satisfying C2's "more than one layer" with margin. Subdomain tenant identification v1 / custom domain v2; membership-shaped identity (`user_roles` PK) ratified; operational tenancy (onboarding/org-admin/self-service) explicitly deferred per ADR-0014 §3. Content `GLOBAL|TENANT` ownership, control/data-plane separation, and tenant↔deployment operational mapping recorded as future considerations scoped by YAGNI, not v1 decisions. Silo/bridge isolation a documented future escalation trigger (data residency, regulatory isolation, noisy-neighbor). Escalation triggers included. One decision per ADR.
+- `docs/05-decisions/DECISIONS.md` — ADR-0007 and ADR-0008 moved from **Proposed** → **Active**; removed their Proposed rows.
+- `CHANGELOG.md` — ADR-0007 and ADR-0008 entries added under `## [Unreleased] ### Added`.
+
+**Grounding note — what was already decided and therefore not re-decided:** The repo's binding docs had already locked the v1 tenancy mechanics the Q6 framing implies: shared-schema + `tenant_id` (`SYSTEM_ARCHITECTURE.md` §3), three-layer enforcement incl. RLS (`DATA_MODEL.md`), subdomain identification v1, `user_roles` membership table, and `audit_log` shape. Both ADRs therefore *confirm and scope* rather than *re-decide*, honoring `PROJECT_ARCHITECTURE_CONTEXT.md` §4 (never override prior decisions without a migration plan) and ADR-0012's one-decision-per-ADR. The multi-AI chat review (four external model passes) surfaced Deployment-Instance-vs-Tenant separation, content `GLOBAL|TENANT` ownership, extension-vs-config, identity membership, migration-trigger discipline, integration boundary, and SaaS-scale avoidance; most were already satisfied by existing docs, and the remainder were folded as **future-evaluated, YAGNI-scoped** considerations inside ADR-0008's When-to-revisit rather than as build-now features. Chosen scope per founder decision: "Narrow + grounded" (vs. a broad product-architecture framework ADR); v1 deploy = "Dedicated single-VPS, abstracted"; Q6 = "Confirm shared-schema + `tenant_id` + RLS"; RLS = "Confirm existing 3-layer design."
+
+**Decisions made:**
+- ADR-0007 (Accepted) — self-hosted dedicated single-VPS deployment for v1, shape kept abstract, multi-instance deferred.
+- ADR-0008 (Accepted) — shared-schema + `tenant_id` + 3-layer enforcement (incl. RLS) confirmed for v1; operational tenancy deferred; silo/bridge reachable later.
+
+**Open questions:**
+- none (grounding read of all related docs: `ADR-0014`, `DECISIONS.md`, `DEVELOPMENT_GUIDE.md`, `ARCHITECTURE_CONSTRAINTS.md`, `ARCHITECTURE_PRINCIPLES.md`, `PROJECT_ARCHITECTURE_CONTEXT.md`, `SYSTEM_ARCHITECTURE.md`, `DATA_MODEL.md`, `ADR-0006`, `PROJECT_STATE.md`, this file; scope confirmed via founder answers before authoring).
+
+**Verification:**
+- `pnpm governance:validate:local` — to be run before commit (this session).
+- `pnpm verify` not required — documentation-only changes (`.md`), exempt from `PRODUCT_CODE_PATTERNS` / build.
+
+**Rollback:** Pure documentation — `git revert` the commit; no code/schema/config/CI behavioral change.
+
+**Notes for the next session:**
+- Q5 and Q6 are now closed. The remaining founder decisions are Q7 (PWA / offline) and the ADR-0009/0010/0011 Proposed items (i18n, media storage, background jobs), all parked until M7 sign-off.
+- ADR-0007 unblocks SPRINT-001 **M5/M6 (Deployment / CI-CD)** planning — the next concrete work, subject to the M7 feature gate.
+- ADR-0008 unblocks the schema freeze: the three-layer enforcement (incl. RLS policies) and the membership-shaped `user_roles` are now binding.
+- Both ADRs carry escalation-trigger sections matching the ADR-0014 convention; agents touching deployment/DB/tenant-resolution code must check them.

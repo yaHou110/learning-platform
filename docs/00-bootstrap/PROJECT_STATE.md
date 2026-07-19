@@ -2,7 +2,7 @@
 
 > **Current snapshot of the project.** This is the *first* file to read after `DEVELOPMENT_GUIDE.md`.
 
-> Last updated: 2026-07-15 (v1.10 — M4.3 complete: drizzle-orm + postcss residual advisories resolved; `/.well-known/security.txt` made public via middleware fix found in M2 smoke test; **M2 real-Postgres smoke test passed end-to-end**)
+> Last updated: 2026-07-19 (v1.11 — Q5/Q6 closed: ADR-0007 + ADR-0008 added; deployment shape and multi-tenant isolation locked; operational tenancy deferred)
 
 ---
 
@@ -16,9 +16,9 @@
 
 > **Live pointer to where the work is right now.** Updated after every meaningful milestone (see `DEVELOPMENT_GUIDE.md`). At a glance: what is being done, what is blocking it, what is next. For full history, read `PROJECT_HANDOVER.md`.
 
-- **Current task:** Record the AI-session-progress-log design decision (fold into existing artifacts, no `.ai/` files) and land it on the `docs/governance-precedence-vision-ai-policy` branch.
-- **Blocked by:** Founder approval of the plan — received 2026-07-18.
-- **Next:** Repository consistency review across the governance docs on this branch, then open the PR.
+- **Current task:** ADR-0007 + ADR-0008 authored on main (Q5/Q6 closed). Next: commit + push on a dedicated branch; then unblock SPRINT-001 M5/M6 (Deployment / CI-CD) planning.
+- **Blocked by:** (none — decisions made)
+- **Next:** Open a PR for the ADR-0007/0008 additions; plan M5/M6 once merged.
 
 ---
 
@@ -56,6 +56,8 @@
 | **Mandatory engineering protocol** (quality gates, DoD, contributor constraints) | `ADR-0012` | ✅ binding |
 | **Engineering Protocol v2** (DoR, spec-first, human approval, risk matrix, §39–§60) | `ADR-0013` | ✅ binding |
 | **No new business features until M7 sign-off** | SPRINT-001 (founder directive 2026-07-11) | 🚧 active gate |
+| **Hosting & deployment model — v1 self-hosted dedicated single-VPS, shape kept abstract** | `ADR-0007` | ✅ binding (2026-07-19) |
+| **Multi-tenant data isolation — shared schema + tenant_id + 3-layer enforcement (app default + Postgres RLS + integration tests); operational tenancy deferred** | `ADR-0008` | ✅ binding (2026-07-19) |
 
 ---
 
@@ -67,8 +69,8 @@
 | 2 | Database | founder | before code starts | ✅ Decided — ADR-0004 |
 | 3 | Auth model | founder | before code starts | ✅ Decided — ADR-0005 |
 | 4 | Plugin architecture pattern | founder | before code starts | ✅ Decided — ADR-0006 |
-| 5 | Hosting: Vercel / self-hosted / VPS / Iranian host? | founder | before M6 of SPRINT-001 | ⏳ Pending — Q5 |
-| 6 | Multi-tenant: subdomain / tenant column / schema? | founder | before schema freeze | ⏳ Pending — Q6 |
+| 5 | Hosting: Vercel / self-hosted / VPS / Iranian host? | founder | before M6 of SPRINT-001 | ✅ Decided — ADR-0007 |
+| 6 | Multi-tenant: subdomain / tenant column / schema? | founder | before schema freeze | ✅ Decided — ADR-0008 |
 | 7 | Offline / PWA support? | founder | before MVP | ⏳ Pending — Q7 |
 
 Q5 is consumed by SPRINT-001 M6. Q6 affects schema evolution; defer until M6 lands. Q7 is parked.
