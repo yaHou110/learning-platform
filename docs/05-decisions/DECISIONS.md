@@ -17,6 +17,7 @@
 | [ADR-0006](./ADR-0006-plugin-architecture.md) | Plugin architecture — pnpm monorepo + compile-time typed manifest | Accepted | 2026-07-11 |
 | [ADR-0012](./ADR-0012-engineering-protocol.md) | Mandatory engineering protocol — quality gates, DoD, agent constraints | Accepted | 2026-07-12 |
 | [ADR-0013](./ADR-0013-engineering-protocol-v2.md) | Engineering Protocol v2 (§39–§60), chapters, DoR, spec-first, risk matrix | Accepted | 2026-07-12 |
+| [ADR-0014](./ADR-0014-reusable-platform-vision.md) | Reusable platform vision — first customer, not the only customer; capability vs. operation split reconciles C2 with deferred multi-tenancy (ADR-0008) | Accepted | 2026-07-18 |
 
 ---
 
