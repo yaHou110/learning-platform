@@ -12,6 +12,16 @@
 
 ---
 
+## In-flight task
+
+> **Live pointer to where the work is right now.** Updated after every meaningful milestone (see `DEVELOPMENT_GUIDE.md`). At a glance: what is being done, what is blocking it, what is next. For full history, read `PROJECT_HANDOVER.md`.
+
+- **Current task:** Record the AI-session-progress-log design decision (fold into existing artifacts, no `.ai/` files) and land it on the `docs/governance-precedence-vision-ai-policy` branch.
+- **Blocked by:** Founder approval of the plan — received 2026-07-18.
+- **Next:** Repository consistency review across the governance docs on this branch, then open the PR.
+
+---
+
 ## Phase
 
 | Phase | Status | Notes |
