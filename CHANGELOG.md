@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- **ADR-0014 — Reusable platform vision (first customer, not the only customer):** records the intent that the codebase evolve into a reusable, customer-agnostic platform, scoped by YAGNI. Reconciles `ARCHITECTURE_CONSTRAINTS.md` C2 (multi-tenant hard constraint) with the Product Vision's deferred operational multi-tenancy via a capability-vs-operation split: v1 stays architecturally multi-tenant-capable (`tenant_id`, no customer assumptions in shared code, configuration over hardcoding) without building the operational layer (onboarding, org admin) deferred to ADR-0008. Deployment model remains deferred to ADR-0007. Companion docs: `PRODUCT_BIBLE.md` §2.1/§7.1–§7.3 and `PROJECT_ARCHITECTURE_CONTEXT.md` reference this ADR.
 - **Executable governance (CI-enforced):** `.github/workflows/governance.yml` runs `pnpm verify` + `pnpm governance:validate` on PRs and pushes to `main`.
 - **`scripts/governance/validate.mjs`** — PR template validation (Risk, DoR, DoD, ADR, Rollback, Evidence), CHANGELOG requirement, ADR index integrity, ADR-0001 code scan.
 - **`.github/pull_request_template.md`** — mandatory governance sections with CI markers.
