@@ -755,3 +755,90 @@ Each entry has:
 - The `pnpm audit` endpoint is gone; future audits need a substitute. One-day follow-up: pick a substitute (`osv-scanner` is a good first try — it's open source, no API key, works with `pnpm-lock.yaml`).
 - On Windows, `cmd /c "set DATABASE_URL=… && pnpm …"` corrupts the URL with a trailing space. Set env vars in PowerShell (`$env:DATABASE_URL='…'`) before invoking `cmd /c "pnpm …"` (the env var is inherited). The `cmd set` form should not be used for URLs.
 - The dev server crashes when `next build` overwrites `.next/` mid-flight. Run `pnpm verify` and `pnpm dev` in separate windows, or use `pnpm start` against a pre-built bundle.
+
+---
+
+## Session 018 — 2026-07-16 — contributor (governance: precedence + Product Vision + AI-instruction policy)
+
+**Goal:** Establish repository governance for future architectural decisions — bring Product Vision into the precedence model, make the AI-instruction policy explicit, and refresh drifted docs. Documentation-only; no architecture/code changes (per founder directive).
+
+**Done:**
+- `DEVELOPMENT_GUIDE.md` — "Tooling notes" retitled "Tooling notes (agent-portable governance)" + explicit **tool-neutral policy**: do not create `CLAUDE.md` / `AGENTS.md` / `.cursorrules` / Windsurf / Codex instruction files. Canonical AI-instruction surface = `DEVELOPMENT_GUIDE.md` + `ENGINEERING_PROTOCOL.md` + `GOVERNANCE_CHECKLIST.md`. Any future per-tool file only as a pointer, and only after an ADR.
+- `docs/03-development/ENGINEERING_PROTOCOL.md` §47 — precedence table rewritten to founder-approved order: **Security > Product Vision > Accepted ADRs > Engineering Protocol / Guardrails > Architecture Documentation > Development Guide > Sprint Documents > Historical Documents**. Added two binding clarifications: *Security precedence scope* (security priority 1 applies only to actual security constraints, not a general override) and *Historical documents are context only* (on conflict: report, preserve history, update references only after approval, never auto-revert implementation). Added a note that §41 (human approval) is a gate, not a precedence level, and remains fully binding.
+- `README.md` — stale documentation map refreshed to list every tracked doc: all `00-bootstrap` (incl. `PROJECT_PRINCIPLES`), `01-product` (incl. `MVP_SCOPE`), `02-architecture` (incl. `BOUNDED_CONTEXTS`/`PLUGIN_MATRIX`/`ARCHITECTURE_CONSTRAINTS`), `03-development` (incl. `ENGINEERING_PROTOCOL`/`GOVERNANCE_CHECKLIST`/`QUALITY_GATES`/`RISK_CLASSIFICATION`), all 8 ADRs (0001–0006, 0012, 0013), the `06-sprints` folder, and all 8 templates.
+- `docs/05-decisions/DECISIONS.md` — Proposed-ADR target column refreshed (old "before M3" was stale; M3/M4 closed). Now: ADR-0007 → "before M6 of SPRINT-001 (Q5)", ADR-0008 → "before schema freeze / before M6 (Q6)", ADR-0009/0010 → "parked until M7 sign-off", ADR-0011 unchanged. Realigns with `PROJECT_STATE.md` Q5/Q6. Index is non-historical (ADR-0002 append-only applies to past ADRs/handovers/CHANGELOG, not the index).
+- `PROJECT_STATE.md` and `PROJECT_BACKLOG.md` — not modified this session (no milestone change; backlog already queued Session 018).
+
+**Decisions:**
+- None new. Precedence clarification is under existing ADR-0013 (§47), not a new ADR — it sharpens the existing rule, it does not make a new architectural decision. Per §43/§47, this is a non-binding governance clarification recorded here, not an ADR.
+
+**Open questions:**
+- none (all four edits approved at decision points; `pnpm governance:validate:local` PASSED).
+
+**Verification:**
+- `pnpm governance:validate:local` → **PASSED** (12 changed-files view; 4 working-tree `.md` modifications).
+- `pnpm verify` not required: changes are documentation-only (`.md`), exempt from `PRODUCT_CODE_PATTERNS` / `CHANGELOG` requirement.
+
+**Rollback:** Pure documentation — `git checkout -- DEVELOPMENT_GUIDE.md README.md docs/03-development/ENGINEERING_PROTOCOL.md docs/05-decisions/DECISIONS.md`. No code/schema/config/CI behavioral change.
+
+**Notes for the next session:**
+- Governance closure is done. Next sprint milestone work still gated until M7 sign-off (`PROJECT_STATE.md`). Do not start M5+ without an approved plan.
+- If a per-tool AI-instruction file (`CLAUDE.md` etc.) is later genuinely needed, it must be (a) a pointer only — re-states nothing — and (b) approved as a new ADR first. Track this in `PROJECT_BACKLOG.md` if it comes up.
+
+---
+
+## Session 019 — 2026-07-18 — contributor (governance: agent progress-log — fold into existing artifacts, single source of truth)
+
+**Goal:** Resolve the founder question of where an agent's "where am I right now" pointer should live, so that progress survives a closed/mangled terminal without re-reading chat history or scrolling logs. Decision: fold the pointer into existing artifacts rather than adding three new files under `.ai/`. Documentation-only; no architecture/code changes.
+
+**Done:**
+- `DEVELOPMENT_GUIDE.md` — added "**After every meaningful milestone**" rider to the "When you finish a work cycle" section: keep the **In-flight task** section at the top of `PROJECT_STATE.md` current (three labels only: *Current task* / *Blocked by* / *Next*), as the agent's live pointer that survives a closed terminal. Added a **Single source of truth** note that explicitly forbids creating a separate AI session-log file (`.ai/SESSION_LOG.md`, `TODO.md`, `HANDOFF.md`) — `PROJECT_STATE.md` = current snapshot, `PROJECT_BACKLOG.md` = next concrete task, `PROJECT_HANDOVER.md` = session history; one artifact per kind of information per `ENGINEERING_PROTOCOL.md` §47.
+- `docs/00-bootstrap/PROJECT_STATE.md` — added an **In-flight task** section directly below "One-line status" (current task / blocked by / next), pointed at as the live progress pointer. `Last updated` header line intentionally **not** bumped — the milestone status (M4 closed, advisory count 0) is unchanged; this edit adds a section without altering the v1.10 milestone snapshot.
+- `PROJECT_BACKLOG.md` — not modified this session (no new task queued; backlog already reflects the parked M5+/M7 state).
+
+**Decisions:**
+- None new. This is a non-binding governance clarification under existing **ADR-0013 (§47)** (single source of truth / one artifact per kind of information), not an architectural decision — recorded here, not as an ADR. Explicitly *declined* the alternative of a new `.ai/` directory with `SESSION_LOG.md` / `TODO.md` / `HANDOFF.md` because it would duplicate three governance artifacts that already exist and would create a per-tool-flavored footprint against the tool-neutral policy established in Session 018.
+
+**Open questions:**
+- none (plan reviewed and approved by founder before execution).
+
+**Verification:**
+- `pnpm governance:validate:local` → **PASSED** (intended; run before commit).
+- `pnpm verify` not required: changes are documentation-only (`.md`), exempt from `PRODUCT_CODE_PATTERNS` / `CHANGELOG` requirement.
+
+**Rollback:** Pure documentation — `git checkout -- DEVELOPMENT_GUIDE.md docs/00-bootstrap/PROJECT_STATE.md`. No code/schema/config/CI behavioral change.
+
+**Notes for the next session:**
+- The In-flight task section is now the canonical "where are we right now" pointer. Keep it current after meaningful milestones; full history lives in this append-only file.
+- The PR for this branch (`docs/governance-precedence-vision-ai-policy`) was not yet opened this session — next step on a fresh session is the repository consistency review across the governance docs, then open the PR per the In-flight task pointer.
+
+---
+
+## Session 020 — 2026-07-19 — contributor (governance: ADR-0014 reusable-platform vision + English-artifacts rule)
+
+**Goal:** Close the reusable-platform-vision governance work on this branch — author ADR-0014 (binding record already referenced by `PRODUCT_BIBLE.md` and `PROJECT_ARCHITECTURE_CONTEXT.md` but absent), and codify the English-for-engineering-artifacts rule agreed during this session. Documentation-only; no code/schema/config change.
+
+**Done:**
+- `docs/05-decisions/ADR-0014-reusable-platform-vision.md` (new, Accepted) — records the reusable-platform intent (first customer, not the only customer), scoped by YAGNI. Resolves the C2 vs Product Vision tension via a **capability-vs-operation split**: v1 stays architecturally multi-tenant-capable (`tenant_id`, no customer assumptions in shared code, configuration over hardcoding) without building the operational multi-tenancy layer (onboarding, org admin, self-service provisioning) deferred to ADR-0008. Deployment model deferred to ADR-0007. C2 unchanged; ADR-0014 clarifies its scope. Honors `ARCHITECTURE_PRINCIPLES.md` §11 and `PROJECT_PRINCIPLES.md` #6 (YAGNI) by keeping "capability" distinct from "feature."
+- `docs/05-decisions/DECISIONS.md` — ADR-0014 row added to the Active index.
+- `CHANGELOG.md` — ADR-0014 entry under `### Added`; §61 entry under `### Changed`.
+- `docs/03-development/ENGINEERING_PROTOCOL.md` — added **§61 (Chapter 12: Documentation & Decisions): Documentation language — English for engineering artifacts**. Non-binding engineering clarification under ADR-0013 §47, not an ADR. Includes a product-voice carve-out (personas, mission, user-facing copy stay native-language/Persian-first even inside English docs), reflecting existing `PRODUCT_BIBLE.md` practice.
+- Companion docs (`PRODUCT_BIBLE.md` §2.1/§7.1–§7.3, `ARCHITECTURE_PRINCIPLES.md`, `PROJECT_ARCHITECTURE_CONTEXT.md`) — authored by founder; committed atomically with ADR-0014 in `513b623`.
+- `docs/03-development/AGENT_OPERATIONAL_GUARDRAILS_PROPOSAL.md` — committed earlier this branch (`2944578`); internal proposal document (not an ADR) for agent tooling guardrails against large-inline-Write failures. Root cause of the observed malformed-tool-call failures recorded as **unconfirmed**; justification is the observed failure class, not a proven cause.
+
+**Decisions:**
+- **Multi-tenancy reconciliation (founder-approved):** v1 architecture remains multi-tenant-capable; C2 stands. Operational multi-tenancy deferred to ADR-0008. Settled via the capability-vs-operation framing in ADR-0014.
+- **English-artifacts rule placement:** placed in `ENGINEERING_PROTOCOL.md` as §61, not a new ADR — it is a documentation standard, not an architectural decision. Adopted with the product-voice carve-out.
+
+**Open questions:**
+- none (multi-tenancy framing approved by founder before commit; English-rule placement agreed).
+
+**Verification:**
+- `pnpm governance:validate:local` → **PASSED** (exit 0), run before the §61 commit.
+- ADR-0014 reference integrity checked: file exists; referenced from `PRODUCT_BIBLE.md`, `PROJECT_ARCHITECTURE_CONTEXT.md`, `DECISIONS.md`; no dangling links introduced (ADR-0010/0011 are pre-existing Proposed open items, not new dangles).
+
+**Rollback:** Pure documentation — `git revert` the relevant commits; no code/schema/config/CI behavioral change.
+
+**Notes for the next session:**
+- Branch is ahead of `origin/docs/governance-precedence-vision-ai-policy` by the governance commits on this branch — push or open the PR per the branch's stated purpose (governance precedence + Vision + AI-instruction policy).
+- Keep the In-flight task section in `PROJECT_STATE.md` current; full history lives in this append-only file.

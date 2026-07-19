@@ -37,6 +37,20 @@ We are building our own. It will be:
 - **Owned by us** — no dependency on a third-party platform.
 - **Extensible** — every learning center can run its own customized instance.
 
+### 2.1 Platform strategy — a reusable platform, not one-off custom software
+
+The first deployment is for an Islamic seminary organization. The **long-term product strategy**, however, is to evolve this codebase into a **reusable learning platform** that can later be deployed for more than one organization. The first customer is a *first customer*, not the *only* customer.
+
+Accordingly:
+
+- The project is treated as a **product platform**, not a customer-specific build.
+- **Reusable platform capabilities** belong to the shared core (authentication, authorization, user management, course engine, lesson engine, quiz engine, media management, certificates, notifications, audit logging, search, CMS, admin dashboard, APIs, shared UI components).
+- **Customer-specific behavior** stays isolated where practical (branding, theme, logo, domain, organization terminology, custom workflows, reports, integrations, optional modules).
+- **Configuration over hardcoding** is preferred wherever practical (feature flags, branding, localization, organization settings, permission mappings, optional modules).
+- Customer names and customer-specific assumptions must **not** be embedded into shared code.
+
+This does **not** require immediate implementation of full multi-tenancy, nor premature abstraction, large refactors, or rewrites of stable code. Changes are made only where they provide clear long-term value. This strategic direction is recorded as a binding decision in [ADR-0014](../05-decisions/ADR-0014-reusable-platform-vision.md).
+
 ---
 
 ## 3. Mission (چرا این محصول، چرا حالا)
@@ -66,6 +80,9 @@ We are building our own. It will be:
 - سیستم آزمون آنلاین پیچیده — فقط آزمون ساده چندگزینه‌ای.
 - پشتیبانی از زبان‌های غیر از فارسی.
 - هوش مصنوعی مولد برای تولید محتوا — این قابلیت در roadmap بلندمدت است.
+- پشتیبانی از چندین tenant هم‌زمان در v1 — چندمستاجری واقعی به ADR-0008 موکول شده است؛ v1 به‌گونه‌ای طراحی می‌شود که مانع استفاده مجدد در آینده نشود (ADR-0014).
+
+> **Clarification on SaaS (binding):** The "Out of scope" item about an *external* SaaS platform refers only to **depending on a third-party SaaS as our backend**. It does **not** mean the platform itself cannot later be offered as SaaS. Whether the product is deployed as SaaS, self-hosted, or managed hosting for future customers is a **deployment model** decision deferred to [ADR-0007](../05-decisions/DECISIONS.md). This Vision records only the *intent* that the architecture must not lock out those deployment targets (per ADR-0014).
 
 ### Never (تصمیمات دائمی)
 
@@ -109,6 +126,35 @@ We are building our own. It will be:
 - ❌ یک محصول که برای کار کردن به اینترنت پرسرعت و ابزارهای خارجی وابسته باشد.
 - ❌ یک پروژه که با رفتن بنیان‌گذار، نگهداری‌اش متوقف شود. (این دلیل اصلی استفاده از Engineering Protocol است.)
 
+### 7.1 Future customers (مشتریان آینده)
+
+پلتفرم با هدف استفاده‌مجدد برای بیش از یک نوع سازمان طراحی می‌شود. نشانه‌ها (نه الزام):
+
+- مؤسسات آموزشی (Educational institutes)
+- دانشگاه‌ها (Universities)
+- مدارس (Schools)
+- سازمان‌های مذهبی (Religious organizations)
+- NGOها و موسسات غیرانتفاعی
+- آموزش شرکتی (Corporate training)
+- مشتریان بین‌المللی (International customers)
+
+مشتری اول (حوزه) معتبر و اولویت اصلی باقی می‌ماند. این لیست جهت‌گیری آینده است، طبق اصل #۶ (YAGNI) نباید به‌عنوان pretext برای premature abstraction استفاده شود.
+
+### 7.2 Ownership and IP strategy (مالکیت و مالکیت فکری)
+
+- **مالکیت پلتفرم قابل استفاده‌مجدد** در درازمدت با بنیان‌گذار/سازنده باقی می‌ماند.
+- **سفارشی‌سازی‌های خاص مشتری** باید در صورت ممکن از پلتفرم جدا نگه داشته شوند (Customer Layer).
+- این معماری از چند مدل تجاری پشتیبانی می‌کند: SaaS، deployments دارای لایسنس (Licensed)، Managed hosting، پیاده‌سازی خاص مشتری.
+- **مالکیت و لایسنس واقعی** هر deployment همواره تابع قرارداد با مشتری است؛ این Vision فقط **قصد** را ثبت می‌کند.
+
+### 7.3 Architectural anti-vision (جلوگیری از lock-in با آینده)
+
+- ❌ جاسازی نام مشتری یا فرضیات خاص مشتری در کد مشترک.
+- ❌ تصمیمات معماری که استفاده‌مجدد در آینده را بدون دلیل لازم سد می‌کنند.
+- ❌ premature abstraction یا rewrite کد پایدار بدون ارزش روشن بلندمدت.
+
+> _بخش‌های ۷.۱–۷.۳ **قصد استراتژیک بلندمدت** را ثبت می‌کنند، نه تعهدات قطعی برای هر مشتری. اجرای فنی هر تصمیم این بخش‌ها نیازمند ADR جداگانه است._
+
 ---
 
 ## 8. Change policy
@@ -119,3 +165,5 @@ We are building our own. It will be:
 هر تغییر در این فایل باید:
 - در `PROJECT_HANDOVER.md` ثبت شود.
 - اگر binding است، یک ADR جدید ایجاد کند.
+
+> **تغییرات این سِشن (Session 019، 2026-07-16):** بخش‌های ۲.۱ (استراتژی پلتفرم)، ۴ (توضیح SaaS)، ۷.۳ (مشتریان آینده + IP)، و ۷.۵ (anti-vision معماری) اضافه شد. این یک تغییر **binding** در Vision است و توسط [ADR-0014](../05-decisions/ADR-0014-reusable-platform-vision.md) ثبت شده است.

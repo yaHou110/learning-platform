@@ -47,34 +47,55 @@ If you are a contributor, **start here**: [`DEVELOPMENT_GUIDE.md`](./DEVELOPMENT
 │   │   ├── PROJECT_FOUNDATION.md
 │   │   ├── PROJECT_HANDOVER.md
 │   │   ├── PROJECT_STATE.md
-│   │   └── PROJECT_BACKLOG.md
+│   │   ├── PROJECT_BACKLOG.md
+│   │   └── PROJECT_PRINCIPLES.md
 │   │
 │   ├── 01-product/                ← what we build and why
-│   │   ├── PRODUCT_BIBLE.md
+│   │   ├── PRODUCT_BIBLE.md       ← canonical Product Vision (§47 priority 2)
 │   │   ├── REQUIREMENTS.md
 │   │   ├── FEATURE_CATALOG.md
 │   │   ├── PERSONAS.md
+│   │   ├── MVP_SCOPE.md
 │   │   └── ROADMAP.md
 │   │
 │   ├── 02-architecture/           ← how it is built
 │   │   ├── SYSTEM_ARCHITECTURE.md
 │   │   ├── DATA_MODEL.md
+│   │   ├── BOUNDED_CONTEXTS.md
+│   │   ├── PERMISSION_MATRIX.md
 │   │   ├── PLUGIN_MATRIX.md
-│   │   └── PERMISSION_MATRIX.md
+│   │   └── ARCHITECTURE_CONSTRAINTS.md
 │   │
-│   ├── 03-development/            ← conventions and rules
+│   ├── 03-development/            ← conventions, guardrails, quality gates
+│   │   ├── ENGINEERING_PROTOCOL.md       ← 60 rules (Guardrails; §47 priority 4)
+│   │   ├── GOVERNANCE_CHECKLIST.md       ← per-session checklist
+│   │   ├── QUALITY_GATES.md
+│   │   ├── RISK_CLASSIFICATION.md
 │   │   └── TECH_STACK.md
 │   │
-│   └── 05-decisions/              ← why we chose what we chose
-│       ├── DECISIONS.md
-│       ├── ADR-0001-no-wordpress.md
-│       └── ADR-0002-operating-manual.md
+│   ├── 05-decisions/              ← why we chose what we chose (binding)
+│   │   ├── DECISIONS.md            ← ADR index
+│   │   ├── ADR-0001-no-wordpress.md
+│   │   ├── ADR-0002-operating-manual.md
+│   │   ├── ADR-0003-web-framework.md
+│   │   ├── ADR-0004-database.md
+│   │   ├── ADR-0005-auth.md
+│   │   ├── ADR-0006-plugin-architecture.md
+│   │   ├── ADR-0012-engineering-protocol.md
+│   │   └── ADR-0013-engineering-protocol-v2.md
+│   │
+│   └── 06-sprints/                ← active sprint + per-milestone evidence
+│       └── SPRINT-001-production-foundation/
 │
 └── templates/                     ← copy-paste starters
     ├── HANDOFF_TEMPLATE.md
     ├── SESSION_NOTES.md
     ├── ADR_TEMPLATE.md
-    └── FEATURE_REQUEST.md
+    ├── FEATURE_REQUEST.md
+    ├── DEFINITION_OF_READY.md
+    ├── DEFINITION_OF_DONE.md
+    ├── HUMAN_APPROVAL_CHECKLIST.md
+    └── IMPLEMENTATION_PLAN.md
 ```
 
 ---

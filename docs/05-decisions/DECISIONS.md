@@ -17,6 +17,7 @@
 | [ADR-0006](./ADR-0006-plugin-architecture.md) | Plugin architecture — pnpm monorepo + compile-time typed manifest | Accepted | 2026-07-11 |
 | [ADR-0012](./ADR-0012-engineering-protocol.md) | Mandatory engineering protocol — quality gates, DoD, agent constraints | Accepted | 2026-07-12 |
 | [ADR-0013](./ADR-0013-engineering-protocol-v2.md) | Engineering Protocol v2 (§39–§60), chapters, DoR, spec-first, risk matrix | Accepted | 2026-07-12 |
+| [ADR-0014](./ADR-0014-reusable-platform-vision.md) | Reusable platform vision — first customer, not the only customer; capability vs. operation split reconciles C2 with deferred multi-tenancy (ADR-0008) | Accepted | 2026-07-18 |
 
 ---
 
@@ -24,11 +25,16 @@
 
 | # | Title | Status | Target |
 | --- | --- | --- | --- |
-| ADR-0007 | Hosting & deployment model | Proposed | before M7 |
-| ADR-0008 | Multi-tenant data isolation enforcement (subdomain vs tenant column vs schema) | Proposed | before schema freeze |
-| ADR-0009 | i18n & Shamsi date library | Proposed | before M3 (will likely fold into ADR-0003 follow-up since derived from stack) |
-| ADR-0010 | Media storage provider (S3-compatible) | Proposed | before M3 |
+| ADR-0007 | Hosting & deployment model | Proposed | before M6 of SPRINT-001 (founder decision Q5; M3/M4 closed) |
+| ADR-0008 | Multi-tenant data isolation enforcement (subdomain vs tenant column vs schema) | Proposed | before schema freeze / before M6 (founder decision Q6) |
+| ADR-0009 | i18n & Shamsi date library | Proposed | when first locale work begins (parked until M7 sign-off) |
+| ADR-0010 | Media storage provider (S3-compatible) | Proposed | when first media feature is needed (parked until M7 sign-off) |
 | ADR-0011 | Background job runner (tentative: pg-boss) | Proposed | when first async job is needed |
+
+> **Target refresh (2026-07-16):** Earlier targets read "before M3" for ADR-0007/0010. M3/M4 are
+> now complete; feature work is gated until M7 sign-off. Targets above realign with
+> `PROJECT_STATE.md` (open questions Q5/Q6) and the sprint gate. This index entry is non-historical
+> (per ADR-0002, append-only applies to past ADRs / handovers / CHANGELOG, not to the DECISIONS index).
 
 ---
 
