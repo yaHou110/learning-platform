@@ -719,6 +719,14 @@ Minimum per work cycle: `PROJECT_BACKLOG.md`, `PROJECT_STATE.md` (if needed), `P
 
 If confidence drops **below 90%**, **stop** and seek clarification. Never proceed on guesswork.
 
+### §61. Documentation language — English for engineering artifacts
+
+Use **English by default** for engineering artifacts: ADRs, proposals, governance documents, technical specifications, implementation plans, and other project documentation. Communication-language may differ from documentation-language; this rule governs documentation only.
+
+**Product-voice carve-out:** prose that represents the user's voice (personas, mission statements, user-facing message catalogs, UX rationale) follows the product language (Persian-first here) even inside an otherwise-English document — structural/decisional prose is English, embedded product voice stays native-language. This reflects `PRODUCT_BIBLE.md`, which mixes English structural prose with Persian product headings.
+
+Explicit request otherwise overrides this rule at any time.
+
 ---
 
 ## Chapter 13: Contributor Governance

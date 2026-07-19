@@ -811,3 +811,34 @@ Each entry has:
 **Notes for the next session:**
 - The In-flight task section is now the canonical "where are we right now" pointer. Keep it current after meaningful milestones; full history lives in this append-only file.
 - The PR for this branch (`docs/governance-precedence-vision-ai-policy`) was not yet opened this session — next step on a fresh session is the repository consistency review across the governance docs, then open the PR per the In-flight task pointer.
+
+---
+
+## Session 020 — 2026-07-19 — contributor (governance: ADR-0014 reusable-platform vision + English-artifacts rule)
+
+**Goal:** Close the reusable-platform-vision governance work on this branch — author ADR-0014 (binding record already referenced by `PRODUCT_BIBLE.md` and `PROJECT_ARCHITECTURE_CONTEXT.md` but absent), and codify the English-for-engineering-artifacts rule agreed during this session. Documentation-only; no code/schema/config change.
+
+**Done:**
+- `docs/05-decisions/ADR-0014-reusable-platform-vision.md` (new, Accepted) — records the reusable-platform intent (first customer, not the only customer), scoped by YAGNI. Resolves the C2 vs Product Vision tension via a **capability-vs-operation split**: v1 stays architecturally multi-tenant-capable (`tenant_id`, no customer assumptions in shared code, configuration over hardcoding) without building the operational multi-tenancy layer (onboarding, org admin, self-service provisioning) deferred to ADR-0008. Deployment model deferred to ADR-0007. C2 unchanged; ADR-0014 clarifies its scope. Honors `ARCHITECTURE_PRINCIPLES.md` §11 and `PROJECT_PRINCIPLES.md` #6 (YAGNI) by keeping "capability" distinct from "feature."
+- `docs/05-decisions/DECISIONS.md` — ADR-0014 row added to the Active index.
+- `CHANGELOG.md` — ADR-0014 entry under `### Added`; §61 entry under `### Changed`.
+- `docs/03-development/ENGINEERING_PROTOCOL.md` — added **§61 (Chapter 12: Documentation & Decisions): Documentation language — English for engineering artifacts**. Non-binding engineering clarification under ADR-0013 §47, not an ADR. Includes a product-voice carve-out (personas, mission, user-facing copy stay native-language/Persian-first even inside English docs), reflecting existing `PRODUCT_BIBLE.md` practice.
+- Companion docs (`PRODUCT_BIBLE.md` §2.1/§7.1–§7.3, `ARCHITECTURE_PRINCIPLES.md`, `PROJECT_ARCHITECTURE_CONTEXT.md`) — authored by founder; committed atomically with ADR-0014 in `513b623`.
+- `docs/03-development/AGENT_OPERATIONAL_GUARDRAILS_PROPOSAL.md` — committed earlier this branch (`2944578`); internal proposal document (not an ADR) for agent tooling guardrails against large-inline-Write failures. Root cause of the observed malformed-tool-call failures recorded as **unconfirmed**; justification is the observed failure class, not a proven cause.
+
+**Decisions:**
+- **Multi-tenancy reconciliation (founder-approved):** v1 architecture remains multi-tenant-capable; C2 stands. Operational multi-tenancy deferred to ADR-0008. Settled via the capability-vs-operation framing in ADR-0014.
+- **English-artifacts rule placement:** placed in `ENGINEERING_PROTOCOL.md` as §61, not a new ADR — it is a documentation standard, not an architectural decision. Adopted with the product-voice carve-out.
+
+**Open questions:**
+- none (multi-tenancy framing approved by founder before commit; English-rule placement agreed).
+
+**Verification:**
+- `pnpm governance:validate:local` → **PASSED** (exit 0), run before the §61 commit.
+- ADR-0014 reference integrity checked: file exists; referenced from `PRODUCT_BIBLE.md`, `PROJECT_ARCHITECTURE_CONTEXT.md`, `DECISIONS.md`; no dangling links introduced (ADR-0010/0011 are pre-existing Proposed open items, not new dangles).
+
+**Rollback:** Pure documentation — `git revert` the relevant commits; no code/schema/config/CI behavioral change.
+
+**Notes for the next session:**
+- Branch is ahead of `origin/docs/governance-precedence-vision-ai-policy` by the governance commits on this branch — push or open the PR per the branch's stated purpose (governance precedence + Vision + AI-instruction policy).
+- Keep the In-flight task section in `PROJECT_STATE.md` current; full history lives in this append-only file.

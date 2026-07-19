@@ -54,6 +54,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **`.env.example` lacked comments** — added descriptions, security notes, and `openssl rand -base64 32` generation command.
 
 ### Changed
+- `docs/03-development/ENGINEERING_PROTOCOL.md` — added **§61 (Chapter 12): Documentation language — English for engineering artifacts** (ADRs, proposals, governance, specs, implementation plans). Communication-language is distinct from documentation-language; product-voice (personas, mission, UX rationale) stays native-language (Persian-first) even inside English docs. Non-binding engineering clarification under ADR-0013 §47; not an ADR.
 - `package.json` — `governance:validate`, `governance:validate:local` scripts.
 - `DEVELOPMENT_GUIDE.md` — rule #9 (GOVERNANCE_CHECKLIST); CI reference.
 - `docs/03-development/QUALITY_GATES.md` — documents `governance.yml` pipeline.
