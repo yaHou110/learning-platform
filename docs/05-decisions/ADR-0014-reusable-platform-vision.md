@@ -175,6 +175,49 @@ A new ADR is required to overturn this one.
 
 ---
 
+## Agent escalation triggers
+
+Decision §2 ("Configuration over hardcoding") and §6 ("No premature abstraction") state
+*values*. An agent cannot reliably self-evaluate against abstract values; it can reliably match
+*patterns*. The triggers below are the concrete anti-patterns that warrant **stop-and-propose**
+behavior before implementation. They bind the agent's action, not its judgment of values —
+matching §58 ("verify, do not invent") and §59 ("governance before generation").
+
+Before writing into `shared/` or `core/` code (paths scoped by ADR-0006 and
+`ARCHITECTURE_CONSTRAINTS.md`), stop and propose ADR-style alternatives if the change would:
+
+1. **Embed a customer identity or assumption** — a customer name, logo path, domain, terminology,
+   or organization-specific business rule hard-coded into shared code or the shared data model.
+   (Isolated branding/theme/config per Decision §1 is the intended path; embedding is not.)
+2. **Lock a single-tenant data shape** — a migration or schema that cannot later carry
+   `tenant_id` without a breaking change (this would re-open the C2 capability-vs-operation split
+   Decision §3 closes).
+3. **Commit to a single deployment model** — code that cannot later be delivered as SaaS,
+   licensed, managed, or customer-specific, foreclosing options this ADR leaves open for
+   ADR-0007.
+4. **Fork the core** — creating a customer-specific copy of shared behavior instead of adding
+   configuration, a flag, a plugin, or an optional module (Decision §2 and
+   `PROJECT_PRINCIPLES.md` #6).
+
+These are **triggers to propose, not to silently generalize**. On a trigger:
+
+- Do **not** proceed with the embedding/fork/lock-in as written.
+- Do **not** add speculative abstraction "to be safe" (that violates Decision §5 / #6 just as
+  much as the anti-pattern itself).
+- Propose the minimal customer-agnostic alternative and record the trade-off; if it changes
+  architecture, it routes through §59 → §43 (ADR) before implementation.
+
+Two anti-patterns are explicitly *not* triggers here, to prevent this ADR from becoming a pretext
+for premature work:
+
+- **Building operational multi-tenancy features** (onboarding, org-admin, self-service
+  provisioning) — deferred to ADR-0008; building them now is itself the violation, not the
+  trigger.
+- **Adding configurability for a hypothetical second customer when the first needs nothing** —
+  YAGNI via #6 / §11; this is a cost Decision §5 forbids.
+
+---
+
 ## References
 
 - [`ADR-0002-operating-manual.md`](./ADR-0002-operating-manual.md) — binding decisions must be recorded as ADRs; append-only history.
