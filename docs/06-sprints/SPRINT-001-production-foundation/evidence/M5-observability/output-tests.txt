@@ -1,0 +1,16 @@
+
+> @learning-platform/core@0.1.0 test D:\code\learning-platform\packages\core
+> vitest run
+
+
+[1m[7m[36m RUN [39m[27m[22m [36mv2.1.9 [39m[90mD:/code/learning-platform/packages/core[39m
+
+ [32m✓[39m tests/api-user-public-type.test.ts [2m([22m[2m2 tests[22m[2m)[22m[90m 7[2mms[22m[39m
+ [32m✓[39m tests/registry.test.ts [2m([22m[2m3 tests[22m[2m)[22m[90m 13[2mms[22m[39m
+ [32m✓[39m tests/observability-metrics.test.ts [2m([22m[2m5 tests[22m[2m)[22m[90m 8[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m3 passed[39m[22m[90m (3)[39m
+[2m      Tests [22m [1m[32m10 passed[39m[22m[90m (10)[39m
+[2m   Start at [22m 15:14:43
+[2m   Duration [22m 1.75s[2m (transform 347ms, setup 0ms, collect 695ms, tests 28ms, environment 1ms, prepare 1.68s)[22m
+
