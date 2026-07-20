@@ -63,6 +63,23 @@ anything unfamiliar.
 
 ---
 
+## Security Audit
+
+```bash
+# Local audit (requires osv-scanner in PATH)
+pnpm security:audit
+
+# Install osv-scanner:
+#   • Binary: https://github.com/google/osv-scanner/releases
+#   • Go:     go install github.com/google/osv-scanner/cmd/osv-scanner@latest
+#   • Docker: docker run --rm -v ${PWD}:/src gcr.io/osv-scanner/osv-scanner scan /src/pnpm-lock.yaml
+```
+
+CI runs the official OSV Scanner GitHub Action on every push/PR touching `pnpm-lock.yaml`
+and uploads results to the **Security** tab (SARIF).
+
+---
+
 ## When you finish a work cycle
 
 ```markdown
