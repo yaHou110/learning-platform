@@ -16,6 +16,7 @@
 | C5 | **Security-first** | Safe defaults (deny-by-default authz, parameterized queries, secrets in env). Student PII is protected. |
 | C6 | **Low operational complexity** | Minimal moving parts; one person can operate, back up, and upgrade it. Avoid premature distribution. |
 | C7 | **API contract** | *All externally consumed APIs must expose a stable, versioned, machine-readable contract.* The concrete contract technology (e.g. OpenAPI) is **deferred to a later ADR** and is not fixed here. |
+| C8 | **One code artifact, different configuration** | One build artifact serves all deployment targets (dedicated VPS, SaaS, licensed, managed). Do **not** fork application code per customer. Customer identity, branding, domain, feature flags, and deployment target are runtime configuration, not build-time branches or customer-specific artifacts. |
 
 ## Service-level objectives (SLOs)
 
