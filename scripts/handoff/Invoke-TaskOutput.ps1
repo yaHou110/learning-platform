@@ -21,9 +21,11 @@
 #   .\scripts\handoff\Invoke-TaskOutput.ps1 -DryRun    # plan only, no git writes
 #   .\scripts\handoff\Invoke-TaskOutput.ps1 -Path .\path\to\other.json
 #
-# Exit codes:
-#   0  success (PR open, CI green, stopped before merge OR auto-merged)
-#   2  soft no-op: handoff absent or not status=completed (normal mid-task stop)
+# Exit codes (Stop-hook semantics in brackets):
+#   0  success — PR open + CI green + stopped before merge (OR auto-merged).
+#      Also the no-op exit when handoff absent or not status=completed, so the
+#      Stop hook allows Claude to stop cleanly. [non-zero on a Stop hook BLOCKS
+#      the stop and loops; the no-op path MUST be 0]
 #   3  contract failure: not gitignored / missing fields / schema invalid
 #   4  verification failure: CI not green
 #   5  git/gh operational failure
@@ -48,15 +50,24 @@ function Fail($code, $msg) {
 }
 
 # ============================================================================
-# STAGE 0 — Guard: handoff absent or not completed? Soft no-op (exit 2).
+# STAGE 0 — Guard: handoff absent or not completed? Silent no-op (exit 0).
 # This is what makes the Stop hook cheap on every non-milestone Claude stop:
 # most stops there is no JSON at all (Claude answered a question), so the hook
 # exits here in <50ms. Only a real milestone completion produces a JSON with
 # status=completed, and only then does the chain run.
+#
+# CRITICAL: stop-hook exit-code semantics. A Claude Code Stop hook that exits
+# NON-ZERO **blocks the turn from ending** — the harness re-prompts Claude,
+# which stops again, fires the hook again, and you get a loop
+# ("A hook blocked the turn from ending N consecutive times"). So the no-op
+# paths MUST exit 0 to let Claude stop cleanly. (PreToolUse uses exit 2 to mean
+# "deny + show stderr"; Stop hooks do NOT — non-zero on Stop = block. This
+# distinction bit us via exit 2 here on the no-op path; fixed to exit 0.)
 # ============================================================================
 if (-not (Test-Path $Path)) {
-    # Not an error: just a normal Claude stop with no handoff pending.
-    exit 2
+    # Not an error: just a normal Claude stop with no handoff pending. Exit 0
+    # so the harness allows the stop. No output (silent no-op).
+    exit 0
 }
 
 $raw = Get-Content $Path -Raw
@@ -67,9 +78,10 @@ try {
 }
 
 if ($task.status -ne "completed") {
-    # JSON present but not completed — Claude marked it draft/pending/in-progress.
-    # Not the trigger condition. No-op.
-    exit 2
+    # JSON present but not completed (draft/pending/in-progress) — not the
+    # trigger condition. Silent exit 0 so Claude can stop (see STAGE 0 note:
+    # non-zero would block the stop and loop).
+    exit 0
 }
 
 Write-Host "=== TaskOutput handoff ===" -ForegroundColor Cyan

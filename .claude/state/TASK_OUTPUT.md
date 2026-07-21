@@ -15,7 +15,7 @@ Previously Claude ran the entire Git lifecycle inline: `git add → commit → p
 
 ## When the chain fires
 
-A `Stop` hook (`.claude/settings.json`) runs the script **every time Claude stops**. Cheap on non-milestone stops: the script exits with code `2` (soft no-op) when `task-output.json` is absent or `status` is not `completed`. So:
+A `Stop` hook (`.claude/settings.json`) runs the script **every time Claude stops**. Cheap on non-milestone stops: the script silently `exit 0`s when `task-output.json` is absent or `status` is not `completed`. (Stop-hook exit-code contract: non-zero **blocks the stop and loops** — so the no-op MUST be exit 0, not an error code.) So:
 
 - Claude answers a question / reads a file / pauses mid-task → no JSON, or `status=in-progress` → script exits immediately, nothing happens.
 - Claude finishes a milestone, has run local validation, and writes `task-output.json` with `status="completed"` → the Stop hook runs, the script owns the chain: verify → branch → commit → push → PR → wait CI → stop before merge.
