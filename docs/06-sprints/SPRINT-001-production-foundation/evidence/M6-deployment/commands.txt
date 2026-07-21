@@ -1,0 +1,42 @@
+# M6 Deployment / CI-CD — Commands Run
+
+## Files Created
+```bash
+# Docker
+apps/web/Dockerfile                      # multi-stage builder → runner (standalone)
+.dockerignore                            # build context pruning
+docker-compose.prod.yml                  # app + postgres + minio
+
+# Reverse Proxy
+docs/07-deployment/nginx.conf            # TLS + HSTS + rate-limit + metrics gate
+
+# systemd
+docs/07-deployment/learning-platform.service  # Type=oneshot, drives compose
+
+# Backup / Restore
+scripts/deployment/backup.sh             # pg_dump + minio mirror + manifest + 30-day retention
+scripts/deployment/restore.sh            # idempotent restore with sha256 verify
+
+# Deployment Guide
+docs/07-deployment/DEPLOYMENT_GUIDE.md   # full provisioning + ops + rollback guide
+
+# CI/CD
+.github/workflows/deploy.yml             # build → push GHCR → ssh deploy → smoke test → rollback
+```
+
+## Files Modified
+```bash
+apps/web/next.config.mjs                 # added output: "standalone" for Docker
+```
+
+## Verification
+```bash
+pnpm --filter @learning-platform/core typecheck   # exit 0
+pnpm --filter @learning-platform/core test        # 10 tests pass
+pnpm --filter @learning-platform/core build       # exit 0
+pnpm --filter @learning-platform/core lint        # exit 0
+pnpm --filter web typecheck                       # exit 0
+pnpm --filter web build                           # exit 0 (with output: standalone)
+pnpm test                                         # all packages pass
+pnpm lint                                         # core ✅, web pre-existing eslint-plugin-import issue
+```

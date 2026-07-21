@@ -21,6 +21,18 @@ function pool(): pg.Pool {
   const connectionString =
     process.env.DATABASE_URL ?? "postgres://learning_platform:learning_platform@localhost:5432/learning_platform";
   _pool = new Pool({ connectionString, max: 10 });
+  // Close the pool once on process exit so connections are not leaked on
+  // graceful shutdown (SIGTERM from PM2/systemd in production) or during the
+  // Next.js dev server's hot self-restart. Idempotent: a no-op if already
+  // closed. Imported lazily so this module stays import-side-effect-free in
+  // test contexts that never start the server.
+  const close = async () => {
+    if (!_pool) return;
+    await _pool.end();
+    _pool = null;
+  };
+  process.once("SIGTERM", () => void close().finally(() => process.exit(0)));
+  process.once("SIGINT", () => void close().finally(() => process.exit(0)));
   return _pool;
 }
 

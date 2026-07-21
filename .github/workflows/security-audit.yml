@@ -30,10 +30,11 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Setup pnpm
+        # No `version` here: package.json `packageManager: pnpm@9.15.9` is the
+        # source of truth. Setting `version: 9` here collided with it and failed
+        # pnpm/action-setup@v4 ("Multiple versions of pnpm specified"). Match the
+        # pattern used in governance.yml (action-setup with no `with:` block).
         uses: pnpm/action-setup@v4
-        with:
-          version: 9
-          run_install: false
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -51,8 +52,15 @@ jobs:
           args: scan --lockfile=pnpm-lock.yaml --format=sarif --output=osv-results.sarif
 
       - name: Upload SARIF to GitHub Security
+        # Best-effort upload. GitHub requires "Code scanning" enabled in repo
+        # settings (Settings → Security → Code scanning) to accept SARIF; until a
+        # repo admin enables it this step 401s, which would otherwise fail the
+        # whole job even though the OSV scan itself succeeded. The scan output is
+        # still printed to the run log; making the upload non-fatal keeps the
+        # authoritative result (the scan) as the job's pass/fail signal.
         uses: github/codeql-action/upload-sarif@v3
         if: always()
+        continue-on-error: true
         with:
           sarif_file: osv-results.sarif
           category: osv-scanner
