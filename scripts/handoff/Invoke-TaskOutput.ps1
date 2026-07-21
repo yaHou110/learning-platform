@@ -226,14 +226,24 @@ try {
     }
 
     $prArgs = @("pr", "create", "--base", "main", "--head", $branch, "--title", "$($task.pr_title)", "--body", $body)
-    & gh @prArgs
+    # Capture stdout — gh pr create prints the new PR URL on success.
+    $createOut = & gh @prArgs
     if ($LASTEXITCODE -ne 0) { Fail 5 "gh pr create failed." }
 
-    # Capture the PR URL / number for the wait stage.
-    $prUrl = (& gh pr view --json url --jq '.url' -H $branch).Trim()
-    if ($LASTEXITCODE -ne 0) {
-        # Fallback: list PRs for this head.
-        $prUrl = (& gh pr list --head $branch --json url --jq '.[0].url').Trim()
+    $prUrl = "$createOut".Trim()
+    # Fallback if create didn't print a URL (older gh): query by head branch.
+    # gh pr VIEW takes a branch/PR as a positional arg — -H is NOT a view flag.
+    if (-not ($prUrl -match '^https?://')) {
+        $viewOut = & gh pr view $branch --json url --jq '.url' 2>$null
+        if ($LASTEXITCODE -eq 0 -and $viewOut) { $prUrl = "$viewOut".Trim() }
+    }
+    # Last resort: list PRs for this head.
+    if (-not ($prUrl -match '^https?://')) {
+        $listOut = & gh pr list --head $branch --state open --json url --jq '.[0].url' 2>$null
+        if ($LASTEXITCODE -eq 0 -and $listOut) { $prUrl = "$listOut".Trim() }
+    }
+    if (-not ($prUrl -match '^https?://')) {
+        Fail 5 "PR created but URL could not be captured. Check GitHub for the open PR on branch '$branch'."
     }
     Write-Host "PR opened: $prUrl" -ForegroundColor Green
     if ($labels) {
