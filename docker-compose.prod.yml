@@ -29,7 +29,11 @@ services:
       retries: 5
 
   minio:
-    image: minio/minio:RELEASE.2024-07-19T21-05-03Z
+    # Pin a current MinIO RELEASE. The previously pinned tag
+    # (RELEASE.2024-07-19T21-05-03Z) was pruned from Docker Hub and resolves to
+    # "not found" on any fresh host/CI run, breaking the prod stack. Bump to a
+    # stable current release; re-pin when rotating. Verified present 2026-07-21.
+    image: minio/minio:RELEASE.2025-07-23T15-54-02Z
     container_name: lp-minio
     restart: unless-stopped
     command: server /data --console-address ":9001"
@@ -49,7 +53,11 @@ services:
 
   app:
     build:
-      context: ..
+      # Context MUST be repo root (where this compose file lives). A parent
+      # repo previously set `context: ..`, which only worked if the compose file
+      # sat one level below root — it does NOT, so `..` walked up into the parent
+      # dir and the build failed with "GetFileAttributesEx D:\code\apps". Use `.`.
+      context: .
       dockerfile: apps/web/Dockerfile
     container_name: lp-app
     restart: unless-stopped
@@ -75,7 +83,12 @@ services:
     ports:
       - "127.0.0.1:3000:3000"
     healthcheck:
-      test: ["CMD", "wget", "-q", "--spider", "http://localhost:3000/api/health"]
+      # Use 127.0.0.1 (IPv4 explicit), not `localhost`. On node:20-alpine the
+      # busybox `wget` resolves `localhost` to ::1 (IPv6) first; the Next.js
+      # standalone server binds 0.0.0.0 (IPv4), so `localhost` probes get
+      # "Connection refused" and the container is reported unhealthy even though
+      # the app serves 200 on 127.0.0.1 (confirmed during M6 local verification).
+      test: ["CMD", "wget", "-q", "--spider", "http://127.0.0.1:3000/api/health"]
       interval: 30s
       timeout: 10s
       retries: 3
