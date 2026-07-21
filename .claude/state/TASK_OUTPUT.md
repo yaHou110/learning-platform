@@ -65,6 +65,15 @@ Schema: [.claude/state/schema/v1.schema.json](schema/v1.schema.json) — the aut
 4. **Never trust your own recall** for the file list — you don't write one. The script derives `git status`/`git diff` itself; that's the structure enforcing the principle.
 5. **Keep `merge_policy: "manual"` unless the founder has explicitly opted into auto-merge** for this project. The merge gate is a deliberate human checkpoint.
 6. **When you start a new milestone** mid-session, overwrite `task-output.json` (not append — only the latest is authoritative) and set `status="draft"` until you finish.
+7. **`pr_body` MUST include the project's governance sections** — this repo runs `pnpm governance:validate` on every PR and it blocks merge if any section is missing or incomplete. Copy the section set from `.github/pull_request_template.md`:
+   - `<!-- governance:section:risk -->` + `**Level:**` (`LOW`/`MEDIUM`/`HIGH`/`CRITICAL`) + rationale
+   - `<!-- governance:section:dor -->` + either the five DoR checkboxes OR, for LOW risk, `DoR waived — LOW risk`
+   - `<!-- governance:section:dod -->` + **all five** DoD checkboxes checked: `Acceptance criteria verified`, `` `pnpm verify` passed ``, `Documentation updated`, `Evidence attached`, **`Rollback documented (if non-trivial)`** (the last one is easy to miss)
+   - `<!-- governance:section:adr -->` + `Required:` `yes`/`no` + `References:` + `Compliance:`
+   - `<!-- governance:section:rollback -->` + substantive revert method (required for HIGH/CRITICAL, good practice otherwise)
+   - `<!-- governance:section:evidence -->` + commands/output
+   - Also update `CHANGELOG.md` (`[Unreleased] → Added`) when `apps/`/`packages/`/`scripts/`/`workflows/` change, or governance validation fails.
+8. **Editing the PR body does NOT retrigger governance CI** — `governance.yml` fires on `pull_request` (opened/synchronize = push). To re-run after a body fix, push a commit.
 
 ## Schema evolution (versioning)
 
