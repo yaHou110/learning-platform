@@ -237,11 +237,11 @@ try {
         Write-Host "PR opened: $prUrl" -ForegroundColor Green
     } else {
         # Likely "already exists" — locate the open PR for this head and update it.
-        $existing = & gh pr list --head $branch --state open --json url,number --jq '.[0]' 2>$null
-        if ($LASTEXITCODE -eq 0 -and $existing -and $existing -ne "null") {
-            $prUrl = (& gh pr view $existing --json url --jq '.url' 2>$null).Trim()
-            Write-Host "PR already exists — updating: $prUrl" -ForegroundColor Gray
-            & gh pr edit $prUrl --title "$($task.pr_title)" --body $body 2>$null | Out-Null
+        $prNum = (& gh pr list --head $branch --state open --json number --jq '.[0].number' 2>$null)
+        if ($LASTEXITCODE -eq 0 -and $prNum -and $prNum -ne "null") {
+            $prUrl = (& gh pr view $prNum --json url --jq '.url' 2>$null).Trim()
+            Write-Host "PR already exists (#$prNum) — updating: $prUrl" -ForegroundColor Gray
+            & gh pr edit $prNum --title "$($task.pr_title)" --body $body 2>$null | Out-Null
         } else {
             Write-Host $createOut -ForegroundColor Red
             Fail 5 "gh pr create failed and no existing open PR found for head '$branch'."
