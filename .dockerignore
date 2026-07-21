@@ -1,0 +1,51 @@
+# Docker build context ignore list.
+# Keeps the builder stage lean and the image reproducible.
+
+# Version control
+.git
+.gitignore
+
+# Dependencies (reinstalled inside the builder)
+node_modules
+**/node_modules
+
+# Build outputs (reproduced inside the builder)
+.next
+**/dist
+**/.turbo
+
+# Tests & docs (not needed at runtime; docs served outside the container)
+**/*.test.ts
+**/*.spec.ts
+**/__tests__
+tests
+docs
+evidence
+
+# Sprint artifacts
+docs/06-sprints
+
+# IDE / OS
+.vscode
+.idea
+.DS_Store
+Thumbs.db
+
+# Env (must not be baked into the image)
+.env
+.env.local
+**/.env
+apps/web/.env
+
+# CI / scripts not needed at runtime (backup/restore run on the host)
+.github
+scripts/deployment
+
+# Logs
+*.log
+npm-debug.log*
+
+# Docker meta
+Dockerfile
+.dockerignore
+docker-compose*.yml

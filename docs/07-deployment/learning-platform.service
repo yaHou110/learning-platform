@@ -1,0 +1,49 @@
+# systemd unit for the Learning Platform app container (M6 deployment)
+#
+# v1 runs the app inside docker compose; this unit drives compose as a service so
+# the host's service manager (not a manual `docker compose up`) owns restarts.
+# Postgres + MinIO ride in the same compose file and are managed by Docker's
+# own restart policy; this unit ensures the compose stack is up after boot.
+#
+# Install (see docs/07-deployment/DEPLOYMENT_GUIDE.md):
+#   sudo cp docs/07-deployment/learning-platform.service /etc/systemd/system/
+#   sudo systemctl daemon-reload
+#   sudo systemctl enable --now learning-platform
+
+[Unit]
+Description=Learning Platform (docker compose stack)
+Documentation=file:///docs/07-deployment/DEPLOYMENT_GUIDE.md
+Requires=docker.service
+After=docker.service network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+
+# Environment file: holds POSTGRES_PASSWORD, AUTH_SECRET, MINIO_ROOT_PASSWORD,
+# NEXTAUTH_URL, METRICS_TOKEN, S3_BUCKET. Created by the deployer (see guide).
+EnvironmentFile=/etc/learning-platform/env
+
+# Compose is invoked from the repo root; the prod compose path is explicit so
+# the dev docker-compose.yml is never accidentally run in production.
+WorkingDirectory=/opt/learning-platform
+
+ExecStartPre=/usr/bin/docker compose -f docker-compose.prod.yml pull
+ExecStart=/usr/bin/docker compose -f docker-compose.prod.yml up -d
+ExecStop=/usr/bin/docker compose -f docker-compose.prod.yml down
+
+# Restart the whole stack only if the oneshot itself fails (compose handles
+# per-container restarts via `restart: unless-stopped`). Bounded retry.
+Restart=on-failure
+RestartSec=10
+
+# Hardening (systemd)
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/var/lib/docker /opt/learning-platform
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target
