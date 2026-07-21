@@ -17,3 +17,5 @@ coverage
 .tmp/
 PR_BODY.md
 .freebuff/
+.claude/
+scripts/handoff/
