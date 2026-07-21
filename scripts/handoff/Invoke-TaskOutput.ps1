@@ -44,38 +44,39 @@ $repoRoot = (Resolve-Path (Join-Path $PSScriptRoot "..\..")).Path
 # ---------------------------------------------------------------------------
 # Stdin / stop_hook_active guard (anti-loop).
 # Claude Code passes the hook input as JSON on STDIN (including when invoked as
-# a Stop hook). One field — stop_hook_active — counts how many times Stop has
-# fired consecutively in this turn. If a Stop hook ever blocks (exit 2) the
-# turn continues and Stop re-fires with an incremented value — that is the loop
-# we saw ("A hook blocked the turn from ending N consecutive times").
+# a Stop hook). Per the official docs (code.claude.com/docs/en/hooks, "Stop
+# input"): stop_hook_active is a BOOLEAN — "true when Claude Code is already
+# continuing as a result of a stop hook. Check this value .. to avoid blocking
+# on a continuation loop." Example payload: {"hook_event_name":"Stop",
+# "stop_hook_active": true, ...}.
 #
-# Defense-in-depth: if we have already fired a few times this turn, short-circuit
-# to exit 0 and let Claude stop. This guarantees the script can NEVER loop,
-# regardless of which exit path a future edit introduces downstream. The no-op
-# paths already exit 0 (the real fix); this guard additionally caps retries.
+# (Earlier I mis-read it as a consecutive-fire COUNT and wrote a `-ge 2`
+# numeric threshold — that was wrong; the field is boolean. The harness also
+# imposes its own 8-consecutive-continuation cap, after which it relabels as
+# "Stop hook feedback". We implement the documented boolean guard here so the
+# hook can NEVER self-loop: if we're already in a hook-driven continuation,
+# exit 0 immediately and let Claude stop.)
 #
-# stdin is consumed only if present (PowerShell; manual runs have no stdin
-# piped, so $stdin stays $null and the guard is skipped — manual runs proceed).
+# stdin is consumed only if redirected (manual/CLI runs have no piped stdin, so
+# the guard is skipped and the script behaves as before).
 # ---------------------------------------------------------------------------
-$stopHookActive = 0
-if (-not [Console]::IsInputRedirected) {
-    # No stdin redirected (interactive/CLI invocation) — not a hook fire, skip.
-} else {
+$stopHookActive = $false
+if ([Console]::IsInputRedirected) {
     try {
         $stdinRaw = [Console]::In.ReadToEnd()
         if ($stdinRaw) {
             $hookInput = $stdinRaw | ConvertFrom-Json
-            if ($hookInput.stop_hook_active -ne $null) {
-                $stopHookActive = [int]$hookInput.stop_hook_active
-            }
+            # Boolean true (strict). Be tolerant of "true" string too.
+            $v = $hookInput.stop_hook_active
+            if ($v -eq $true -or "$v" -eq "true") { $stopHookActive = $true }
         }
     } catch {
         # Malformed stdin — don't let it block the stop. Ignore and continue.
     }
 }
-# Cap: never block-retry more than a handful of times. Once we're past the
-# first couple of consecutive fires in a turn, allow the stop unconditionally.
-if ($stopHookActive -ge 2) {
+# If we were already invoked as a continuation of a prior Stop hook, do NOT
+# do anything that could re-block. Short-circuit to exit 0 and let Claude stop.
+if ($stopHookActive) {
     exit 0
 }
 
