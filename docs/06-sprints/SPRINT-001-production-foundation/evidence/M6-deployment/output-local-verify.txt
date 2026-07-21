@@ -1,0 +1,60 @@
+# M6 Deployment — Local Docker Verification (output capture)
+# Run: 2026-07-21, host machine (Win11), against docker-compose.prod.yml.
+# Purpose: close the M6 checklist items that were "deferred — no live VPS":
+#   docker build succeeds locally; compose up brings all services healthy;
+#   /api/health 200, /api/ready 200, /api/metrics 401(no token)/200(token),
+#   MinIO S3 + console reachable. (TLS / HSTS / host-Nginx / deploy.yml SSH
+#   remain genuinely VPS-only → M7.)
+
+## Image build
+Command: docker compose -f docker-compose.prod.yml up -d --build
+Result:  learning-platform-app:latest built successfully.
+  - next build: ✓ Compiled with warnings in 35.3s (warnings are the known
+    jose @ Edge Runtime CompressionStream/DecompressionStream notice —
+    non-fatal, cosmetic only).
+  - Routes (10): / , /_not-found, /.well-known/security.txt,
+    /api/auth/[...nextauth], /api/auth/session, /api/health, /api/metrics,
+    /api/ready, /api/users, /login.
+  - First Load JS shared: 102 kB; Middleware: 46.3 kB.
+
+## Containers (docker compose ps)
+timestamp: 2026-07-21T16:35:39Z
+  lp-app      | Up 50 seconds (healthy)
+  lp-minio    | Up 10 minutes (healthy)
+  lp-postgres | Up 10 minutes (healthy)
+
+## Endpoint probes (against http://127.0.0.1:3000)
+  /api/health (no auth)              -> HTTP 200
+  /api/ready  (no auth)              -> HTTP 200
+  /api/metrics (no auth)             -> HTTP 401   <- bearer gate denies
+  /api/metrics (Bearer token)        -> HTTP 200   <- bearer gate passes
+  /api/metrics (wrong token)         -> HTTP 401   <- bearer gate rejects bad token
+  /  (home)                         -> HTTP 307   <- redirect (to /login)
+
+## Bodies
+GET /api/health    -> {"status":"ok","checks":{"db":true,"auth":true,"storage":"skipped"},"timestamp":"2026-07-21T16:35:40.807Z"}
+GET /api/ready     -> {"status":"ready","checks":{"config":true,"maintenance":false},"timestamp":"2026-07-21T16:35:40.912Z"}
+GET /api/metrics (+token) -> # TYPE process_uptime_seconds gauge
+                            process_uptime_seconds 50.553
+                            (Prometheus text/plain; full body truncated)
+
+## MinIO
+  MinIO S3 API :9000 /minio/health/live -> HTTP 200
+  MinIO console :9001 /                -> HTTP 200
+  MinIO console :9001 /login           -> HTTP 200
+  Bucket `local/learning-platform` created; mc ls local → learning-platform/ 0B
+
+## Postgres
+  pg_isready -U learning_platform -d learning_platform
+  -> /var/run/postgresql:5432 - accepting connections
+
+## IsActive re-check note
+ (kept for the auth subsystem; per ADR-0005 the per-request isActive gate is
+ exercised by the auth flows, not this opaque smoke — left to integration tests.)
+
+---
+Result: All locally-verifiable M6 checks PASS. The deployed prod stack, as
+shipped in docker-compose.prod.yml + apps/web/Dockerfile, builds, boots, and
+serves correctly on localhost — no VPS required for THIS layer. Remaining
+VPS-only items (Let's-Encrypt TLS, host-level Nginx/HSTS/rate-limit, the
+deploy.yml SSH delivery path) are deferred to M7, by design.

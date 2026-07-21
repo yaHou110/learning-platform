@@ -80,7 +80,7 @@ All core quality gates pass: `pnpm --filter @learning-platform/core typecheck`, 
 
 **M7 — Production Readiness Review** — final checklist, no red, founder sign-off → feature gate lifts.
 
-**Q7 — PWA / offline** — still pending founder decision (yes/no). Drives a new bounded context (Learning) and service-worker infra.
+**Q7 — PWA / offline** — founder decided **YES (2026-07-21, ADR-0016)**: PWA is necessary. Drives a new bounded context (Learning) + service-worker/offline infra. **Implementation parked until M7 sign-off** per the 2026-07-11 directive; ADR records the decision now to stop re-litigation.
 
 **Independent follow-ups (no founder decision required):**
 - HSTS header at M6 behind TLS (M4.2 §4.3).

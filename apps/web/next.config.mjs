@@ -16,6 +16,8 @@ const nextConfig = {
   // empty for future native modules if needed.
   serverExternalPackages: [],
   reactStrictMode: true,
+  // Produce a standalone output for Docker (M6 deployment).
+  output: "standalone",
   // Hide the X-Powered-By header (security best practice).
   poweredByHeader: false,
   // Security headers applied to all routes.

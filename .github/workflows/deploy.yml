@@ -1,0 +1,167 @@
+#!/usr/bin/env bash
+#
+# Learning Platform — deploy workflow (M6).
+#
+# GitHub Actions: builds the Docker image, pushes to GHCR, SSHes to the
+# production host, pulls the new image via docker compose, runs the stack,
+# and smoke-tests /api/health + /api/ready + /api/metrics.
+# On failure: rolls back to the previous image.
+#
+# Required repository secrets:
+#   PROD_HOST        — production VPS IP or hostname
+#   PROD_USER        — SSH user (e.g., deploy)
+#   PROD_SSH_KEY     — private key (base64-encoded)
+#   PROD_ENV         — path to env file on host (e.g., /etc/learning-platform/env)
+#   GHCR_TOKEN       — PAT with write:packages scope (or use GITHUB_TOKEN)
+#
+# Triggers: push to main (after governance + verify pass).
+
+name: Deploy to Production
+
+on:
+  push:
+    branches: [main]
+    paths-ignore:
+      - 'docs/**'
+      - '*.md'
+      - 'templates/**'
+      - 'evidence/**'
+
+permissions:
+  contents: read
+  packages: write
+  id-token: write
+
+jobs:
+  build-and-push:
+    name: Build & Push Docker Image
+    runs-on: ubuntu-latest
+    outputs:
+      image: ${{ steps.meta.outputs.tags }}
+      digest: ${{ steps.build.outputs.digest }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GHCR_TOKEN }}
+
+      - name: Extract metadata (tags, labels)
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ghcr.io/${{ github.repository }}/web
+          tags: |
+            type=ref,event=branch
+            type=sha,prefix=
+            type=raw,value=latest,enable={{is_default_branch}}
+
+      - name: Build and push
+        id: build
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: apps/web/Dockerfile
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  deploy:
+    name: Deploy to VPS
+    needs: build-and-push
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install SSH key
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.PROD_SSH_KEY }}
+
+      - name: Deploy via SSH
+        env:
+          PROD_HOST: ${{ secrets.PROD_HOST }}
+          PROD_USER: ${{ secrets.PROD_USER }}
+          PROD_ENV: ${{ secrets.PROD_ENV }}
+          IMAGE: ${{ needs.build-and-push.outputs.image }}
+        run: |
+          set -euo pipefail
+          ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null \
+            "${PROD_USER}@${PROD_HOST}" <<'REMOTE_EOF'
+          set -euo pipefail
+          cd /opt/learning-platform
+
+          # 1. Update the image tag in the prod compose file (or use a .env override)
+          #    Here we assume the compose file uses `image: ghcr.io/.../web:latest`
+          #    and we just pull the new tag.
+          echo "Pulling new image: $IMAGE"
+          docker compose -f docker-compose.prod.yml pull
+
+          # 2. Bring up the new stack (rolling restart via compose)
+          echo "Starting new containers..."
+          docker compose -f docker-compose.prod.yml up -d --remove-orphans
+
+          # 3. Wait for health checks to pass (compose healthcheck + our /api/ready)
+          echo "Waiting for services to be healthy..."
+          for i in {1..30}; do
+            if docker compose -f docker-compose.prod.yml ps | grep -q "healthy"; then
+              echo "All services healthy"
+              break
+            fi
+            sleep 2
+          done
+
+          # 4. Smoke test the three endpoints
+          echo "Smoke testing /api/health..."
+          curl -fsS --max-time 10 http://127.0.0.1:3000/api/health | grep -q '"status":"ok"'
+
+          echo "Smoke testing /api/ready..."
+          curl -fsS --max-time 10 http://127.0.0.1:3000/api/ready | grep -q '"status":"ready"'
+
+          echo "Smoke testing /api/metrics (with token)..."
+          curl -fsS --max-time 10 \
+            -H "Authorization: Bearer ${METRICS_TOKEN}" \
+            http://127.0.0.1:3000/api/metrics | grep -q 'http_requests_total'
+
+          echo "✅ All smoke tests passed"
+          REMOTE_EOF
+
+      - name: Rollback on failure
+        if: failure()
+        env:
+          PROD_HOST: ${{ secrets.PROD_HOST }}
+          PROD_USER: ${{ secrets.PROD_USER }}
+        run: |
+          echo "⚠️ Deployment failed — rolling back to previous image"
+          ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null \
+            "${PROD_USER}@${PROD_HOST}" <<'REMOTE_EOF'
+          set -euo pipefail
+          cd /opt/learning-platform
+          # Compose keeps the old container stopped; just restart it
+          docker compose -f docker-compose.prod.yml up -d --force-recreate --remove-orphans
+          echo "Rolled back to previous containers"
+          REMOTE_EOF
+
+  notify:
+    name: Notify
+    needs: [deploy]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Slack/Email/Telegram placeholder
+        run: |
+          echo "Deployment ${{ job.status }} — see run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+        if: always()

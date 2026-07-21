@@ -16,3 +16,9 @@ coverage
 .pnpm-store
 .tmp/
 PR_BODY.md
+.freebuff/
+# --- Claude Code: machine-local + runtime only. Contract is committed. ---
+.claude/settings.local.json
+.claude/state/task-output.json
+.claude/state/*.log
+# TaskOutput handoff scripts are committed (hooks reference them): scripts/handoff/ is tracked.

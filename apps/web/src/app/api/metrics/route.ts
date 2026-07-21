@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { renderPrometheus } from "@learning-platform/core/observability";
-import { env } from "@/lib/env";
 
 export const dynamic = "force-dynamic";
 
@@ -27,7 +26,6 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     }
   } else if (isProd) {
     // No token configured in prod → refuse rather than expose metrics.
-    env; // keep import live (env shape may be extended in M6)
     return NextResponse.json({ error: "metrics disabled" }, { status: 503 });
   }
 
