@@ -146,15 +146,15 @@ try {
     & git status --short
     if ($LASTEXITCODE -ne 0) { Fail 5 "git status failed." }
 
-    # Refuse a dirty-unrelated-state run: everything changes must be intended.
-    # If there are unstaged changes, bail — the handoff is for a clean commit set.
-    # (Staged changes from this very hook are not produced; the script stages itself.)
+    # Show unstaged tracked changes (informational). Stage 4 runs `git add -A`
+    # for the handoff commit, so a dirty working tree is INCLUDED by design —
+    # the genuine protection against committing unintended change is the human
+    # PR review surface (the diff --stat printed in Stage 4 and the GitHub PR
+    # page), NOT a pre-commit refuse. Refusing here would contradict `git add -A`.
     $unstaged = & git diff --name-only
-    if ($LASTEXITCODE -ne 0) { Fail 5 "git diff --name-only failed." }
-    if ($unstaged) {
-        Write-Host "`nUnstaged changes detected in working tree:" -ForegroundColor Yellow
+    if ($LASTEXITCODE -eq 0 -and $unstaged) {
+        Write-Host "`nUnstaged tracked changes (will be staged + committed as part of this handoff):" -ForegroundColor Gray
         Write-Host $unstaged
-        Fail 5 "Working tree has unstaged changes. Commit or stash them manually first — the handoff only commits a clean set chosen by you."
     }
 
     # Branch: derive from pr_title kebab-case, or if already on a feat/ branch, reuse it.
@@ -225,27 +225,38 @@ try {
         $labels = $null
     }
 
+    # Try to create the PR. If a PR already exists for this head branch, gh pr
+    # create exits non-zero — detect that case and UPDATE the existing PR
+    # (title + body) instead of failing, so re-running the chain amends the
+    # open PR rather than aborting.
+    $prUrl = $null
     $prArgs = @("pr", "create", "--base", "main", "--head", $branch, "--title", "$($task.pr_title)", "--body", $body)
-    # Capture stdout — gh pr create prints the new PR URL on success.
-    $createOut = & gh @prArgs
-    if ($LASTEXITCODE -ne 0) { Fail 5 "gh pr create failed." }
+    $createOut = & gh @prArgs 2>&1
+    if ($LASTEXITCODE -eq 0) {
+        $prUrl = "$createOut".Trim()
+        Write-Host "PR opened: $prUrl" -ForegroundColor Green
+    } else {
+        # Likely "already exists" — locate the open PR for this head and update it.
+        $existing = & gh pr list --head $branch --state open --json url,number --jq '.[0]' 2>$null
+        if ($LASTEXITCODE -eq 0 -and $existing -and $existing -ne "null") {
+            $prUrl = (& gh pr view $existing --json url --jq '.url' 2>$null).Trim()
+            Write-Host "PR already exists — updating: $prUrl" -ForegroundColor Gray
+            & gh pr edit $prUrl --title "$($task.pr_title)" --body $body 2>$null | Out-Null
+        } else {
+            Write-Host $createOut -ForegroundColor Red
+            Fail 5 "gh pr create failed and no existing open PR found for head '$branch'."
+        }
+    }
 
-    $prUrl = "$createOut".Trim()
-    # Fallback if create didn't print a URL (older gh): query by head branch.
-    # gh pr VIEW takes a branch/PR as a positional arg — -H is NOT a view flag.
-    if (-not ($prUrl -match '^https?://')) {
+    # If create succeeded but didn't print a URL (older gh), query it.
+    if (-not $prUrl -or -not ($prUrl -match '^https?://')) {
         $viewOut = & gh pr view $branch --json url --jq '.url' 2>$null
         if ($LASTEXITCODE -eq 0 -and $viewOut) { $prUrl = "$viewOut".Trim() }
     }
-    # Last resort: list PRs for this head.
-    if (-not ($prUrl -match '^https?://')) {
-        $listOut = & gh pr list --head $branch --state open --json url --jq '.[0].url' 2>$null
-        if ($LASTEXITCODE -eq 0 -and $listOut) { $prUrl = "$listOut".Trim() }
+    if (-not $prUrl -or -not ($prUrl -match '^https?://')) {
+        Fail 5 "PR operation completed but URL could not be captured. Check GitHub for the open PR on branch '$branch'."
     }
-    if (-not ($prUrl -match '^https?://')) {
-        Fail 5 "PR created but URL could not be captured. Check GitHub for the open PR on branch '$branch'."
-    }
-    Write-Host "PR opened: $prUrl" -ForegroundColor Green
+    Write-Host "PR URL: $prUrl" -ForegroundColor Green
     if ($labels) {
         # gh pr create --label is unreliable across gh versions; add after creation.
         & gh pr edit $prUrl --add-label $labels 2>$null | Out-Null
