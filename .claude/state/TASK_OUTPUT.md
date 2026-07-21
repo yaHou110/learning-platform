@@ -67,7 +67,7 @@ Schema: [.claude/state/schema/v1.schema.json](schema/v1.schema.json) — the aut
 6. **When you start a new milestone** mid-session, overwrite `task-output.json` (not append — only the latest is authoritative) and set `status="draft"` until you finish.
 7. **`pr_body` MUST include the project's governance sections** — this repo runs `pnpm governance:validate` on every PR and it blocks merge if any section is missing or incomplete. Copy the section set from `.github/pull_request_template.md`:
    - `<!-- governance:section:risk -->` + `**Level:**` (`LOW`/`MEDIUM`/`HIGH`/`CRITICAL`) + rationale
-   - `<!-- governance:section:dor -->` + either the five DoR checkboxes OR, for LOW risk, `DoR waived — LOW risk`
+   - `<!-- governance:section:dor -->` + either the five DoR checkboxes OR, for LOW risk, `- [x] DoR waived — LOW risk` written as a **literal checkbox** (the em-dash and spacing must match `DOR_WAIVER` in `scripts/governance/config.mjs` exactly; prose with no `- [x]` prefix does **not** satisfy the validator)
    - `<!-- governance:section:dod -->` + **all five** DoD checkboxes checked: `Acceptance criteria verified`, `` `pnpm verify` passed ``, `Documentation updated`, `Evidence attached`, **`Rollback documented (if non-trivial)`** (the last one is easy to miss)
    - `<!-- governance:section:adr -->` + `Required:` `yes`/`no` + `References:` + `Compliance:`
    - `<!-- governance:section:rollback -->` + substantive revert method (required for HIGH/CRITICAL, good practice otherwise)
