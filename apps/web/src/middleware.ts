@@ -12,11 +12,23 @@ export async function middleware(request: NextRequest) {
   const isAuthPage = request.nextUrl.pathname.startsWith("/login");
   const isApiAuthPage = request.nextUrl.pathname.startsWith("/api/auth");
   const isHealthPage = request.nextUrl.pathname === "/api/health";
+  // Shallow readiness (M5) — load balancer / reverse proxy scrapes this.
+  const isReadyPage = request.nextUrl.pathname === "/api/ready";
+  // Metrics (M5) — gated by bearer token inside the route handler itself.
+  // Middleware must not short-circuit it; the route does the auth check so a
+  // forgotten token returns 401, not a silent redirect.
+  const isMetricsPage = request.nextUrl.pathname === "/api/metrics";
   // RFC 9116 security.txt — public; must not require auth.
   const isSecurityTxt =
     request.nextUrl.pathname === "/.well-known/security.txt";
 
-  if (isApiAuthPage || isHealthPage || isSecurityTxt) {
+  if (
+    isApiAuthPage ||
+    isHealthPage ||
+    isReadyPage ||
+    isMetricsPage ||
+    isSecurityTxt
+  ) {
     return NextResponse.next();
   }
 

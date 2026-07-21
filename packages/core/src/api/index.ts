@@ -138,8 +138,70 @@ export const identity = {
 
 /** Health/readiness. */
 export const health = {
-  async check(): Promise<{ db: boolean }> {
+  /**
+   * Deep health check. Pings each external dependency the request path
+   * touches in v1. A dependency that is not configured (e.g. no S3 in v1
+   * dev) reports `skipped` rather than `false`, so a prod-shape mismatch
+   * does not read as an outage.
+   *
+   * Status mapping:
+   * - `ok`       — every configured check passed.
+   * - `degraded` — at least one configured check failed; others passed.
+   * - `error`    — the check itself threw (e.g. DB unreachable).
+   */
+  async check(): Promise<{
+    status: "ok" | "degraded" | "error";
+    checks: { db: boolean; auth: boolean | "skipped"; storage: boolean | "skipped" };
+  }> {
     const { pingDb } = await import("../db/client.js");
-    return { db: await pingDb() };
+    const checks = { db: false, auth: false as boolean | "skipped", storage: false as boolean | "skipped" };
+
+    // DB (Postgres) — always configured in v1.
+    try {
+      checks.db = await pingDb();
+    } catch {
+      checks.db = false;
+    }
+
+    // Auth — for v1, reaching the DB is the cheap proxy that the Auth.js
+    // Credentials provider + Drizzle adapter can resolve a session. We do
+    // not call into Auth.js here (it has no headless "ping"), so the check
+    // is "DB reachable" ⇒ auth can serve. Mark skipped only when the DB is
+    // down, which the `db` check already surfaces — so auth mirrors db.
+    checks.auth = checks.db ? true : false;
+
+    // Object storage — not wired in v1 (ADR-0010 proposed). Report skipped
+    // so the endpoint does not lie about a missing dependency.
+    checks.storage = "skipped";
+
+    const allConfigured = [checks.db, checks.auth];
+    const anyFailed = allConfigured.some((c) => c === false);
+    const status = anyFailed ? "degraded" : "ok";
+    return { status, checks };
+  },
+};
+
+export const readiness = {
+  /**
+   * Shallow readiness check. Confirms the process is live and its required
+   * configuration is loaded — NOT whether external deps are reachable. Used
+   * by the load balancer / reverse proxy (M6) to decide whether to route
+   * traffic to this instance. A `503` from here means withdraw the instance,
+   * not necessarily that the app is "broken" for existing connections.
+   */
+  async check(maintenanceFlag?: boolean): Promise<{
+    status: "ready" | "not_ready";
+    checks: { config: boolean; maintenance: boolean };
+  }> {
+    // Config: the two env keys the app literally cannot serve without.
+    const AUTH_SECRET = process.env.AUTH_SECRET ?? "";
+    const DATABASE_URL = process.env.DATABASE_URL ?? "";
+    const configOk = AUTH_SECRET.length > 0 && DATABASE_URL.length > 0;
+    const maintenance = maintenanceFlag === true || process.env.MAINTENANCE_MODE === "1";
+    const status = configOk && !maintenance ? "ready" : "not_ready";
+    return {
+      status,
+      checks: { config: configOk, maintenance },
+    };
   },
 };

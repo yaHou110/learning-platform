@@ -1,0 +1,46 @@
+# M5 Observability — Commands Run
+
+## Install pino
+```bash
+pnpm --filter @learning-platform/core add pino
+```
+
+## Files Created
+```bash
+mkdir -p packages/core/src/observability
+# Created:
+# - packages/core/src/observability/logger.ts
+# - packages/core/src/observability/requestContext.ts
+# - packages/core/src/observability/metrics.ts
+# - packages/core/src/observability/errors.ts
+# - packages/core/src/observability/index.ts
+# - apps/web/src/app/api/ready/route.ts
+# - apps/web/src/app/api/metrics/route.ts
+```
+
+## Files Modified
+```bash
+# packages/core/src/api/index.ts — enhanced health.check() + added readiness.check()
+# apps/web/src/app/api/health/route.ts — updated for deep check response shape
+# apps/web/src/app/api/users/route.ts — added structured logging + metrics + error capture + x-request-id header
+# apps/web/src/middleware.ts — allowed /api/ready and /api/metrics through auth gate
+# packages/core/package.json — added ./observability export
+```
+
+## Verification
+```bash
+pnpm --filter @learning-platform/core typecheck
+pnpm --filter @learning-platform/core test
+pnpm lint
+pnpm build
+```
+
+## Run verification commands
+```bash
+pnpm --filter @learning-platform/core typecheck  # exit 0
+pnpm --filter @learning-platform/core test       # exit 0 (all tests pass including new observability-metrics.test.ts)
+pnpm lint                                        # core passes, web has pre-existing eslint-plugin-import issue
+pnpm build                                       # exit 0
+```
+
+All core quality gates pass. Web lint has pre-existing missing dep issue unrelated to M5.

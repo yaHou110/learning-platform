@@ -2,13 +2,13 @@
 
 > **Current snapshot of the project.** This is the *first* file to read after `DEVELOPMENT_GUIDE.md`.
 
-> Last updated: 2026-07-19 (v1.11 — Q5/Q6 closed: ADR-0007 + ADR-0008 added; deployment shape and multi-tenant isolation locked; operational tenancy deferred)
+> Last updated: 2026-07-20 (v1.12 — M5 closed: Observability added; M6 Deployment unblocked)
 
 ---
 
 ## One-line status
 
-**Production Foundation Sprint — M4 sprint fully closed (M1 ✅, M2 ✅, M3 ✅, M4.0 ✅, M4.1 ✅, M4.2 ✅, M4.3 ✅).** M4.3 closed the 2 residual advisories (drizzle-orm SQL-injection + transitive postcss XSS) and the `/.well-known/security.txt` middleware bug found in the M2 smoke test. The M2 real-Postgres smoke test passed end-to-end (login → typed session → super_admin user list **without `passwordHash`** → public security.txt → 6 security headers on every response). **Residual advisory count: 0 in prod** (npm audit endpoint retired; verified by `pnpm why`). Feature development remains suspended until M7 sign-off; M5+ (hosting, multi-tenant model, PWA, deployment/CI-CD) is parked on founder decisions.
+**Production Foundation Sprint — M1–M5 closed (M1 ✅, M2 ✅, M3 ✅, M4.0 ✅, M4.1 ✅, M4.2 ✅, M4.3 ✅, **M5 ✅**).** M5 added structured JSON logging (pino, request-scoped + redaction), Prometheus-format metrics (`http_requests_total`, `http_request_duration_seconds`, `process_uptime_seconds`), error capture with sanitized stacks + `x-request-id` correlation, deep `/api/health` (`db`+`auth`+`storage`), shallow `/api/ready` (config + maintenance), and bearer-token-gated `/api/metrics` endpoint. `/api/users` wired as the first consumer. Feature development remains suspended until M7 sign-off; M6 (Deployment / CI-CD) is now unblocked.
 
 ---
 
@@ -16,9 +16,9 @@
 
 > **Live pointer to where the work is right now.** Updated after every meaningful milestone (see `DEVELOPMENT_GUIDE.md`). At a glance: what is being done, what is blocking it, what is next. For full history, read `PROJECT_HANDOVER.md`.
 
-- **Current task:** ADR-0007 + ADR-0008 authored on main (Q5/Q6 closed). Next: commit + push on a dedicated branch; then unblock SPRINT-001 M5/M6 (Deployment / CI-CD) planning.
-- **Blocked by:** (none — decisions made)
-- **Next:** Open a PR for the ADR-0007/0008 additions; plan M5/M6 once merged.
+- **Current task:** M5 Observability complete. Next: SPRINT-001 M6 (Deployment) — Docker Compose prod, Nginx reverse-proxy config, systemd unit, backup & restore scripts, deployment guide.
+- **Blocked by:** (none — M5 unblocked M6)
+- **Next:** Plan M6 milestones per `docs/06-sprints/SPRINT-001-production-foundation/SPRINT-001-production-foundation.md`.
 
 ---
 
@@ -34,8 +34,8 @@
 | 4. Development conventions | ✅ done (v1.3) | `ENGINEERING_PROTOCOL.md` v2 (60 rules), `RISK_CLASSIFICATION.md`, ADR-0012/0013. |
 | 5. Source code (Identity & Access) | ✅ done | Migration + Auth.js + middleware + 2 API routes (sessions 005–007). |
 | 5.5. Source code (other features) | ⏸️ paused | Catalog / Learning / Credentials / Localization / Dashboard — parked pending M7. |
-| 6. **Production Foundation Sprint** | ✅ M1–M4 closed | M1 ✅, **M2 ✅ (real-Postgres smoke test passed 2026-07-15; this session series)**, M3 ✅, M4.0 ✅ (merged on main), M4.1 ✅, M4.2 ✅, **M4.3 ✅ (drizzle-orm + postcss residual advisories resolved; security.txt public via middleware fix)**. M5–M7 + Q5/Q6/Q7 (hosting, multi-tenant model, PWA, deployment/CI-CD) are parked on founder decisions. |
-| 7. Deployment & CI/CD | ❌ not started | Blocked on sprint M3/M6. |
+| 6. **Production Foundation Sprint** | ✅ M1–M5 closed | M1 ✅, **M2 ✅ (real-Postgres smoke test passed 2026-07-15)**, M3 ✅, M4.0 ✅ (merged on main), M4.1 ✅, M4.2 ✅, **M4.3 ✅ (drizzle-orm + postcss residual advisories resolved; security.txt public via middleware fix)**, **M5 ✅ (Observability: pino JSON logs + Prometheus metrics + error capture + health/ready/metrics endpoints)**. M6–M7 + Q7 (PWA, deployment/CI-CD) remain; M6 unblocked by M5. |
+| 7. Deployment & CI/CD | ❌ not started | **M6 now unblocked** — Docker Compose prod, Nginx reverse proxy, systemd, backup/restore, deployment guide. |
 
 ---
 

@@ -1,0 +1,41 @@
+
+> web@0.1.0 build D:\code\learning-platform\apps\web
+> next build
+
+   ▲ Next.js 15.5.20
+   - Environments: .env
+
+   Creating an optimized production build ...
+ ✓ Compiled successfully in 4.8s
+   Linting and checking validity of types ...
+   Collecting page data ...
+   Generating static pages (0/4) ...
+   Generating static pages (1/4) 
+   Generating static pages (2/4) 
+   Generating static pages (3/4) 
+ ✓ Generating static pages (4/4)
+   Finalizing page optimization ...
+   Collecting build traces ...
+
+Route (app)                                 Size  First Load JS
+┌ ƒ /                                      144 B         102 kB
+├ ○ /_not-found                            994 B         103 kB
+├ ○ /.well-known/security.txt              144 B         102 kB
+├ ƒ /api/auth/[...nextauth]                144 B         102 kB
+├ ƒ /api/auth/session                      144 B         102 kB
+├ ƒ /api/health                            144 B         102 kB
+├ ƒ /api/metrics                           144 B         102 kB
+├ ƒ /api/ready                             144 B         102 kB
+├ ƒ /api/users                             144 B         102 kB
+└ ƒ /login                                 144 B         102 kB
++ First Load JS shared by all             102 kB
+  ├ chunks/967-2fa68fe0e5b9c290.js       46.1 kB
+  ├ chunks/fba5c65d-93b55f1ab789e850.js  54.2 kB
+  └ other shared chunks (total)          1.96 kB
+
+
+ƒ Middleware                             46.1 kB
+
+○  (Static)   prerendered as static content
+ƒ  (Dynamic)  server-rendered on demand
+
