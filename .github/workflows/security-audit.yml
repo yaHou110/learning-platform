@@ -52,8 +52,15 @@ jobs:
           args: scan --lockfile=pnpm-lock.yaml --format=sarif --output=osv-results.sarif
 
       - name: Upload SARIF to GitHub Security
+        # Best-effort upload. GitHub requires "Code scanning" enabled in repo
+        # settings (Settings → Security → Code scanning) to accept SARIF; until a
+        # repo admin enables it this step 401s, which would otherwise fail the
+        # whole job even though the OSV scan itself succeeded. The scan output is
+        # still printed to the run log; making the upload non-fatal keeps the
+        # authoritative result (the scan) as the job's pass/fail signal.
         uses: github/codeql-action/upload-sarif@v3
         if: always()
+        continue-on-error: true
         with:
           sarif_file: osv-results.sarif
           category: osv-scanner
