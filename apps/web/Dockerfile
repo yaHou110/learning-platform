@@ -54,10 +54,14 @@ WORKDIR /app
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
 
-# Copy standalone output (includes server.js + minimal node_modules)
+# Copy standalone output (includes server.js + minimal node_modules).
+# In a pnpm monorepo, Next.js standalone preserves the workspace tree, so the
+# entrypoint lands at /app/apps/web/server.js (NOT /app/server.js). Copy the
+# static + public assets under that same apps/web path and run from there so the
+# server's relative-path resolution matches the source layout.
 COPY --from=builder --chown=nextjs:nodejs /app/apps/web/.next/standalone ./
-COPY --from=builder --chown=nextjs:nodejs /app/apps/web/.next/static ./.next/static
-COPY --from=builder --chown=nextjs:nodejs /app/apps/web/public ./public
+COPY --from=builder --chown=nextjs:nodejs /app/apps/web/.next/static ./apps/web/.next/static
+COPY --from=builder --chown=nextjs:nodejs /app/apps/web/public ./apps/web/public
 
 # The standalone output does NOT include these; copy explicitly if needed:
 # - .env.example (template)
@@ -69,6 +73,10 @@ EXPOSE 3000
 
 ENV PORT=3000
 ENV HOSTNAME="0.0.0.0"
+
+# Run from the app's original workspace dir so server.js and its relative
+# .next/static + public paths resolve (monorepo standalone layout).
+WORKDIR /app/apps/web
 
 # Next.js standalone entrypoint
 CMD ["node", "server.js"]
