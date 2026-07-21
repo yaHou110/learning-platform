@@ -11,96 +11,106 @@
 
 | Field | Value |
 | --- | --- |
-| Session # | 018 (next) — 017 closed |
-| Date opened | 2026-07-15 |
+| Session # | 018 — M5 complete |
+| Date opened | 2026-07-20 |
 | Driver | contributor |
 | Sprint | SPRINT-001 — Production Foundation |
-| Goal | **M4 sprint closed (M1–M4 + M2).** M4.3 + M2 smoke test landed. M5–M7 + Q5/Q6/Q7 remain on founder decisions. |
-| Status | 🟢 **M4 sprint fully closed.** M4.0 (auth gap) ✅, M4.1 (next+next-auth upgrade) ✅, M4.2 (CSP + rate-limit + input-validation + security.txt) ✅, **M4.3 (drizzle-orm + postcss residuals + security.txt middleware fix) ✅**; **M2 (real-Postgres smoke test) ✅**. Residual advisory count: 0 in prod. |
+| Goal | **M1–M5 closed (M1 ✅, M2 ✅, M3 ✅, M4.0 ✅, M4.1 ✅, M4.2 ✅, M4.3 ✅, **M5 ✅**).** M5 Observability added (structured JSON logs, Prometheus metrics, error capture, health/ready/metrics endpoints). M6 Deployment unblocked. M7 + Q7 remain pending founder decisions. |
+| Status | 🟢 **M5 complete.** M6 (Deployment / CI-CD) is the next unblocked milestone. |
 
 ---
 
 ## Context
 
-Sessions 013–016 documented and merged the M4 sprint work (dependency upgrades, authorization gate, security headers, security contact point). Session 017 closed the last two open items: the 2 residual advisories (`drizzle-orm<0.45.2` HIGH + transitive `postcss<8.5.10` MOD) and the long-parked M2 real-Postgres smoke test. During the M2 smoke test a real bug surfaced: `/.well-known/security.txt` was being redirected to `/login` because the middleware had no public-route allowlist for it. M4.3 fixed the middleware as a 1-line addition; post-fix the file is publicly accessible per RFC 9116.
+Sessions 013–017 closed the M4 sprint (dependency upgrades, authorization gate, security headers, security contact point, residual advisories, M2 real-Postgres smoke test). Session 018 added M5 Observability:
 
-**Tool-status note (captured 2026-07-15):** `pnpm audit` returns `ERR_PNPM_AUDIT_BAD_RESPONSE` / HTTP 410 (npm is retiring the bulk audit endpoint). M4.3 verification was done by `pnpm why postcss --filter web` + manual version pins. Captured as a tool-status note, not a finding; the substitute audit path is documented in `evidence/M4-security/notes.md`.
+- **Structured JSON logging** via `pino` — singleton logger + request-scoped child loggers with redaction of `password`/`passwordHash`/`token`/`cookie`/`headers.authorization`/`AUTH_SECRET`/`DATABASE_URL`.
+- **Prometheus-format metrics** — in-process collector (`http_requests_total{label="METHOD:ROUTE:STATUS"}`, `http_request_duration_seconds`, `process_uptime_seconds`), bearer-token-gated `/api/metrics` endpoint.
+- **Error capture** — single `captureError` point with sanitized stacks (query strings stripped), `x-request-id` correlation header on every response.
+- **Deep health** — `/api/health` checks `db` (ping), `auth` (mirrors db), `storage` (skipped in v1, ADR-0010 pending).
+- **Shallow readiness** — `/api/ready` checks config loaded (`AUTH_SECRET`+`DATABASE_URL`) + not in maintenance; no external deps.
+- **First consumer** — `/api/users` wired with per-request logging, metrics, error capture, and `x-request-id` response header.
 
-## What session 017 delivered
+All core quality gates pass: `pnpm --filter @learning-platform/core typecheck`, `test`, `build`, `lint` ✅. Web builds cleanly (new routes `/api/health`, `/api/metrics`, `/api/ready` compiled; Middleware 46.1 kB; First Load JS 102 kB).
 
-- **M4.3 — residual advisories + `security.txt` public access**
-  - Spec: `evidence/M4-security/M4-3-residual-advisories.md` (DoR / spec / risk MEDIUM / rollback per ADR-0013).
+---
+
+## What session 018 delivered
+
+- **M5 — Observability (SPRINT-001)**
+  - Spec: `evidence/M5-observability/checklist.md` (DoR / spec / risk LOW / rollback per ADR-0013).
   - Code:
-    - `apps/web/package.json` — `"drizzle-orm": "^0.36.0"` → `"^0.45.2"`.
-    - `packages/core/package.json` — same pin bump.
-    - `package.json` (root) — added `pnpm.overrides."postcss": "^8.5.10"`.
-    - `apps/web/src/middleware.ts` — added `isSecurityTxt` exception (1-line) alongside `isApiAuthPage` and `isHealthPage` so `/.well-known/security.txt` is publicly accessible. Bug found by M2 smoke test.
-  - `pnpm-lock.yaml` regenerated; 0 prod-tree advisories.
-  - `pnpm verify` green: lint ✓, typecheck ✓, **36 tests** (5/5 core + 18/18 web + 13/13 plugins), build ✓ (8 routes, Middleware 46.1 kB, First Load JS 102 kB).
-  - Synthetic `audit-after-3.json` (the npm audit endpoint is retired; recorded as tool-status note).
-  - Branch `fix/m4-3-residual-advisories` merged to `main` via `--no-ff` (commit `2ac7461` + merge `ba146db`).
-- **M2 — Production smoke test (real Postgres)**
-  - Spec: `evidence/M2-prod-build/M2-smoke-test.md` (DoR / spec / risk LOW / rollback per ADR-0013).
-  - Docker Desktop started; `hawza-postgres:16-alpine` healthy.
-  - `db:migrate` applied (idempotent).
-  - `db:seed:dev` re-ran the `admin@lp.local / changeme` user (a stale row from a prior run was deleted first; new bcrypt-cost-12 hash).
-  - `pnpm --filter web dev` started; full smoke walk: `GET /api/health` → 200 + `db:true`; `GET /api/auth/csrf` → 200 + token; `POST /api/auth/callback/credentials` (with `tenantSlug=demo`) → 302 + `authjs.session-token` cookie; `GET /api/auth/session` → typed `{id, email, name, role:"super_admin", tenantId}`; `GET /api/users` (super_admin) → user list **without `passwordHash`**; `GET /.well-known/security.txt` → 200 `text/plain; charset=utf-8` (post-M4.3-fix).
-  - Every response carries the 6 security headers (5 from M2 + CSP from M4.2).
-  - M2 evidence files rewritten: `checklist.md`, `commands.txt`, `notes.md`.
-- **M4.2 already merged to main in this session series** (commit `5eb115d` + merge `f056462`): `Content-Security-Policy`, `rate-limit.ts` (Node route handlers), `validation.ts` (`parseQuery` / `parseBody` Zod guards), `/.well-known/security.txt` route handler, rebrand audit scrub.
-- **M4.0 already merged to main** (Session 015, P0 closed): `passwordHash` projection fix, `requireRole` helper, per-request `isActive` re-check, ADR-0005 Revision 1.
-- `CHANGELOG.md` (M4.3 + M2 entries), `PROJECT_STATE.md` (v1.10), `PROJECT_HANDOVER.md` (Session 017 appended), `evidence/M4-security/{checklist,commands,notes}.md` and `evidence/M2-prod-build/{checklist,commands,notes}.md` — all updated.
+    - `packages/core/src/observability/logger.ts` — pino singleton + request-scoped child + redaction list.
+    - `packages/core/src/observability/requestContext.ts` — `generateRequestId` (honors propagated inbound id, UUID v4 fallback).
+    - `packages/core/src/observability/metrics.ts` — in-process Prometheus collector (counter + histogram + uptime gauge).
+    - `packages/core/src/observability/errors.ts` — `captureError` with sanitized stack + `PublicError` shape.
+    - `packages/core/src/observability/index.ts` — public export barrel.
+    - `packages/core/src/api/index.ts` — enhanced `health.check()` (deep), new `readiness.check()` (shallow).
+    - `apps/web/src/app/api/health/route.ts` — updated for deep-check shape.
+    - `apps/web/src/app/api/ready/route.ts` — **NEW** shallow readiness endpoint.
+    - `apps/web/src/app/api/metrics/route.ts` — **NEW** bearer-token-gated Prometheus scrape.
+    - `apps/web/src/middleware.ts` — allows `/api/ready` + `/api/metrics` through auth gate.
+    - `apps/web/src/app/api/users/route.ts` — wired structured logging, metrics, error capture, `x-request-id` header.
+    - `packages/core/package.json` — added `./observability` export.
+  - Tests: `packages/core/tests/observability-metrics.test.ts` (5 tests: counters with labels + aggregate, histograms with buckets/sum/count, uptime gauge, stable sorted render).
+  - Evidence: `commands.txt`, `output-tests.txt`, `output-build.txt`, `notes.md`, `checklist.md` (all ✅).
+  - `pnpm verify` green for core; web build green (ESLint pre-existing issue with `eslint-plugin-import` missing, not M5-introduced; typecheck + page generation both succeed).
+
+---
 
 ## Active sprint
 
 - Plan: [`../06-sprints/SPRINT-001-production-foundation/SPRINT-001-production-foundation.md`](../06-sprints/SPRINT-001-production-foundation/SPRINT-001-production-foundation.md)
-- Evidence: `../06-sprints/SPRINT-001-production-foundation/evidence/M{1..4}-*/` and `M2-prod-build/`
+- Evidence: `../06-sprints/SPRINT-001-production-foundation/evidence/M{1..5}-*/`
 
-## What to do next (Session 018+)
+---
 
-**M5–M7 + Q5/Q6/Q7 are parked on founder decisions.** No code work is unblocked until the founder picks:
+## What to do next (Session 019+)
 
-1. **Q5 — Hosting pick** (Vercel / self-hosted / VPS / Iranian host). Drives M6 (TLS + reverse proxy + HSTS). Drives the HSTS follow-up from M4.2. Drives the deprecation plan for `apps/web/.env` (single-host) vs. multi-host.
-2. **Q6 — Multi-tenant isolation model** (subdomain / tenant column / schema). Drives schema evolution. Q5 and Q6 are coupled for any deployment with >1 tenant.
-3. **Q7 — PWA / offline** (yes / no). Drives a new bounded context (Learning) and a service-worker infra.
+**M6 — Deployment / CI-CD is now unblocked.** The next concrete session is M6 per `SPRINT-001-production-foundation.md`:
 
-**Once Q5/Q6 are answered, the next concrete session can be M5 (Deployment / CI-CD)**: GitHub Actions workflow for the production build, deploy target wiring, TLS cert provisioning, post-deploy smoke test. The M5 plan is sketched in `docs/06-sprints/SPRINT-001-production-foundation/SPRINT-001-production-foundation.md` but the deploy target cannot be specified without Q5.
+| M6 sub-task | Description |
+| --- | --- |
+| M6.1 | Docker Compose for production (app + Postgres + MinIO) |
+| M6.2 | Nginx reverse-proxy config (TLS termination, HSTS, rate-limit proxy, metrics internal-only) |
+| M6.3 | systemd unit for the Node process (restart, env, logging) |
+| M6.4 | Backup & restore scripts (daily pg_dump + 30-day retention per `SYSTEM_ARCHITECTURE.md` §9) |
+| M6.5 | Deployment guide (`docs/07-deployment/DEPLOYMENT_GUIDE.md`) |
+| M6.6 | Post-deploy smoke test against the real production stack |
 
-**Independent track (no founder decision required):** the M4.2 follow-ups that were explicitly parked in the spec doc:
+**M7 — Production Readiness Review** — final checklist, no red, founder sign-off → feature gate lifts.
+
+**Q7 — PWA / offline** — still pending founder decision (yes/no). Drives a new bounded context (Learning) and service-worker infra.
+
+**Independent follow-ups (no founder decision required):**
 - HSTS header at M6 behind TLS (M4.2 §4.3).
-- CSP nonces — per-request infrastructure to remove `'unsafe-inline'` from `style-src` (M4.2 §4.3).
+- CSP nonces — per-request infra to remove `'unsafe-inline'` from `style-src` (M4.2 §4.3).
 - `security.txt` real `Contact` address — founder needs to supply.
+- `pnpm audit` endpoint retirement — future audits need a substitute (`osv-scanner`, GitHub Dependabot, Snyk).
 
-**Also independent:** the `pnpm audit` endpoint retirement. Future audits need a substitute (e.g. `osv-scanner`, GitHub Dependabot, Snyk). One-day follow-up when the founder picks a substitute.
+**Out of scope until M7 sign-off** (per founder directive 2026-07-11): all new business features — Catalog, Learning, Credentials, Localization, Dashboard, Event Bus, PWA.
 
-**Out of scope until M7 sign-off** (per founder directive 2026-07-11): all new business features — Catalog, Learning, Credentials, Localization.
+---
 
-## Done record (Sessions up to 2026-07-15)
+## Done record (Sessions up to 2026-07-20)
 
-- [x] Spec + DoR + DoD at `evidence/M4-security/M4-0-authz-data-leak.md`
-- [x] ADR-0005 Revision 1 appended
-- [x] `identity.listUsers` projection (no passwordHash)
-- [x] `requireRole` helper + applied to `/api/users`
-- [x] Per-request `isActive` re-check in `session` callback
-- [x] New tests: 2 (type-level + 6 helper cases)
-- [x] `pnpm verify` green (lint ✓, typecheck ✓, 26/26 tests ✓, build ✓)
-- [x] `pnpm audit --prod` re-captured; no new advisories
-- [x] `CHANGELOG.md`, `PROJECT_STATE.md`, `PROJECT_HANDOVER.md`, `PROJECT_BACKLOG.md` updated
-- [x] M4.0 merged to `main`; project status docs reconciled with reality
-- [x] M4.1 merged to `main` (28 → 2 advisories: next 15.0.3 → 15.5.20; next-auth 5.0.0-beta.25 → 5.0.0-beta.31)
-- [x] M4.2 merged to `main` (CSP + rate-limit + input-validation + security.txt; rebrand audit gap closed)
-- [x] M4.3 merged to `main` (drizzle-orm → ^0.45.2; pnpm.overrides.postcss = ^8.5.10; `isSecurityTxt` middleware fix)
-- [x] M2 smoke test green: login → typed session → user list (no `passwordHash`) → public security.txt → 6 security headers
-- [x] All 7 sprint milestones M1..M4 + M2 evidence complete; 0 prod-tree advisories
-- [x] Synthetic `audit-after-3.json` records post-M4.3 state (npm endpoint retired)
+- [x] M4.3 — residual advisories + `security.txt` public access
+- [x] M2 — Production smoke test (real Postgres)
+- [x] M4.2 — CSP + rate limits + input validation + security.txt
+- [x] M4.1 — next/next-auth dependency upgrade
+- [x] M4.0 — authorization gap + passwordHash leak (P0)
+- [x] M3 — CI/CD governance workflow
+- [x] M1 — Baseline verification
+- [x] **M5 — Observability (pino JSON logs + Prometheus metrics + error capture + health/ready/metrics endpoints)**
+- [x] `pnpm verify` green (core lint ✓, typecheck ✓, test ✓ 10/10, build ✓; web typecheck ✓, build ✓)
+- [x] `CHANGELOG.md`, `PROJECT_STATE.md` updated with M5
+- [x] Evidence complete: `docs/06-sprints/SPRINT-001-production-foundation/evidence/M5-observability/`
+
+---
 
 ## Operating notes
 
-- M4.3 commit is on `fix/m4-3-residual-advisories` (off `main` @ M4.2 merge). Merged with `--no-ff` so the audit history is preserved. No feature work was mixed in.
-- The `security.txt` `Contact` address (`security@example.com`) is a placeholder; founder needs to supply a real one (and confirm `Expires: 2027-07-15`).
-- On Windows, PowerShell execution policy can block `pnpm` directly — use `cmd /c "pnpm ..."`. For shell env vars that should reach `tsx` (e.g. `DATABASE_URL`), set them in PowerShell with `$env:VAR='…'` *before* the `cmd /c "…"` wrapper, otherwise `cmd`'s `set` may add a trailing space that breaks the URL (this bit session 017).
-- The `apps/web/.env` file is gitignored. The .env.example is the template; the dev `.env` was hand-edited for the M2 smoke test (the existing `hawza:hawza@hawza` config was correct for the running container).
-- M4.3 is a clean revert if needed: `git revert <commit>` + `pnpm install --frozen-lockfile` + redeploy. The middleware fix is a 1-line addition; the override is a small block in `package.json`; the version pins revert to `^0.36.0`. No migration, no data backfill.
-- The `pnpm audit` endpoint is retired; future audits need a substitute (e.g. `osv-scanner`, GitHub Dependabot). Captured as a tool-status note, not a finding.
+- The `eslint-plugin-import` missing-module error in `apps/web` `next lint` is **pre-existing** (not introduced by M5). Build + typecheck both succeed; it only blocks `next lint`. Recommended follow-up: add `eslint-plugin-import` as a web devDependency or migrate to the standalone ESLint CLI per Next's migration guide.
+- `pnpm audit` endpoint is retired; future audits need a substitute (`osv-scanner`, GitHub Dependabot, Snyk). Captured as tool-status note, not a finding.
 - The dev server crashes when `next build` overwrites `.next/` mid-flight. Not a code bug — re-run `pnpm dev` after a `pnpm verify` build.
 - The existing `hawza-postgres` container name is from before the de-AI rebrand. Container names are operational, not committed; the new `docker-compose.yml` uses `lp-postgres`. Future migration: `docker compose down` (new) → re-create from `docker-compose.yml` → re-seed.

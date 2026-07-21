@@ -875,3 +875,58 @@ Each entry has:
 - ADR-0007 unblocks SPRINT-001 **M5/M6 (Deployment / CI-CD)** planning — the next concrete work, subject to the M7 feature gate.
 - ADR-0008 unblocks the schema freeze: the three-layer enforcement (incl. RLS policies) and the membership-shaped `user_roles` are now binding.
 - Both ADRs carry escalation-trigger sections matching the ADR-0014 convention; agents touching deployment/DB/tenant-resolution code must check them.
+
+---
+
+## Session 022 — 2026-07-20 — contributor (M5 — Observability)
+
+**Goal:** Implement SPRINT-001 milestone **M5 — Observability**: structured JSON logging, Prometheus-format metrics, error capture with correlation ids, deep `/api/health` check, shallow `/api/ready` check, and a bearer-token-gated `/api/metrics` scrape endpoint. Additive only — no schema, no auth-flow change, no migration. Risk LOW per ADR-0013 §42.
+
+**Done:**
+- `packages/core/src/observability/logger.ts` (new) — singleton pino logger, ISO timestamps, redaction list (`password`, `passwordHash`, `token`, `authjs.session-token`, `AUTH_SECRET`, `DATABASE_URL`, `session`, `accessToken`, `cookie`, `cookies.*`, `headers.authorization`, `headers.cookie`), and `requestLogger(ctx)` → pino child with `requestId`/`method`/`route`/`tenantId`/`userId`.
+- `packages/core/src/observability/requestContext.ts` (new) — `generateRequestId(inbound)` honoring a propagated `x-request-id` (≥8 chars, safe charset) else UUID v4 via `node:crypto.randomUUID()` (no `Math.random)`); response header constant.
+- `packages/core/src/observability/metrics.ts` (new) — in-process Prometheus-format collector: counter with single label dimension, histogram with SLO buckets (p95 < 500 ms), `process_uptime_seconds` gauge, sorted stable `renderPrometheus()`, type guards `isCounter`/`isHistogram`.
+- `packages/core/src/observability/errors.ts` (new) — `captureError(err, ctx)`: logs at `error` level with `requestId`/`errName`/`errMessage`/`status`/`code` + **sanitized stack** (query strings stripped); returns `PublicError` (`error`, `code`, `requestId`, `status`) with generic 5xx message. `omit()` helper prevents caller from overriding reserved keys.
+- `packages/core/src/observability/index.ts` (new) — public barrel `@learning-platform/core/observability`.
+- `packages/core/src/api/index.ts` — `health.check()` upgraded to deep `{status, checks:{db,auth,storage}}` (auth mirrors db; storage "skipped" — ADR-0010 pending); added `readiness.check()` → `{status, checks:{config,maintenance}}` (config = AUTH_SECRET + DATABASE_URL loaded; maintenance = MAINTENANCE_MODE===1).
+- `apps/web/src/app/api/health/route.ts` — updated to deep-check response shape (200 ok / 503 degraded|error).
+- `apps/web/src/app/api/ready/route.ts` (new) — shallow readiness endpoint (200 ready / 503 not_ready).
+- `apps/web/src/app/api/metrics/route.ts` (new) — Prometheus scrape; bearer-token gated via `METRICS_TOKEN` (401 on mismatch; 503 in prod if token unset; allowed in dev). Prometheus text format 0.0.4 content-type.
+- `apps/web/src/middleware.ts` — allows `/api/ready` and `/api/metrics` through the auth gate (metrics does its own auth; ready is for the load balancer).
+- `apps/web/src/app/api/users/route.ts` — wired as the first real consumer: per-request structured log (requestId/tenantId/userId/route), `http_requests_total{label="METHOD:/api/users:STATUS"}` + `http_request_duration_seconds`, `captureError` on throw, `x-request-id` response header on every path (401/403/429/400/200/5xx).
+- `packages/core/tests/observability-metrics.test.ts` (new) — 5 unit tests: counter labels + aggregate, histogram buckets/sum/count, uptime gauge, stable sorted render order. `__resetMetricsForTests`/`__resetLoggerForTests` for isolation.
+- `packages/core/package.json` — added `"./observability": "./src/observability/index.ts"` export; `pino` dependency.
+- `templates/ADR_CHECKLIST.md` (new) — mandatory-fields/content-sections/escalation-triggers/cross-reference-hygiene/format/self-review template for future ADR authors.
+- `CHANGELOG.md`, `docs/00-bootstrap/PROJECT_STATE.md` (v1.12), `docs/00-bootstrap/PROJECT_BACKLOG.md` — M5 entries.
+- Evidence: `docs/06-sprints/SPRINT-001-production-foundation/evidence/M5-observability/{checklist,commands,notes,output-tests,output-build}.txt/.md`.
+
+**Design decisions made (answered an external model review):**
+- **Metric label cardinality** — labels carry only the low-cardinality `METHOD:ROUTE:STATUS` tuple. Request/user/tenant identity travels in **logs** (pino child), never in metrics. Standard Prometheus guidance; prevents the in-process `Map` from exploding over a long-running VPS.
+- **PII in logs** — two layers: (1) pino `redact.paths` masks `password`/`token`/`cookie`/`headers.authorization`/`AUTH_SECRET`/`DATABASE_URL` to `[Redacted]`; (2) error-capture `sanitizeStack` strips query strings from frames.
+- **Request context: manual vs AsyncLocalStorage** — v1 threads context manually via `requestLogger(ctx)`. The API already takes a context object, so an ALS-backed `getRequestLogger()` is a drop-in addition when route count grows. Not built now (YAGNI / §11).
+- **No remote error backend in v1** — Sentry/GlitchTip is operational load (C6) for zero marginal value before a second customer. `captureError` is the single extension point.
+- **Pretty logs intentionally not added** — keeps prod and dev log shape identical (JSON to stdout), one fewer moving part on the 4 GB VPS.
+
+**Decisions made:**
+- M5 (Accepted, risk LOW, auto-proceeded per founder directive) — pino JSON logs + Prometheus-format in-process metrics + error capture + health/ready/metrics endpoints. No ADR (observability tooling details are deferred to implementation per TECH_STACK.md "Observability" row).
+
+**Open questions:**
+- none for M5. M6 (Deployment) is unblocked. Q7 (PWA) remains pending founder decision.
+
+**Verification:**
+- `pnpm --filter @learning-platform/core typecheck` → ✅ exit 0
+- `pnpm --filter @learning-platform/core test` → ✅ 10 tests pass (incl. 5 new `observability-metrics.test.ts`)
+- `pnpm --filter @learning-platform/core build` → ✅ exit 0
+- `pnpm --filter @learning-platform/core lint` → ✅ exit 0
+- `pnpm --filter web typecheck` → ✅ exit 0
+- `pnpm --filter web build` → ✅ exit 0 — `/api/health`, `/api/metrics`, `/api/ready` compiled; 8 routes; Middleware 46.1 kB; First Load JS 102 kB (unchanged)
+- `pnpm test` (workspace) → ✅ all packages pass
+- `pnpm lint` → ⚠️ core ✅; web has **pre-existing** `eslint-plugin-import` missing-module error (not M5-introduced; build + typecheck succeed past it)
+
+**Rollback:** Purely additive (new files + new exports + new routes). `git revert <commit>`; no schema, no migration, no auth-flow change, no breaking API change. The only behavioral change on an existing route is `/api/health` returning a richer JSON body.
+
+**Notes for the next session:**
+- Branch `feat/m5-observability` (commit `5db293a`) pushed to `origin`; PR to merge to `main` next.
+- M6 (Deployment / CI-CD) is now unblocked: Docker Compose prod, Nginx reverse-proxy (TLS + HSTS — the deferred M4.2 follow-up), systemd unit, backup/restore scripts, deployment guide, post-deploy smoke test.
+- Web `next lint` missing `eslint-plugin-import` is pre-existing; not blocking M5. Move to the standalone ESLint CLI or add the plugin as a web devDependency.
+- M7 (Production Readiness Review) is the final gate before the feature-work ban lifts.
