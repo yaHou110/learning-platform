@@ -73,29 +73,48 @@ git clone https://github.com/yaHou110/learning-platform.git .
 # or: scp -r .../learning-platform deploy@vps:/opt/learning-platform/
 
 # 5. Create environment file
+#
+# IMPORTANT: generate the secrets FIRST as shell variables (below), then write the
+# env file with an UNQUOTED heredoc (<<EOF, NOT <<'EOF') so the variables expand.
+# A single-quoted heredoc (<<'EOF') stores the *literal* command text — e.g.
+# AUTH_SECRET=$(openssl rand -base64 32) — as the secret, which is a known string,
+# not a random value. That was a defect in an earlier version of this guide.
 sudo mkdir -p /etc/learning-platform
-sudo cat > /etc/learning-platform/env <<'EOF'
+
+# 5a. Generate secrets ONCE into shell variables (256-bit / 64-byte random):
+POSTGRES_PASSWORD="$(openssl rand -base64 48 | tr -d '\n' | head -c 64)"
+AUTH_SECRET="$(openssl rand -base64 32)"
+MINIO_ROOT_PASSWORD="$(openssl rand -base64 48 | tr -d '\n' | head -c 64)"
+METRICS_TOKEN="$(openssl rand -hex 16)"   # 32 hex chars (128-bit)
+
+# 5b. Write the env file. UNQUOTED heredoc (<<EOF) so $VARs expand. Do NOT log
+#     these; clear the variables after (5c). Keep this terminal private.
+sudo cat > /etc/learning-platform/env <<EOF
 # Database
 POSTGRES_USER=learning_platform
 POSTGRES_DB=learning_platform
-POSTGRES_PASSWORD=CHANGE_ME_SECURE_RANDOM_64
+POSTGRES_PASSWORD=$POSTGRES_PASSWORD
 
 # Auth
-AUTH_SECRET=$(openssl rand -base64 32)
+AUTH_SECRET=$AUTH_SECRET
 NEXTAUTH_URL=https://learning.example.com
 
 # Object storage (MinIO)
 MINIO_ROOT_USER=minioadmin
-MINIO_ROOT_PASSWORD=CHANGE_ME_SECURE_RANDOM_64
+MINIO_ROOT_PASSWORD=$MINIO_ROOT_PASSWORD
 S3_BUCKET=learning-platform
 
 # Metrics (optional; if unset, /api/metrics returns 503 in prod)
-METRICS_TOKEN=CHANGE_ME_SECURE_RANDOM_32
+METRICS_TOKEN=$METRICS_TOKEN
 
 # Backup
 BACKUP_DEST=/var/backups/learning-platform
 EOF
 sudo chmod 600 /etc/learning-platform/env
+
+# 5c. Clear the secret variables from this shell so they don't persist:
+unset POSTGRES_PASSWORD AUTH_SECRET MINIO_ROOT_PASSWORD METRICS_TOKEN
+
 
 # 6. Install Nginx config
 sudo cp docs/07-deployment/nginx.conf /etc/nginx/sites-available/learning-platform

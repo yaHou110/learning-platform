@@ -36,13 +36,18 @@ ALTER TABLE "tenants" ENABLE ROW LEVEL SECURITY;
 ALTER TABLE "users" ENABLE ROW LEVEL SECURITY;
 --> statement-breakpoint
 -- RLS policy: non-super_admin users can only see their own tenant's data
+-- NOTE (2026-07-22): switched from "TO authenticated" (Supabase pseudo-role) to "TO PUBLIC"
+-- because the local/VPS PostgreSQL does NOT have an "authenticated" role — the RLS migration
+-- would fail with "role 'authenticated' does not exist" and crash the app. PUBLIC is the
+-- standard PG catch-all. v1 enforces tenant isolation at the application layer via WHERE
+-- clauses anyway; these policies are defense-in-depth for future use.
 CREATE POLICY "tenant_isolation_users" ON "users"
   AS PERMISSIVE FOR ALL
-  TO authenticated
+  TO PUBLIC
   USING ("tenant_id" = current_setting('app.tenant_id')::uuid)
   WITH CHECK ("tenant_id" = current_setting('app.tenant_id')::uuid);
 --> statement-breakpoint
 CREATE POLICY "tenant_isolation_tenants" ON "tenants"
   AS PERMISSIVE FOR SELECT
-  TO authenticated
+  TO PUBLIC
   USING ("id" = current_setting('app.tenant_id')::uuid);

@@ -22,6 +22,7 @@
 | [ADR-0007](./ADR-0007-hosting-deployment-model.md) | Hosting & deployment model — self-hosted single-VPS dedicated deployment for v1, deployment shape kept abstract (SaaS/licensed/managed reachable without rewrite) | Accepted | 2026-07-19 |
 | [ADR-0008](./ADR-0008-multi-tenant-isolation.md) | Multi-tenant data isolation — shared schema + `tenant_id` + 3-layer enforcement (app default + Postgres RLS + integration tests) for v1; operational tenancy deferred; silo/bridge reachable later | Accepted | 2026-07-19 |
 | [ADR-0016](./ADR-0016-pwa-offline.md) | PWA / offline — founder decided **YES** (2026-07-21); parked until M7 sign-off. Unlocks Learning bounded context + service-worker infra | Accepted | 2026-07-21 |
+| [ADR-0017](./ADR-0017-containerized-db-migrations.md) | DB migrations run as a one-shot containerized compose service at deploy time (reusing the app image; prod `DATABASE_URL`); no host `pnpm`/`node`/`psql` required — works on Docker-only hosts | Accepted | 2026-07-22 |
 
 ---
 

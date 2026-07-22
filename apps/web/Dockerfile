@@ -40,8 +40,17 @@ COPY . .
 # Build only the web app (standalone output)
 RUN pnpm --filter web build
 
+# Persist the migrations + the migrate entrypoint for the `migrate` image target
+# (ADR-0017). These stay in the builder stage; the `migrate` target below copies
+# the builder's workspace wholesale (source + dev toolchain + node_modules), so
+# it can run the real Drizzle `migrate()` helper via tsx — no Drizzle-internal
+# `__drizzle_migrations` re-implementation, full compatibility with the dev
+# `pnpm db:migrate` flow.
+ENV MIGRATE_SCRIPT=/app/packages/core/scripts/migrate.ts
+ENV MIGRATIONS_DIR=/app/packages/core/src/db/migrations
+
 # =====================================================================
-# Stage 2: Runner
+# Stage 2: Runner (the app image — ghcr.io/.../web:latest)
 # =====================================================================
 FROM node:20-alpine AS runner
 
@@ -80,3 +89,37 @@ WORKDIR /app/apps/web
 
 # Next.js standalone entrypoint
 CMD ["node", "server.js"]
+
+# =====================================================================
+# Stage 3: Migrate (a one-shot image target — ADR-0017)
+# =====================================================================
+# Reuses the BUILDER stage (which already has the source, devDependencies —
+# including `tsx` and `drizzle-orm` — and `pg`) rather than bundling these into
+# the slimmer runner. Why: the prod image is a Next.js `standalone` output that
+# traces only the web app's runtime imports, which excludes `drizzle-orm` /
+# `tsx`; rebuilding that tracing to include them would bloat the runner for no
+# runtime benefit. Instead this target is a separate, never-served image the
+# `migrate` compose service uses once per deploy to apply the committed Drizzle
+# migrations against the prod DATABASE_URL, then exit. It is NOT pushed to GHCR
+# and never serves traffic (the build only pushes the `runner` target — see the
+# compose `image:` on `app` and the `migrate` service below which builds locally).
+#
+# Compatibility: runs the SAME migrate.ts + the SAME Drizzle `migrate()` helper that
+# the local `pnpm db:migrate` uses, sharing the `__drizzle_migrations` tracking
+# table — so dev and deploy cannot diverge on which migrations are applied.
+FROM builder AS migrate
+# Run from packages/core so the migrate script's relative `migrationsFolder:
+# ./src/db/migrations` (relative to cwd, the dev convention) resolves correctly
+# to /app/packages/core/src/db/migrations — where the builder copied the source.
+WORKDIR /app/packages/core
+
+# DATABASE_URL is provided by the compose env (host `postgres`, prod password) —
+# see docker-compose.prod.yml `migrate` service. loadEnvOnce() sees DATABASE_URL
+# already set and skips its .env walk (no .git/.env in the image), so the dev
+# localhost default never applies here.
+ENV NODE_ENV=production
+
+# Apply migrations, then exit. --import tsx lets tsx register as the .ts loader.
+# (tsx is a devDependency of @learning-platform/core, present from the builder's
+# `pnpm install --frozen-lockfile`.)
+CMD ["node", "--import", "tsx", "scripts/migrate.ts"]
