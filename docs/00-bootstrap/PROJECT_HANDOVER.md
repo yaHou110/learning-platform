@@ -930,3 +930,37 @@ Each entry has:
 - M6 (Deployment / CI-CD) is now unblocked: Docker Compose prod, Nginx reverse-proxy (TLS + HSTS — the deferred M4.2 follow-up), systemd unit, backup/restore scripts, deployment guide, post-deploy smoke test.
 - Web `next lint` missing `eslint-plugin-import` is pre-existing; not blocking M5. Move to the standalone ESLint CLI or add the plugin as a web devDependency.
 - M7 (Production Readiness Review) is the final gate before the feature-work ban lifts.
+
+---
+
+## Session 023 — 2026-07-22 — contributor (M7 pre-provision prep: deploy defects + containerized migrations)
+
+**Goal:** Prepare the deployment path so a fresh host (Docker Desktop on Windows via WSL subsystem — founder paused VPS purchase) reaches a green stack via `compose up` alone, with no host `pnpm`/`node`/`psql` and no manual migrate step. Surfaced and fixed real M6 deploy defects.
+
+**Done:**
+- **Deploy defect — compose `image:` field** (CP0.1): `docker-compose.prod.yml` `app` had only `build:`, so `.github/workflows/deploy.yml`'s `docker compose pull` pulled nothing. Added `image: ghcr.io/yahou110/learning-platform/web:latest` (kept `build:` for local Docker Desktop use). `docker compose config` validates.
+- **Deploy defect — env-template heredoc** (CP0.2): `docs/07-deployment/DEPLOYMENT_GUIDE.md` §3 wrote `AUTH_SECRET=$(openssl rand -base64 32)` inside a single-quoted `<<'EOF'` heredoc, storing the literal command text as the secret. Rewrote: generate secrets into shell variables first, write via unquoted `<<EOF` (expands), then `unset`.
+- **Real secrets** (CP0.3): generated high-entropy POSTGRES_PASSWORD/AUTH_SECRET/MINIO_ROOT_PASSWORD/METRICS_TOKEN into the **gitignored** root `.env`; verified `.env` is untracked and no secret is committable. Replaces M6 throwaway dummy values.
+- **Env template** (CP0.4): `docs/07-deployment/env.template` (keys-only, generation hints, no values); gitignored `.tls-local/` and `.secrets-generated.env` added to `.gitignore`.
+- **Pre-provision checklist** (docs/06-sprints/SPRINT-001-production-foundation/evidence/M7-readiness/pre-provision-checklist.md): splits Claude-prep (done offline now) vs founder-steps (VPS-day), sequenced with a dependency-order diagram.
+- **ADR-0017 — Containerized DB migrations** (in progress, CP0.6a): records the decision to run Drizzle migrations as a one-shot `migrate` service in `docker-compose.prod.yml` reusing the app image (ships `packages/core/src/db/migrations/`) against the prod `DATABASE_URL`, before `app` boots. Closes the gap found live this session: prod image excluded migrations + nothing ran them → fresh host boots app into schema-less DB → `/api/health` `degraded` (`db:false`, `auth:false`) → `deploy.yml` smoke grep on `"status":"ok"` would roll back a good release. Added to DECISIONS.md Active table + CHANGELOG `## [Unreleased]`.
+
+**Open work this session (in progress, no prompt needed):**
+- CP0.6b — add the `migrate` service to `docker-compose.prod.yml`;
+- ship migrations inside the app image (`apps/web/Dockerfile`);
+- verify `/api/health` turns green on the local Docker Desktop stack;
+- CP0.5 — localhost self-signed nginx harness validating `nginx.conf` (HSTS / headers / metrics gate);
+- CP0.8 — `pnpm verify` + `pnpm governance:validate:local`.
+
+**Decisions made:**
+- ADR-0017 (Accepted, risk LOW) — containerized one-shot migrate over host-side `pnpm db:migrate` (binding constraint: Docker-on-Windows, no host Node toolchain) and over app self-migrate at boot (conflates schema-write with request-serve).
+
+**Open questions:**
+- none requiring founder input this session. (VPS purchase paused by founder; GitHub un-park decision parked until host intent returns.)
+
+**Verification (pending CP0.6b/0.5/0.8):**
+- observed live 2026-07-22: stack `up --build` succeeded; `lp-postgres`/`lp-minio` healthy; `lp-app` booted (`Next.js Ready in 734ms`); `/api/ready` 200 `{config:true}`; `/api/health` 503 `{status:"degraded",db:false,auth:false}` — confirming the migration gap before the fix.
+
+**Notes for the next session:**
+- The deploy-migration gap is the single load-bearing fix this session; ADR-0017 records why it's containerized.
+- VPS framing parked per founder 2026-07-22; target is green stack on local Docker Desktop.
