@@ -27,15 +27,15 @@ NGINX_IMG="nginx:1.27-alpine"
 # --- 1. Gen self-signed cert if missing -------------------------------------
 if [ ! -f "$TLS_DIR/local.crt" ] || [ ! -f "$TLS_DIR/local.key" ]; then
   echo "[harness] generating self-signed cert in $TLS_DIR ..."
-  # Run openssl INSIDE a container so it doesn't trip Git-Bash MSYS path mangling
-  # on the -subj argument (which broke the host openssl attempt earlier).
-  docker run --rm -v "$TLS_DIR:/tls" --entrypoint /bin/sh "$NGINX_IMG" -c "
+  # Use a temp container with a HERE-DOC script to avoid Git Bash path mangling
+  # on the -subj argument. Write the script to a file, then execute it.
+  docker run --rm -v "$TLS_DIR:/tls" --entrypoint /bin/sh alpine:3.20 <<'EOF'
     apk add --no-cache openssl >/dev/null 2>&1
     openssl req -x509 -newkey rsa:2048 -nodes \
       -keyout /tls/local.key -out /tls/local.crt -days 825 \
       -subj '/C=US/ST=Local/L=Local/O=Learning Platform DEV/CN=localhost' \
       -addext 'subjectAltName=DNS:localhost,IP:127.0.0.1'
-  "
+EOF
   echo "[harness] cert generated."
 fi
 

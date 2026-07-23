@@ -94,6 +94,7 @@ services:
       # dir and the build failed with "GetFileAttributesEx D:\code\apps". Use `.`.
       context: .
       dockerfile: apps/web/Dockerfile
+      target: runner
     container_name: lp-app
     restart: unless-stopped
     environment:

@@ -11,27 +11,21 @@
 
 | Field | Value |
 | --- | --- |
-| Session # | 018 — M5 complete |
-| Date opened | 2026-07-20 |
+| Session # | 023 — M7 pre-provision prep complete |
+| Date opened | 2026-07-22 |
 | Driver | contributor |
 | Sprint | SPRINT-001 — Production Foundation |
-| Goal | **M1–M5 closed (M1 ✅, M2 ✅, M3 ✅, M4.0 ✅, M4.1 ✅, M4.2 ✅, M4.3 ✅, **M5 ✅**).** M5 Observability added (structured JSON logs, Prometheus metrics, error capture, health/ready/metrics endpoints). M6 Deployment unblocked. M7 + Q7 remain pending founder decisions. |
-| Status | 🟢 **M5 complete.** M6 (Deployment / CI-CD) is the next unblocked milestone. |
+| Goal | **M1–M6 closed (M1–M5 ✅, **M6 ✅**). M6 Deployment/CI-CD merged to main (PR #6). M7 pre-provision prep complete (PR #7 merged): ADR-0017 containerized DB migrations, docker-compose.prod.yml `image:` fix, DEPLOYMENT_GUIDE.md heredoc fix, local TLS nginx harness. M7 gate active — awaiting founder VPS provisioning + live smoke test → M7 sign-off.** |
+| Status | 🟢 **M6 + M7 prep complete.** M7 gate: founder VPS + DNS + GitHub un-park → live deploy → sign-off. |
 
 ---
 
 ## Context
 
-Sessions 013–017 closed the M4 sprint (dependency upgrades, authorization gate, security headers, security contact point, residual advisories, M2 real-Postgres smoke test). Session 018 added M5 Observability:
+Sessions 013–017 closed the M4 sprint (dependency upgrades, authorization gate, security headers, security contact point, residual advisories, M2 real-Postgres smoke test). Session 018 added M5 Observability. Session 019–022 handled governance (precedence + Product Vision + AI-instruction policy, ADR-0014 reusable-platform vision + English artifacts rule, ADR-0007/0008 for Q5/Q6). **Session 023 (2026-07-22) completed M6 Deployment/CI-CD (merged via PR #6) and M7 pre-provision prep (merged via PR #7):**
 
-- **Structured JSON logging** via `pino` — singleton logger + request-scoped child loggers with redaction of `password`/`passwordHash`/`token`/`cookie`/`headers.authorization`/`AUTH_SECRET`/`DATABASE_URL`.
-- **Prometheus-format metrics** — in-process collector (`http_requests_total{label="METHOD:ROUTE:STATUS"}`, `http_request_duration_seconds`, `process_uptime_seconds`), bearer-token-gated `/api/metrics` endpoint.
-- **Error capture** — single `captureError` point with sanitized stacks (query strings stripped), `x-request-id` correlation header on every response.
-- **Deep health** — `/api/health` checks `db` (ping), `auth` (mirrors db), `storage` (skipped in v1, ADR-0010 pending).
-- **Shallow readiness** — `/api/ready` checks config loaded (`AUTH_SECRET`+`DATABASE_URL`) + not in maintenance; no external deps.
-- **First consumer** — `/api/users` wired with per-request logging, metrics, error capture, and `x-request-id` response header.
-
-All core quality gates pass: `pnpm --filter @learning-platform/core typecheck`, `test`, `build`, `lint` ✅. Web builds cleanly (new routes `/api/health`, `/api/metrics`, `/api/ready` compiled; Middleware 46.1 kB; First Load JS 102 kB).
+- **M6 — Deployment / CI-CD (merged PR #6):** Docker Compose prod (app + Postgres 16 + MinIO), host Nginx (TLS/HSTS/rate-limit/metrics gate), systemd unit, backup/restore scripts, DEPLOYMENT_GUIDE.md, deploy.yml CI/CD (build → GHCR → SSH → smoke → rollback). Locally verified: image builds, all three services healthy, endpoints `/api/health` 200 / `/api/ready` 200 / `/api/metrics` 401→200(bearer), backup→destroy→restore round-trip recovers Postgres + MinIO byte-identical.
+- **M7 pre-provision prep (merged PR #7):** ADR-0017 containerized DB migrations (one-shot `migrate` service in compose, reuses app builder stage with tsx+drizzle-orm+migrations, runs against prod DATABASE_URL before app boots). Fixed deploy defects: `docker-compose.prod.yml` `app` service gains `image:` field (fixes CI `pull`), `DEPLOYMENT_GUIDE.md` §3 heredoc fixed (real secrets not literal `$(...)`), new `env.template` (keys-only). Local TLS nginx harness validates HSTS/headers/metrics gate. Observed gap before fix: fresh stack → `/api/health` degraded (`db:false, auth:false`) → deploy.yml smoke grep would roll back good release.
 
 ---
 
@@ -65,22 +59,31 @@ All core quality gates pass: `pnpm --filter @learning-platform/core typecheck`, 
 
 ---
 
-## What to do next (Session 019+)
-
-**M6 — Deployment / CI-CD is now unblocked.** The next concrete session is M6 per `SPRINT-001-production-foundation.md`:
-
-| M6 sub-task | Description |
-| --- | --- |
-| M6.1 | Docker Compose for production (app + Postgres + MinIO) |
-| M6.2 | Nginx reverse-proxy config (TLS termination, HSTS, rate-limit proxy, metrics internal-only) |
-| M6.3 | systemd unit for the Node process (restart, env, logging) |
-| M6.4 | Backup & restore scripts (daily pg_dump + 30-day retention per `SYSTEM_ARCHITECTURE.md` §9) |
-| M6.5 | Deployment guide (`docs/07-deployment/DEPLOYMENT_GUIDE.md`) |
-| M6.6 | Post-deploy smoke test against the real production stack |
+## What to do next (Session 024+)
 
 **M7 — Production Readiness Review** — final checklist, no red, founder sign-off → feature gate lifts.
 
-**Q7 — PWA / offline** — founder decided **YES (2026-07-21, ADR-0016)**: PWA is necessary. Drives a new bounded context (Learning) + service-worker/offline infra. **Implementation parked until M7 sign-off** per the 2026-07-11 directive; ADR records the decision now to stop re-litigation.
+**Founder steps (in order, per `pre-provision-checklist.md`):**
+
+| Step | Description |
+| --- | --- |
+| F0.1 | Domain name decision (e.g. `hawza.example.ir`) |
+| F0.2 | GitHub decision: un-park GitHub (use `deploy.yml` CI/CD) or stay parked (manual deploy) |
+| F1.1 | Purchase VPS ≤ 4 GB RAM, 50 GB SSD, Ubuntu 22.04/24.04 LTS |
+| F1.2 | DNS — point A/AAAA record for domain at VPS IP |
+| F1.3 | First login + harden SSH (deploy user, key-only auth, fail2ban, UFW) |
+| F1.4 | Install stack deps (docker, compose plugin, certbot, minio-client, nginx) |
+| F1.5 | Get code onto host (`git clone` or `scp -r`) |
+| F2.1 | GitHub repo secrets (if F0.2a): GHCR_TOKEN, PROD_HOST, PROD_USER, PROD_SSH_KEY, PROD_ENV |
+| F2.2 | Host env file — write `/etc/learning-platform/env` from CP0.4 template + real secrets |
+| F3.1 | certbot — Let's Encrypt cert for domain |
+| F3.2 | Install nginx.conf (already validated in CP0.5) |
+| F4.1 | systemd unit install + enable |
+| F4.2 | `docker compose -f docker-compose.prod.yml up -d` (or next push runs deploy.yml) |
+| F4.3 | Live smoke: `/api/health` 200, `/api/ready` 200, `/api/metrics` 401/200 |
+| F5.1 | Founder sign-off → gate lifts |
+
+**Q7 — PWA / offline** — founder decided **YES (2026-07-21, ADR-0016)**: PWA is necessary. Drives a new bounded context (Learning) + service-worker/offline infra. **Implementation parked until M7 sign-off** per the 2026-07-11 directive.
 
 **Independent follow-ups (no founder decision required):**
 - HSTS header at M6 behind TLS (M4.2 §4.3).

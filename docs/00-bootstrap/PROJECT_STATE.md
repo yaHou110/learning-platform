@@ -2,7 +2,7 @@
 
 > **Current snapshot of the project.** This is the *first* file to read after `DEVELOPMENT_GUIDE.md`.
 
-> Last updated: 2026-07-20 (v1.12 — M5 closed: Observability added; M6 Deployment unblocked)
+> Last updated: 2026-07-22 (v1.13 — M6 closed: Deployment/CI-CD merged; M7 pre-provision prep complete; M7 gate active)
 
 ---
 
@@ -16,9 +16,9 @@
 
 > **Live pointer to where the work is right now.** Updated after every meaningful milestone (see `DEVELOPMENT_GUIDE.md`). At a glance: what is being done, what is blocking it, what is next. For full history, read `PROJECT_HANDOVER.md`.
 
-- **Current task:** M5 Observability complete. Next: SPRINT-001 M6 (Deployment) — Docker Compose prod, Nginx reverse-proxy config, systemd unit, backup & restore scripts, deployment guide.
-- **Blocked by:** (none — M5 unblocked M6)
-- **Next:** Plan M6 milestones per `docs/06-sprints/SPRINT-001-production-foundation/SPRINT-001-production-foundation.md`.
+- **Current task:** M7 pre-provision prep complete (PR #7 merged). M6 Deployment/CI-CD merged. **Next: founder VPS provisioning + live smoke test → M7 sign-off.**
+- **Blocked by:** Founder VPS purchase + DNS + GitHub un-park (see `pre-provision-checklist.md` F0.1–F2.1)
+- **Next:** Follow `docs/06-sprints/SPRINT-001-production-foundation/evidence/M7-readiness/pre-provision-checklist.md` Phase F steps.
 
 ---
 
@@ -35,7 +35,7 @@
 | 5. Source code (Identity & Access) | ✅ done | Migration + Auth.js + middleware + 2 API routes (sessions 005–007). |
 | 5.5. Source code (other features) | ⏸️ paused | Catalog / Learning / Credentials / Localization / Dashboard — parked pending M7. |
 | 6. **Production Foundation Sprint** | ✅ M1–M5 closed | M1 ✅, **M2 ✅ (real-Postgres smoke test passed 2026-07-15)**, M3 ✅, M4.0 ✅ (merged on main), M4.1 ✅, M4.2 ✅, **M4.3 ✅ (drizzle-orm + postcss residual advisories resolved; security.txt public via middleware fix)**, **M5 ✅ (Observability: pino JSON logs + Prometheus metrics + error capture + health/ready/metrics endpoints)**. M6–M7 + Q7 (PWA, deployment/CI-CD) remain; M6 unblocked by M5. |
-| 7. Deployment & CI/CD | ❌ not started | **M6 now unblocked** — Docker Compose prod, Nginx reverse proxy, systemd, backup/restore, deployment guide. |
+| 7. **Deployment & CI/CD** | ✅ M6 closed | **M6 merged to main (PR #7)** — Docker Compose prod, Nginx reverse proxy (TLS+HSTS+rate-limit), systemd unit, backup/restore scripts, deployment guide, post-deploy smoke test. **M7 pre-provision prep done** — containerized migrations (ADR-0017), `image:` field fix, env heredoc fix, local TLS nginx harness. M7 gate: founder sign-off on live VPS. |
 
 ---
 
@@ -56,6 +56,7 @@
 | **Mandatory engineering protocol** (quality gates, DoD, contributor constraints) | `ADR-0012` | ✅ binding |
 | **Engineering Protocol v2** (DoR, spec-first, human approval, risk matrix, §39–§60) | `ADR-0013` | ✅ binding |
 | **No new business features until M7 sign-off** | SPRINT-001 (founder directive 2026-07-11) | 🚧 active gate |
+| **Containerized DB migrations — one-shot `migrate` service in docker-compose.prod.yml, reusing app builder stage (tsx + drizzle-orm + migrations), runs against prod DATABASE_URL before app boots (`depends_on: service_completed_successfully`)** | `ADR-0017` | ✅ binding (2026-07-22) |
 | **Hosting & deployment model — v1 self-hosted dedicated single-VPS, shape kept abstract** | `ADR-0007` | ✅ binding (2026-07-19) |
 | **Multi-tenant data isolation — shared schema + tenant_id + 3-layer enforcement (app default + Postgres RLS + integration tests); operational tenancy deferred** | `ADR-0008` | ✅ binding (2026-07-19) |
 
@@ -83,10 +84,10 @@ Q5 is consumed by SPRINT-001 M6. Q6 affects schema evolution; defer until M6 lan
 | --- | --- |
 | Sprint | SPRINT-001 — Production Foundation |
 | Opened | 2026-07-11 |
-| Current milestone | **Sprint M4 — closed.** M1–M4 (M4.0, M4.1, M4.2, M4.3) + M2 smoke test all ✅. M5+ parked on founder decisions. |
+| Current milestone | **Sprint M6 — closed (merged to main via PR #7).** M1–M5 ✅, M6 (Deployment/CI-CD) ✅. **M7 pre-provision prep complete** — containerized migrations (ADR-0017), deploy defects fixed, local nginx harness validated. M7 gate active: feature work blocked until founder sign-off on live VPS readiness. |
 | Plan | [`../06-sprints/SPRINT-001-production-foundation/SPRINT-001-production-foundation.md`](../06-sprints/SPRINT-001-production-foundation/SPRINT-001-production-foundation.md) |
-| Evidence | `docs/06-sprints/SPRINT-001-production-foundation/evidence/M{2,3,4}-*/` |
-| Gate | No feature work merged until M7 sign-off |
+| Evidence | `docs/06-sprints/SPRINT-001-production-foundation/evidence/M{2,3,4,5,6}-*/` + `M7-readiness/` |
+| Gate | No feature work merged until M7 sign-off (founder decision on VPS + live smoke) |
 | **Critical finding (M4.0, merged on main)** | `GET /api/users` returned `passwordHash` to any logged-in user + no role-based authorization. Closed: spec at `evidence/M4-security/M4-0-authz-data-leak.md`; code merged to `main`. |
 
 ---
@@ -103,6 +104,7 @@ Q5 is consumed by SPRINT-001 M6. Q6 affects schema evolution; defer until M6 lan
 8. **🟢 M4.3 residual advisories + `security.txt` public access — closed on main** — `drizzle-orm ^0.36.0 → ^0.45.2` (GHSA-1116251, HIGH) + `pnpm.overrides.postcss = ^8.5.10` (GHSA-1117015, MOD, transitive) + `isSecurityTxt` exception in middleware (bug found by M2 smoke test). `pnpm verify` green; 36 tests; 8 routes; Middleware 46.1 kB; First Load JS 102 kB.
 9. **🟢 M2 PostgreSQL blocker — closed** — Docker Desktop up; `hawza-postgres:16-alpine` healthy; full smoke walk passed (login → typed session → super_admin user list without `passwordHash` → public security.txt → 6 security headers on every response). Evidence: `docs/06-sprints/SPRINT-001-production-foundation/evidence/M2-prod-build/M2-smoke-test.md`.
 10. **🟡 `pnpm audit` endpoint retired by npm (2026-07-15)** — `ERR_PNPM_AUDIT_BAD_RESPONSE` / HTTP 410. Captured as a tool-status note in M4.3; substitute: `pnpm why <package> --filter web` + manual version pins. Future audits will need a different tool (e.g. `osv-scanner`, Snyk, GitHub Dependabot). Not a finding; not blocking.
+11. **🟢 M7 pre-provision prep — completed on main (PR #7)** — containerized DB migrations (ADR-0017), `docker-compose.prod.yml` `image:` field fix (CI `pull` now works), `DEPLOYMENT_GUIDE.md` heredoc fixed (real secrets not literal `$(...)`), local TLS nginx harness validates HSTS/headers/metrics gate. Next: founder VPS provisioning + live smoke test → M7 sign-off.
 
 ---
 
