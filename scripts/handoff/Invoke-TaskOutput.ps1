@@ -382,6 +382,23 @@ try {
 } finally { Pop-Location }
 
 # ============================================================================
+# Helper: Reset task-output.json status to 'draft' after successful handoff
+# ============================================================================
+function Reset-TaskOutputStatus {
+    try {
+        $taskPath = Join-Path $repoRoot ".claude\state\task-output.json"
+        if (Test-Path $taskPath) {
+            $json = Get-Content $taskPath -Raw | ConvertFrom-Json
+            $json.status = "draft"
+            $json | ConvertTo-Json -Depth 10 | Set-Content $taskPath -Encoding UTF8
+            Write-Host "Reset task-output.json status to 'draft'." -ForegroundColor Gray
+        }
+    } catch {
+        Write-Host "Warning: Failed to reset task-output.json status: $($_.Exception.Message)" -ForegroundColor Yellow
+    }
+}
+
+# ============================================================================
 # STAGE 6 — Merge gate. Manual by default.
 # merge_policy=manual (default) → STOP here, print the PR for a human to merge.
 # merge_policy=auto-on-green    → gh pr merge --squash --auto.
@@ -414,20 +431,3 @@ if ($mergePolicy -eq "auto-on-green") {
 
 # Unreachable: merge_policy was validated in Stage 1.
 Fail 3 "Unknown merge_policy '$mergePolicy' reached merge stage."
-
-# ============================================================================
-# Helper: Reset task-output.json status to 'draft' after successful handoff
-# ============================================================================
-function Reset-TaskOutputStatus {
-    try {
-        $taskPath = Join-Path $repoRoot ".claude\state\task-output.json"
-        if (Test-Path $taskPath) {
-            $json = Get-Content $taskPath -Raw | ConvertFrom-Json
-            $json.status = "draft"
-            $json | ConvertTo-Json -Depth 10 | Set-Content $taskPath -Encoding UTF8
-            Write-Host "Reset task-output.json status to 'draft'." -ForegroundColor Gray
-        }
-    } catch {
-        Write-Host "Warning: Failed to reset task-output.json status: $($_.Exception.Message)" -ForegroundColor Yellow
-    }
-}
