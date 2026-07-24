@@ -17,6 +17,12 @@ coverage
 .tmp/
 PR_BODY.md
 .freebuff/
+# Compiled TypeScript output (packages/**/src/)
+packages/**/src/**/*.js
+packages/**/src/**/*.js.map
+packages/**/src/**/*.d.ts
+packages/**/src/**/*.d.ts.map
+
 # --- Claude Code: machine-local + runtime only. Contract is committed. ---
 .claude/settings.local.json
 .claude/state/task-output.json

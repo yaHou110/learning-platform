@@ -1,9 +1,9 @@
-# Learning Platform — Production Deployment Guide (M6)
+# Learning Platform — Production Deployment Guide (M7)
 
-> **Scope:** v1 — single self-hosted dedicated VPS (~4 GB RAM, ADR-0007, C1).
+> **Scope:** v1 — **Vercel (serverless Next.js) + Railway Postgres** is the production cloud target (ADR-0018, supersedes ADR-0007's VPS path).
+> **Local verification lane:** Docker Compose prod stack (`docker-compose.prod.yml`) with ADR-0017 containerized migrations runs on the founder's Docker Desktop (Windows) to verify the full stack (app + Postgres + MinIO) end-to-end before pushing to Vercel.
 > One artifact, customer-agnostic, re-configurable (C8).
 > No SaaS control plane, no multi-instance routing, no automated provisioning.
-> All secrets in `/etc/learning-platform/env` on the host.
 
 ---
 

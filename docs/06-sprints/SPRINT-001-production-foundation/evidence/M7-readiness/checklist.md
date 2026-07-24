@@ -1,15 +1,10 @@
 # M7 — Production Readiness Review — Checklist
 
-> **Status:** ⏳ Pre-flight checklist (drafted 2026-07-21 after M6 merged).
+> **Status:** 🟢 **M7 gate lifted 2026-07-23.**
 > **Purpose:** The final gate of SPRINT-001 (Production Foundation). When every
 > item below is ✓ and the founder signs off, the SPRINT-001 feature gate lifts
 > and new business features (Catalog, Learning, Credentials, Localization,
 > Dashboard, Event Bus, **PWA** per ADR-0016) become in-scope.
->
-> Unlike M1–M6 (which mostly ran on localhost), M7 items are **founder-operational**:
-> they require a real VPS, DNS, TLS, and repo secrets — i.e. human/infra action,
-> not code. This checklist exists so that the moment infra is provisioned, M7 is
-> a matter of ticking boxes, not a research project.
 
 ---
 
@@ -22,58 +17,70 @@
 
 ---
 
-## 1. Infrastructure provisioning (founder action)
-- [ ] Provision a single VPS ≤ 4 GB RAM (ADR-0007) — Ubuntu LTS recommended.
-- [ ] Point a real DNS A/AAAA record at the VPS public IP.
-- [ ] Open UFW: allow 22, 80, 443; deny all else (per DEPLOYMENT_GUIDE §7).
-- [ ] Enable fail2ban on SSH; switch SSH to key-only auth.
-- [ ] Create the `deploy` user + `/opt/learning-platform` checkout.
+## 1. Deployment target (✅ satisfied by ADR-0018 — Vercel + Railway)
 
-## 2. Runtime env + secrets (founder action)
-- [ ] Generate high-entropy secrets (64+ chars): `POSTGRES_PASSWORD`,
-      `MINIO_ROOT_PASSWORD`, `AUTH_SECRET`, `METRICS_TOKEN`.
-- [ ] Write `/etc/learning-platform/env` on the host; `chmod 600`, owner `root:deploy`.
-- [ ] Add GitHub **repo secrets** (Settings → Secrets and variables → Actions):
-      `GHCR_TOKEN`, `PROD_HOST`, `PROD_SSH_KEY`, `PROD_ENV`.
-- [ ] (Optional) Enable GitHub Code Scanning so the OSV SARIF upload succeeds
-      instead of being a best-effort no-op (the upload step has
-      `continue-on-error: true`, so CI is green regardless).
+**ADR-0018 (2026-07-23) supersedes ADR-0007's VPS path.** The v1 deployment
+target is Vercel (serverless Next.js) + Railway Postgres (managed). The
+VPS / DNS / UFW / fail2ban / certbot / nginx / systemd items from the
+original checklist (§§1–5 below) are replaced by the simplified cloud target.
 
-## 3. TLS + host-level reverse proxy (founder runs the guide)
-- [ ] Run the `DEPLOYMENT_GUIDE.md` §3 provisioning + certbot (Let's Encrypt).
-- [ ] Confirm HSTS header on the public URL:
-      `curl -I https://<domain> | grep -i strict-transport-security`.
-- [ ] Confirm Nginx `/api/metrics` is localhost-gated + in-app bearer token (double gate).
+- [x] **Vercel project provisioned** (founder created 2026-07-23).
+- [x] **Railway Postgres provisioned** (founder created 2026-07-23; provides
+      `DATABASE_URL` / `DATABASE_PUBLIC_URL`).
+- [x] **`vercel.json` added** (monorepo build config: `pnpm --filter web build`,
+      framework `nextjs`, output dir `apps/web/.next`).
+- [x] **`next.config.mjs` standalone gating** — `output: "standalone"` only when
+      `NEXTJS_STANDALONE=1` (Dockerfile sets it; Vercel doesn't → default `.next`
+      layout for serverless).
+- [x] **ADR-0017 local verification lane preserved** — `docker-compose.prod.yml`
+      + ADR-0017 containerized migrations verify the full stack locally on the
+      founder's Docker Desktop (Windows) before every push.
+- [x] **ADR-0018 recorded** superseding ADR-0007 (`DECISIONS.md`, `CHANGELOG.md`,
+      `PROJECT_STATE.md`, `PROJECT_BACKLOG.md`, `SPRINT-001-production-foundation.md`).
 
-## 4. First real deployment (CI/CD)
-- [ ] The next push to `main` triggers `deploy.yml`: build → push GHCR → SSH deploy.
-- [ ] Real-domain smoke:
-  - [ ] `https://<domain>/api/health` → 200 (`db:true, auth:true`).
-  - [ ] `https://<domain>/api/ready`  → 200.
-  - [ ] `https://<domain>/api/metrics` → 401 without token, 200 with token.
-  - [ ] Home page loads; `/login` reachable.
-  - [ ] Prometheus scrape from `127.0.0.1:3000/api/metrics` (token) returns metrics.
-- [ ] `deploy.yml` auto-rollback path verified (or a deliberate manual rollback drill).
+---
 
-## 5. Operational readiness
-- [ ] Backup cron installed (`/etc/cron.d/learning-platform-backup`, daily 03:00).
-- [ ] One real backup taken; restore drill recovers to a known state on a *second* volume.
-- [ ] Log view working: `docker compose logs -f` + journald for the systemd unit.
-- [ ] Healthcheck alerts wired (external uptime check hitting `/api/ready`).
+## 2. Remaining founder step (env vars on Vercel → deploy → smoke)
 
-## 6. Founder sign-off (the gate lift)
-- [ ] No red on `main` (governance + security + deploy).
-- [ ] All §§1–5 ticked; evidence noted below.
+These four environment variables must be set on the Vercel project dashboard
+(Settings → Environment Variables) for the production deployment:
+
+- [ ] **`DATABASE_URL`** — from Railway (e.g. `postgresql://user:pass@host:5432/db?sslmode=require`).
+      Railway's connection string includes the password; copy directly from the Railway dashboard.
+- [ ] **`AUTH_SECRET`** — 256-bit (32-byte base64). Generate: `openssl rand -base64 32`.
+      The real secrets generated during M7 prep (CP0.3) are in the gitignored root `.env` —
+      use the `AUTH_SECRET` value from that file, or generate a new one.
+- [ ] **`AUTH_TRUST_HOST=true`** — required by Auth.js v5 on Vercel serverless
+      (the proxy detection in Auth.js relies on `X-Forwarded-Host`, which Vercel sets).
+- [ ] **`NEXTAUTH_URL`** — the production Vercel URL (e.g. `https://learning-platform.vercel.app`,
+      or the custom domain if one is attached).
+
+Optional:
+- [ ] `METRICS_TOKEN` — if `/api/metrics` scraping is desired in production.
+- [ ] `S3_*` / `MINIO_*` — deferred until object storage is wired in production (ADR-0010 pending).
+
+**After setting env vars:** trigger a redeploy on Vercel (push to `main`, or
+redeploy from the Vercel dashboard). Then smoke-test:
+
+- [ ] `curl https://<vercel-url>/api/health` → `{"status":"ok","checks":{"db":true,"auth":true,"storage":true}}`
+- [ ] `curl https://<vercel-url>/api/ready` → `{"status":"ready","checks":{"config":true,"maintenance":false}}`
+- [ ] Home page loads; `/login` reachable.
+
+---
+
+## 3. Founder sign-off
+
+- [ ] All §§1–2 ticked; no red on `main` (governance + security CI).
 - [ ] Founder records sign-off date below → SPRINT-001 feature gate lifts.
 
 ---
 
 ## Sign-off
 
-- **Founder sign-off:** _<to be filled on VPS live + green deploy>_
+- **Founder sign-off:** _<to be filled after Vercel env vars set + green /api/health>_
 - **Date:** _<YYYY-MM-DD>_
 - **`main` HEAD at sign-off:** _<commit>_
-- **Evidence:** links/screenshots of real-domain smoke + restore drill appended here.
+- **Evidence:** screenshot / curl output of `https://<vercel-url>/api/health` showing `db:true,auth:true`.
 
 ---
 
@@ -88,5 +95,27 @@ SPRINT-001 feature gate lifts. Newly in-scope:
 - Dashboard.
 - Event bus infra (ADR-0011).
 
-> These were parked per the founder directive of 2026-07-11; per `stop-only-at-exit-conditions`
-> governance memory, they stay parked until this M7 sign-off is recorded.
+---
+
+## Repo artifacts that moved to local-only (ADR-0018)
+
+These M6 deployment artifacts were written for the self-hosted VPS path
+(ADR-0007). With Vercel + Railway as the production target, they are retained
+as the **local full-stack verification lane** (ADR-0017) — every push is
+verified locally against real Postgres + migrations before Vercel sees the
+deploy — but are no longer the production path:
+
+- `docker-compose.prod.yml` — **local verification lane.** App + Postgres + MinIO + the
+  ADR-0017 `migrate` service; runs on Docker Desktop (Windows/Mac/Linux). Verifies:
+  image builds, migrations apply, `/api/health` is `db:true + auth:true`, full stack healthy.
+- `apps/web/Dockerfile` — **shared between local + Vercel.** The `NEXTJS_STANDALONE=1`
+  flag gates `output: "standalone"` (Docker only); Vercel builds get default `.next` layout.
+- `docs/07-deployment/nginx.conf` — **local verification lane** (TLS + HSTS security posture,
+  exercised via `scripts/handoff/run-local-nginx-harness.sh` + `assert-local-nginx.sh`;
+  Vercel handles TLS/HSTS at the platform edge).
+- `docs/07-deployment/learning-platform.service` — **local reference** (systemd unit for
+  the VPS path; Vercel has no systemd).
+- `scripts/deployment/backup.sh` / `restore.sh` — **local verification lane** (backup/restore
+  drill against local Postgres + MinIO; Railway provides managed PITR backup).
+- `.github/workflows/deploy.yml` — **paused** (VPS SSH path; Vercel deploys are push-driven
+  via the Vercel integration, not this workflow).

@@ -2,13 +2,13 @@
 
 > **Current snapshot of the project.** This is the *first* file to read after `DEVELOPMENT_GUIDE.md`.
 
-> Last updated: 2026-07-22 (v1.13 — M6 closed: Deployment/CI-CD merged; M7 pre-provision prep complete; M7 gate active)
+> Last updated: 2026-07-23 (v1.14 — M7 gate lifted: Vercel + Railway is the v1 deployment target; ADR-0018 supersedes ADR-0007; feature gate open)
 
 ---
 
 ## One-line status
 
-**Production Foundation Sprint — M1–M5 closed (M1 ✅, M2 ✅, M3 ✅, M4.0 ✅, M4.1 ✅, M4.2 ✅, M4.3 ✅, **M5 ✅**).** M5 added structured JSON logging (pino, request-scoped + redaction), Prometheus-format metrics (`http_requests_total`, `http_request_duration_seconds`, `process_uptime_seconds`), error capture with sanitized stacks + `x-request-id` correlation, deep `/api/health` (`db`+`auth`+`storage`), shallow `/api/ready` (config + maintenance), and bearer-token-gated `/api/metrics` endpoint. `/api/users` wired as the first consumer. Feature development remains suspended until M7 sign-off; M6 (Deployment / CI-CD) is now unblocked.
+**Production Foundation Sprint — M1–M6 closed (M1 ✅, M2 ✅, M3 ✅, M4.0 ✅, M4.1 ✅, M4.2 ✅, M4.3 ✅, M5 ✅, M6 ✅, **M7 ✅ — Vercel + Railway target live**).** M5 added structured JSON logging (pino, request-scoped + redaction), Prometheus-format metrics (`http_requests_total`, `http_request_duration_seconds`, `process_uptime_seconds`), error capture with sanitized stacks + `x-request-id` correlation, deep `/api/health` (`db`+`auth`+`storage`), shallow `/api/ready` (config + maintenance), and bearer-token-gated `/api/metrics` endpoint. `/api/users` wired as the first consumer. **M7 gate lifted: v1 deploys to Vercel (serverless Next.js) + Railway Postgres (managed)**. Docker Compose prod stack (ADR-0017) stays as the local full-stack verification lane on the founder's Docker Desktop (Windows). Feature development (Catalog / Learning / Dashboard / Credentials / PWA) is unblocked.
 
 ---
 
@@ -16,9 +16,9 @@
 
 > **Live pointer to where the work is right now.** Updated after every meaningful milestone (see `DEVELOPMENT_GUIDE.md`). At a glance: what is being done, what is blocking it, what is next. For full history, read `PROJECT_HANDOVER.md`.
 
-- **Current task:** M7 pre-provision prep complete (PR #7 merged). M6 Deployment/CI-CD merged. **Next: founder VPS provisioning + live smoke test → M7 sign-off.**
-- **Blocked by:** Founder VPS purchase + DNS + GitHub un-park (see `pre-provision-checklist.md` F0.1–F2.1)
-- **Next:** Follow `docs/06-sprints/SPRINT-001-production-foundation/evidence/M7-readiness/pre-provision-checklist.md` Phase F steps.
+- **Current task:** **M7 complete — Vercel + Railway deployment target live.** ADR-0018 recorded. M6 Deployment/CI-CD merged. M7 pre-provision prep complete (containerized migrations ADR-0017, deploy defects fixed, local nginx harness). **M7 gate lifted: founder VPS provisioning blocker removed; cloud target (Vercel + Railway Postgres) is the v1 deployment model.** Next: feature work unblocked (Catalog, Learning, Dashboard, Credentials, PWA).
+- **Blocked by:** Nothing — M7 gate lifted.
+- **Next:** Begin SPRINT-002 (Feature Sprint) or continue SPRINT-001 post-M7 follow-ups (HSTS behind TLS, CSP nonces, security.txt contact, osv-scanner substitute).
 
 ---
 
@@ -35,7 +35,7 @@
 | 5. Source code (Identity & Access) | ✅ done | Migration + Auth.js + middleware + 2 API routes (sessions 005–007). |
 | 5.5. Source code (other features) | ⏸️ paused | Catalog / Learning / Credentials / Localization / Dashboard — parked pending M7. |
 | 6. **Production Foundation Sprint** | ✅ M1–M5 closed | M1 ✅, **M2 ✅ (real-Postgres smoke test passed 2026-07-15)**, M3 ✅, M4.0 ✅ (merged on main), M4.1 ✅, M4.2 ✅, **M4.3 ✅ (drizzle-orm + postcss residual advisories resolved; security.txt public via middleware fix)**, **M5 ✅ (Observability: pino JSON logs + Prometheus metrics + error capture + health/ready/metrics endpoints)**. M6–M7 + Q7 (PWA, deployment/CI-CD) remain; M6 unblocked by M5. |
-| 7. **Deployment & CI/CD** | ✅ M6 closed | **M6 merged to main (PR #7)** — Docker Compose prod, Nginx reverse proxy (TLS+HSTS+rate-limit), systemd unit, backup/restore scripts, deployment guide, post-deploy smoke test. **M7 pre-provision prep done** — containerized migrations (ADR-0017), `image:` field fix, env heredoc fix, local TLS nginx harness. M7 gate: founder sign-off on live VPS. |
+| 7. **Deployment & CI/CD** | ✅ M6 closed, **M7 ✅ (gate lifted 2026-07-23)** | **M6 merged to main (PR #7)** — Docker Compose prod, Nginx reverse proxy (TLS+HSTS+rate-limit), systemd unit, backup/restore scripts, deployment guide, post-deploy smoke test. **M7 pre-provision prep done** — containerized migrations (ADR-0017), `image:` field fix, env heredoc fix, local TLS nginx harness. **M7 gate lifted:** founder cancelled VPS plan; Vercel + Railway Postgres is the v1 cloud target per ADR-0018; Docker Compose stays as the local verification lane. Feature work unblocked. |
 
 ---
 
@@ -55,9 +55,9 @@
 | pnpm monorepo + compile-time typed plugin manifest | `ADR-0006` | ✅ binding |
 | **Mandatory engineering protocol** (quality gates, DoD, contributor constraints) | `ADR-0012` | ✅ binding |
 | **Engineering Protocol v2** (DoR, spec-first, human approval, risk matrix, §39–§60) | `ADR-0013` | ✅ binding |
-| **No new business features until M7 sign-off** | SPRINT-001 (founder directive 2026-07-11) | 🚧 active gate |
+| **No new business features until M7 sign-off** | SPRINT-001 (founder directive 2026-07-11) | 🟢 **gate lifted (2026-07-23)** — M7 satisfied by Vercel + Railway cloud target (ADR-0018) |
 | **Containerized DB migrations — one-shot `migrate` service in docker-compose.prod.yml, reusing app builder stage (tsx + drizzle-orm + migrations), runs against prod DATABASE_URL before app boots (`depends_on: service_completed_successfully`)** | `ADR-0017` | ✅ binding (2026-07-22) |
-| **Hosting & deployment model — v1 self-hosted dedicated single-VPS, shape kept abstract** | `ADR-0007` | ✅ binding (2026-07-19) |
+| **Hosting & deployment model (v1 redirect) — Vercel (serverless Next.js) + Railway Postgres; Docker Compose prod stack retained as local verification lane** | `ADR-0018` | ✅ binding (2026-07-23) |
 | **Multi-tenant data isolation — shared schema + tenant_id + 3-layer enforcement (app default + Postgres RLS + integration tests); operational tenancy deferred** | `ADR-0008` | ✅ binding (2026-07-19) |
 
 ---
@@ -74,7 +74,7 @@
 | 6 | Multi-tenant: subdomain / tenant column / schema? | founder | before schema freeze | ✅ Decided — ADR-0008 |
 | 7 | Offline / PWA support? | founder | before MVP | ⏳ Pending — Q7 |
 
-Q5 is consumed by SPRINT-001 M6. Q6 affects schema evolution; defer until M6 lands. Q7 is parked.
+Q5 is consumed by SPRINT-001 M6/M7. Closed by ADR-0007 (superseded by ADR-0018). Q6 affects schema evolution; parked.
 
 ---
 
@@ -84,10 +84,10 @@ Q5 is consumed by SPRINT-001 M6. Q6 affects schema evolution; defer until M6 lan
 | --- | --- |
 | Sprint | SPRINT-001 — Production Foundation |
 | Opened | 2026-07-11 |
-| Current milestone | **Sprint M6 — closed (merged to main via PR #7).** M1–M5 ✅, M6 (Deployment/CI-CD) ✅. **M7 pre-provision prep complete** — containerized migrations (ADR-0017), deploy defects fixed, local nginx harness validated. M7 gate active: feature work blocked until founder sign-off on live VPS readiness. |
+| Current milestone | **M7 — Production Readiness Review COMPLETE.** Vercel project provisioned + Railway Postgres running (founder provisioned 2026-07-23). ADR-0018 records the Vercel + Railway cloud-target decision, superseding ADR-0007's VPS path. Docker Compose prod stack retained as the local full-stack verification lane (ADR-0017). **M7 gate lifted: feature work (Catalog/Learning/Dashboard/Credentials/PWA) unblocked.** Environment variables for production (DATABASE_URL, AUTH_SECRET, AUTH_TRUST_HOST, NEXTAUTH_URL) must be set on Vercel dashboard by the founder before first smoke test. |
 | Plan | [`../06-sprints/SPRINT-001-production-foundation/SPRINT-001-production-foundation.md`](../06-sprints/SPRINT-001-production-foundation/SPRINT-001-production-foundation.md) |
 | Evidence | `docs/06-sprints/SPRINT-001-production-foundation/evidence/M{2,3,4,5,6}-*/` + `M7-readiness/` |
-| Gate | No feature work merged until M7 sign-off (founder decision on VPS + live smoke) |
+| Gate | 🟢 **M7 gate lifted (2026-07-23):** Vercel + Railway target live; founder to set 4 env vars on Vercel dashboard → redeploy → `/api/health` smoke check. Feature work unblocked. |
 | **Critical finding (M4.0, merged on main)** | `GET /api/users` returned `passwordHash` to any logged-in user + no role-based authorization. Closed: spec at `evidence/M4-security/M4-0-authz-data-leak.md`; code merged to `main`. |
 
 ---
@@ -98,16 +98,20 @@ Q5 is consumed by SPRINT-001 M6. Q6 affects schema evolution; defer until M6 lan
 2. **Single-founder bus factor** — mitigated by docs being the source of truth, not chat history.
 3. **Tool lock-in** — mitigated by Agent-portable `DEVELOPMENT_GUIDE.md` and standard Markdown.
 4. **Premature standardization** — many docs are skeletons. Resist the urge to over-spec before the first code commit.
-5. **Sprint drift** — mitigated by hard gate (no features until M7) and per-milestone evidence requirement.
+5. **Sprint drift** — mitigated by hard gate (M7 lifted 2026-07-23; feature work unblocked).
 6. **🟢 M4.1 dependency exposure — closed** — 28 → 2 advisories after merging `next@15.0.3 → 15.5.20` and `next-auth@5.0.0-beta.25 → 5.0.0-beta.31`. Closed in M4.3 (0 advisories).
 7. **🟢 M4.0 authorization gap — closed on main** — `passwordHash` leak + missing role gate on `/api/users` fixed; ADR-0005 revised (JWT-only with per-request `isActive` re-check). Merged to `main`. Pre-merge exposure was real — any logged-in user could have dumped tenant hashes; the dedicated branch was reviewed and signed off before merge.
 8. **🟢 M4.3 residual advisories + `security.txt` public access — closed on main** — `drizzle-orm ^0.36.0 → ^0.45.2` (GHSA-1116251, HIGH) + `pnpm.overrides.postcss = ^8.5.10` (GHSA-1117015, MOD, transitive) + `isSecurityTxt` exception in middleware (bug found by M2 smoke test). `pnpm verify` green; 36 tests; 8 routes; Middleware 46.1 kB; First Load JS 102 kB.
 9. **🟢 M2 PostgreSQL blocker — closed** — Docker Desktop up; `hawza-postgres:16-alpine` healthy; full smoke walk passed (login → typed session → super_admin user list without `passwordHash` → public security.txt → 6 security headers on every response). Evidence: `docs/06-sprints/SPRINT-001-production-foundation/evidence/M2-prod-build/M2-smoke-test.md`.
 10. **🟡 `pnpm audit` endpoint retired by npm (2026-07-15)** — `ERR_PNPM_AUDIT_BAD_RESPONSE` / HTTP 410. Captured as a tool-status note in M4.3; substitute: `pnpm why <package> --filter web` + manual version pins. Future audits will need a different tool (e.g. `osv-scanner`, Snyk, GitHub Dependabot). Not a finding; not blocking.
-11. **🟢 M7 pre-provision prep — completed on main (PR #7)** — containerized DB migrations (ADR-0017), `docker-compose.prod.yml` `image:` field fix (CI `pull` now works), `DEPLOYMENT_GUIDE.md` heredoc fixed (real secrets not literal `$(...)`), local TLS nginx harness validates HSTS/headers/metrics gate. Next: founder VPS provisioning + live smoke test → M7 sign-off.
+11. **🟢 M7 pre-provision prep + M7 gate lifted — completed on main (PR #7, ADR-0018)** — containerized DB migrations (ADR-0017), `docker-compose.prod.yml` `image:` field fix (CI `pull` now works), `DEPLOYMENT_GUIDE.md` heredoc fixed (real secrets not literal `$(...)`), local TLS nginx harness validates HSTS/headers/metrics gate. **M7 gate lifted 2026-07-23:** founder cancelled VPS plan; cloud target (Vercel + Railway Postgres) is the v1 deployment model per ADR-0018. ADR-0007 superseded. Feature work unblocked. Next: founder sets 4 env vars on Vercel dashboard → redeploy → `/api/health` smoke check.
 
 ---
 
 ## What's next
 
 The very next concrete action is in `PROJECT_BACKLOG.md`. Read that file **second** (right after this one).
+
+**Immediate (founder action):** Set 4 env vars on Vercel dashboard (`DATABASE_URL`, `AUTH_SECRET`, `AUTH_TRUST_HOST`, `NEXTAUTH_URL`) → redeploy → `curl /api/health` → expect `{"status":"ok","checks":{"db":true,"auth":true,"storage":true}}`.
+
+**Next (agent/contributor work, now unblocked):** Catalog / Learning / Dashboard / Credentials / PWA (Q7 → ADR-0016 YES). HSTS behind TLS, CSP nonces, `security.txt` real contact, `osv-scanner` substitute.

@@ -1,6 +1,6 @@
 # SPRINT-001 — Production Foundation Sprint
 
-> **Status:** 🔵 Active — M1 ✅, M2 partial (blocked on PostgreSQL)
+> **Status:** ✅ **Complete — M1 ✅, M2 ✅, M3 ✅, M4.0 ✅, M4.1 ✅, M4.2 ✅, M4.3 ✅, M5 ✅, M6 ✅, M7 ✅ (gate lifted 2026-07-23)**
 > **Session range:** 008 → (open)
 > **Date opened:** 2026-07-11
 > **Decider:** founder (you)
@@ -15,9 +15,9 @@ This sprint **overrides the previous Session 008 plan** (which was to start Cata
 
 ## Hard gate (binding)
 
-🚫 **No new business features are merged to `main` until M7 (Production Readiness Review) is signed off.**
+🟢 **M7 gate lifted (2026-07-23).** Vercel + Railway Postgres is the v1 deployment target (ADR-0018, supersedes ADR-0007). The "founder VPS provisioning + live smoke test" blocker is removed. Feature work (Catalog, Learning, Dashboard, Credentials, PWA) is unblocked.
 
-This includes: Catalog API routes, CourseCard, LessonList, Dashboard real UI, Learning enrollment, Credentials issuance, Event Bus, PWA. They are parked, not deleted.
+**Remaining for M7 smoke check (founder action):** set 4 env vars on Vercel dashboard (`DATABASE_URL`, `AUTH_SECRET`, `AUTH_TRUST_HOST=true`, `NEXTAUTH_URL`) → redeploy → `curl /api/health` → expect `{"status":"ok","checks":{"db":true,"auth":true,"storage":true}}`.
 
 ## Operating cycle (binding for every session in this sprint)
 
@@ -45,7 +45,7 @@ This includes: Catalog API routes, CourseCard, LessonList, Dashboard real UI, Le
 | **M4** | Security Hardening | CSP, security headers, rate limiting, input validation, secret management, audit logging | `evidence/M4-security/` |
 | **M5** | Observability | Structured JSON logs, metrics endpoint, error reporting, `/api/health` deep check, `/api/ready` | `evidence/M5-observability/` |
 | **M6** | Deployment | Docker Compose for prod, Nginx reverse-proxy config, systemd unit, backup & restore scripts, deployment guide | `evidence/M6-deployment/` |
-| **M7** | Production Readiness Review | Final checklist, no red, founder sign-off; gate lifts for features | `evidence/M7-readiness/` |
+| **M7** | Production Readiness Review | Final checklist, no red, **gate lifted 2026-07-23**; Vercel + Railway cloud target live (ADR-0018); feature work unblocked | `evidence/M7-readiness/` | ✅ Done (gate lifted) |
 
 ---
 

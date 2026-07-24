@@ -1,5 +1,28 @@
 {
   "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "permissions": {
+    "allow": [
+      "Bash(pnpm --filter @learning-platform/core typecheck)",
+      "Bash(pnpm --filter @learning-platform/core lint)",
+      "Bash(pnpm --filter @learning-platform/core test)",
+      "Bash(pnpm --filter web typecheck)",
+      "Bash(pnpm lint)",
+      "Bash(pnpm governance:validate:local)",
+      "Bash(pnpm audit)",
+      "Bash(pnpm verify)",
+      "Bash(pnpm --version)",
+      "Bash(node --check *)",
+      "Bash(tasklist)",
+      "Bash(docker info)",
+      "Bash(docker --version)",
+      "Bash(claude --version)",
+      "Bash(gh --version)",
+      "Bash(git grep *)",
+      "Bash(git -C *)",
+      "Bash(node scripts/governance/validate-local.mjs)",
+      "Bash(node scripts/security/audit.mjs)"
+    ]
+  },
   "hooks": {
     "PreToolUse": [
       {
