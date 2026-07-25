@@ -71,6 +71,18 @@ jobs:
         with:
           context: .
           file: apps/web/Dockerfile
+          # Explicit build target: the Dockerfile has TWO final stages —
+          # `runner` (the slim Next.js standalone image that serves traffic) at
+          # Stage 2 and `migrate` (a one-shot Drizzle migration image) at Stage 3.
+          # Stage 3 is LAST, so without an explicit `target`, buildx defaults to
+          # building `migrate` and pushes THAT to GHCR as `:latest` — an image
+          # with no server.js, so `docker compose pull` lands a non-serving image
+          # and the app crash-loops with `Cannot find module '.../server.js'`
+          # (confirmed locally 2026-07-22; the prod image fetched before this fix
+          # was the migrate target, not runner). Pin `runner` so GHCR always
+          # holds the serving image. The `migrate` compose service builds its own
+          # local image via its own `target: migrate`, so this pin does not affect it.
+          target: runner
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
@@ -104,27 +116,53 @@ jobs:
           set -euo pipefail
           cd /opt/learning-platform
 
-          # 1. Update the image tag in the prod compose file (or use a .env override)
-          #    Here we assume the compose file uses `image: ghcr.io/.../web:latest`
-          #    and we just pull the new tag.
+          # 1. Capture the currently-running app image so rollback can return to
+          #    it. `:latest` is a moving tag; without this, a failed deploy's
+          #    rollback would just recreate the same bad image. lp-app is the
+          #    compose container name for the web service. Empty on first deploy.
+          #    (Gordon Docker review 2026-07-25 — Finding #3 fix.)
+          PREV_IMAGE=$(docker inspect lp-app \
+            --format '{{index .Config.Image}}' 2>/dev/null || true)
+          echo "$PREV_IMAGE" > /opt/learning-platform/.last-good-image
+          echo "Captured previous image for rollback: ${PREV_IMAGE:-<none>}"
+
+          # 2. Pull the EXACT SHA tag this workflow built — not the moving :latest.
+          #    metadata-action emits `type=sha,prefix=`, so $IMAGE resolves to
+          #    ghcr.io/.../web:<git-sha>. Pulling the SHA (not `:latest`) means a
+          #    failed deploy's rollback can recreate against the *previous* SHA
+          #    recorded in step 1, instead of re-running whatever :latest points at.
           echo "Pulling new image: $IMAGE"
-          docker compose -f docker-compose.prod.yml pull
+          docker pull "$IMAGE"
 
-          # 2. Bring up the new stack (rolling restart via compose)
-          echo "Starting new containers..."
-          docker compose -f docker-compose.prod.yml up -d --remove-orphans
+          # 3. Override the compose image to the resolved SHA tag so `up` runs
+          #    THIS build, not whatever :latest currently points at.
+          echo "Starting new containers with image: $IMAGE"
+          WEB_IMAGE="$IMAGE" docker compose -f docker-compose.prod.yml \
+            up -d --remove-orphans
 
-          # 3. Wait for health checks to pass (compose healthcheck + our /api/ready)
-          echo "Waiting for services to be healthy..."
+          # 4. Wait for ALL services to report healthy — not just one.
+          #    The old `grep -q "healthy"` matched if ANY single service (e.g.
+          #    postgres) was healthy while app was still crash-looping, breaking
+          #    the loop early and proceeding to smoke tests prematurely.
+          #    Count healthy services against the configured service total.
+          #    (Gordon Docker review 2026-07-25 — Finding #2 fix.)
+          EXPECTED=$(docker compose -f docker-compose.prod.yml config --services | wc -l)
+          HEALTHY=0
           for i in {1..30}; do
-            if docker compose -f docker-compose.prod.yml ps | grep -q "healthy"; then
-              echo "All services healthy"
+            HEALTHY=$(docker compose -f docker-compose.prod.yml ps --format json \
+              | jq -s '[.[] | select(.Health=="healthy")] | length' 2>/dev/null || echo 0)
+            if [ "$HEALTHY" -ge "$EXPECTED" ]; then
+              echo "All $EXPECTED services healthy"
               break
             fi
             sleep 2
           done
+          if [ "$HEALTHY" -lt "$EXPECTED" ]; then
+            echo "Timed out waiting for health ($HEALTHY/$EXPECTED healthy)" >&2
+            exit 1
+          fi
 
-          # 4. Smoke test the three endpoints
+          # 5. Smoke test the three endpoints
           echo "Smoke testing /api/health..."
           curl -fsS --max-time 10 http://127.0.0.1:3000/api/health | grep -q '"status":"ok"'
 
@@ -150,9 +188,22 @@ jobs:
             "${PROD_USER}@${PROD_HOST}" <<'REMOTE_EOF'
           set -euo pipefail
           cd /opt/learning-platform
-          # Compose keeps the old container stopped; just restart it
-          docker compose -f docker-compose.prod.yml up -d --force-recreate --remove-orphans
-          echo "Rolled back to previous containers"
+          # Roll back to the image that was running BEFORE this deploy captured
+          # it into .last-good-image. The old code did `--force-recreate` against
+          # `:latest` — but `:latest` now points at the bad build we just pulled,
+          # so that recreated the same broken image. Here we recreate with the
+          # previous SHA tag instead. Empty marker (first-ever deploy) means we
+          # cannot roll back — fail loudly rather than silently re-running bad.
+          # (Gordon Docker review 2026-07-25 — Finding #3 fix.)
+          PREV_IMAGE=$(cat /opt/learning-platform/.last-good-image 2>/dev/null || echo "")
+          if [ -z "$PREV_IMAGE" ]; then
+            echo "⚠️ No previous image recorded — cannot roll back. Leaving bad deploy in place for manual triage." >&2
+            exit 1
+          fi
+          echo "⚠️ Rolling back from bad deploy to previous image: $PREV_IMAGE"
+          WEB_IMAGE="$PREV_IMAGE" docker compose -f docker-compose.prod.yml \
+            up -d --force-recreate --remove-orphans
+          echo "Rolled back to: $PREV_IMAGE"
           REMOTE_EOF
 
   notify:
