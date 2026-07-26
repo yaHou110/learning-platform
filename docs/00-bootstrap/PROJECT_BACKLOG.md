@@ -72,7 +72,7 @@ Sessions 013–017 closed the M4 sprint (dependency upgrades, authorization gate
 | F3 | Set `AUTH_TRUST_HOST=true` on Vercel — required by Auth.js v5 on Vercel serverless |
 | F4 | Set `NEXTAUTH_URL` on Vercel — the production Vercel URL (e.g., `https://learning-platform.vercel.app`) |
 | F5 | Redeploy (push to `main` or trigger deploy from Vercel dashboard) |
-| F6 | Smoke: `curl https://<vercel-url>/api/health` → expect `{"status":"ok","checks":{"db":true,"auth":true,"storage":true}}` |
+| F6 | Smoke: `curl https://<vercel-url>/api/health` → expect `{"status":"ok","checks":{"db":true,"auth":true,"storage":"skipped"}}` (object storage not wired in v1 — "skipped" is healthy) |
 
 **Cloud provisioning (already done by founder 2026-07-23):**
 

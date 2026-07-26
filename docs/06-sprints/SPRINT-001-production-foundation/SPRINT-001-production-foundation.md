@@ -17,7 +17,7 @@ This sprint **overrides the previous Session 008 plan** (which was to start Cata
 
 🟢 **M7 gate lifted (2026-07-23).** Vercel + Railway Postgres is the v1 deployment target (ADR-0018, supersedes ADR-0007). The "founder VPS provisioning + live smoke test" blocker is removed. Feature work (Catalog, Learning, Dashboard, Credentials, PWA) is unblocked.
 
-**Remaining for M7 smoke check (founder action):** set 4 env vars on Vercel dashboard (`DATABASE_URL`, `AUTH_SECRET`, `AUTH_TRUST_HOST=true`, `NEXTAUTH_URL`) → redeploy → `curl /api/health` → expect `{"status":"ok","checks":{"db":true,"auth":true,"storage":true}}`.
+**Remaining for M7 smoke check (founder action):** set 4 env vars on Vercel dashboard (`DATABASE_URL`, `AUTH_SECRET`, `AUTH_TRUST_HOST=true`, `NEXTAUTH_URL`) → redeploy → `curl /api/health` → expect `{"status":"ok","checks":{"db":true,"auth":true,"storage":"skipped"}}` (object storage not wired in v1; `"skipped"` is the healthy response).
 
 ## Operating cycle (binding for every session in this sprint)
 

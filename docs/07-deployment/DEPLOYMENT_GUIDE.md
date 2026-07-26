@@ -7,7 +7,97 @@
 
 ---
 
-## 1. Architecture Overview
+## 1A. Cloud Target — Production (Vercel + Railway Postgres)
+
+> **This §1A is the v1 production deployment path** (ADR-0018). The Docker Compose + Nginx + systemd path in §1–§11 below is the **local full-stack verification lane** (ADR-0017) — run it on the founder's Docker Desktop before pushing to Vercel, but it is not how v1 serves traffic.
+
+### Architecture
+
+```
+            ┌──────────────┐         ┌──────────────────────┐
+            │   Internet   │         │  Railway             │
+            └──────┬───────┘         │  Postgres 16         │
+                   │                  │  (managed, PITR)    │
+            ┌──────▼─────────────┐    │                      │
+            │  Vercel            │────│  DATABASE_URL        │
+            │  Next.js serverless│    │  (sslmode=require)  │
+            │  TLS / HSTS /      │    └──────────────────────┘
+            │  rate-limit (edge) │
+            └────────────────────┘
+```
+
+- **Vercel** runs the Next.js app as serverless functions and terminates TLS, applies HSTS, and rate-limits at the edge. There is no host nginx, certbot, or systemd in the production path — the platform owns that.
+- **Railway** runs managed PostgreSQL 16 with point-in-time recovery (replaces the local `backup.sh`/`restore.sh` for prod data).
+- **MinIO / object storage** is **not** wired in production v1 (ADR-0010 still proposed). The `/api/health` endpoint reports `storage: "skipped"` — this is correct, not a failure.
+
+### Already provisioned (founder, 2026-07-23)
+
+| Step | Status |
+| --- | --- |
+| Vercel project created, wired to this GitHub repo | ✅ |
+| Railway Postgres provisioned (`DATABASE_URL` / `DATABASE_PUBLIC_URL` available) | ✅ |
+| `vercel.json` at repo root — monorepo build config | ✅ |
+| `apps/web/next.config.mjs` — `output:"standalone"` gated behind `NEXTJS_STANDALONE=1` | ✅ |
+| `apps/web/Dockerfile` — sets `NEXTJS_STANDALONE=1` so Docker keeps standalone | ✅ |
+
+### Set the four required environment variables on Vercel
+
+In the Vercel project: **Settings → Environment Variables** (Production). These four are required for the app to boot and serve:
+
+| Variable | Value | Notes |
+| --- | --- | --- |
+| `DATABASE_URL` | `postgresql://<user>:<pass>@<host>:5432/<db>?sslmode=require` | Copy from Railway's **Connect** tab (the **Public URL**). The `?sslmode=require` query is required — Railway's public connection enforces TLS. **If the Railway password contains `/`, `@`, `:`, or `%`, it must be percent-encoded in this URL** (`/`→`%2F`, `@`→`%40`, `:`→`%3A`, `%`→`%25`), or `pg` will misparse the connection string and the app will fail to boot (`apps/web/src/lib/env.ts` fails fast with this hint in prod; warns in dev). |
+| `AUTH_SECRET` | 32+ byte base64 random | Generate once: `openssl rand -base64 32`. Never reuse the local-dev value. |
+| `AUTH_TRUST_HOST` | `true` | Required by Auth.js v5 on Vercel serverless (X-Forwarded-Proto trust). |
+| `NEXTAUTH_URL` | `https://<your-vercel-domain>` | The production Vercel URL, e.g. `https://learning-platform.vercel.app`. Set after the first deploy gives you the real domain. |
+
+Optional:
+
+| Variable | Value | Notes |
+| --- | --- | --- |
+| `METRICS_TOKEN` | 32 hex chars (`openssl rand -hex 16`) | If you want to scrape `/api/metrics`. If unset, `/api/metrics` returns 503 in prod — non-blocking. |
+
+> The four keys above are the only secrets that must live on Vercel. Do **not** set `POSTGRES_PASSWORD`, `MINIO_*`, `S3_*`, or `BACKUP_DEST` — those are local-lane-only variables from `env.template` and have no meaning on Vercel.
+
+### Deploy
+
+```bash
+# Vercel auto-deploys on push to main. Either:
+git push origin main                            # triggers a production deploy
+# or trigger "Redeploy" from the Vercel dashboard.
+```
+
+### Smoke check (post-deploy)
+
+```bash
+# Deep health — 200 + status "ok" means DB + auth reachable.
+curl -fsS https://<your-vercel-domain>/api/health
+
+# Readiness — 200 + status "ready" means the process is live and configured.
+curl -fsS https://<your-vercel-domain>/api/ready
+```
+
+**Expected `/api/health` response (note `storage`):**
+
+```json
+{ "status":"ok", "checks":{ "db":true, "auth":true, "storage":"skipped" }, "timestamp":"…" }
+```
+
+`storage: "skipped"` (not `true`) is the **correct healthy response** in v1 — object storage is intentionally not wired in production yet (ADR-0010 proposed). If `/api/health` returns `"status":"degraded"` or HTTP 503, the DB is unreachable — check that `DATABASE_URL` on Vercel is the Railway public URL with `?sslmode=require`, and that the Railway service is running.
+
+CI's smoke step (`.github/workflows/deploy.yml`) greps only for `'"status":"ok"'`, so a green Vercel deploy + this response passes the gate.
+
+### What Vercel owns (so you don't)
+
+TLS/HSTS headers, HTTPS redirect, edge rate-limiting, and platform-level backups of the *function* runtime are handled by Vercel. Railway owns Postgres backups (PITR). The nginx/certbot/systemd/backup-script machinery in §1–§11 below is for the **local verification lane only** — it is not run in production.
+
+### Rollback (production)
+
+From the Vercel dashboard: **Deployments → previous deployment → Promote to Production**. Vercel keeps instant rollback to any prior deployment; this replaces the Compose SHA-rollback in §6.
+
+---
+
+## 1. Architecture Overview (Local Verification Lane — Docker Compose)
 
 ```
                            ┌─────────────────────┐

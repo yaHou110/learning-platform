@@ -112,6 +112,6 @@ Q5 is consumed by SPRINT-001 M6/M7. Closed by ADR-0007 (superseded by ADR-0018).
 
 The very next concrete action is in `PROJECT_BACKLOG.md`. Read that file **second** (right after this one).
 
-**Immediate (founder action):** Set 4 env vars on Vercel dashboard (`DATABASE_URL`, `AUTH_SECRET`, `AUTH_TRUST_HOST`, `NEXTAUTH_URL`) → redeploy → `curl /api/health` → expect `{"status":"ok","checks":{"db":true,"auth":true,"storage":true}}`.
+**Immediate (founder action):** Set 4 env vars on Vercel dashboard (`DATABASE_URL`, `AUTH_SECRET`, `AUTH_TRUST_HOST`, `NEXTAUTH_URL`) → redeploy → `curl /api/health` → expect `{"status":"ok","checks":{"db":true,"auth":true,"storage":"skipped"}}`.
 
 **Next (agent/contributor work, now unblocked):** Catalog / Learning / Dashboard / Credentials / PWA (Q7 → ADR-0016 YES). HSTS behind TLS, CSP nonces, `security.txt` real contact, `osv-scanner` substitute.

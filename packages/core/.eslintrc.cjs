@@ -11,7 +11,7 @@ module.exports = {
   plugins: ["@typescript-eslint"],
   extends: ["eslint:recommended", "plugin:@typescript-eslint/recommended"],
   env: { node: true, es2022: true },
-  ignorePatterns: ["dist", "node_modules", "src/db/migrations/**"],
+  ignorePatterns: ["dist", "node_modules", "src/db/migrations/**", "**/*.d.ts"],
   rules: {
     "@typescript-eslint/no-unused-vars": ["warn", { argsIgnorePattern: "^_" }],
     "@typescript-eslint/consistent-type-imports": "warn",

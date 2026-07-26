@@ -62,7 +62,7 @@ Optional:
 **After setting env vars:** trigger a redeploy on Vercel (push to `main`, or
 redeploy from the Vercel dashboard). Then smoke-test:
 
-- [ ] `curl https://<vercel-url>/api/health` → `{"status":"ok","checks":{"db":true,"auth":true,"storage":true}}`
+- [ ] `curl https://<vercel-url>/api/health` → `{"status":"ok","checks":{"db":true,"auth":true,"storage":"skipped"}}`
 - [ ] `curl https://<vercel-url>/api/ready` → `{"status":"ready","checks":{"config":true,"maintenance":false}}`
 - [ ] Home page loads; `/login` reachable.
 

@@ -73,9 +73,11 @@ export default async function LoginPage({
           ورود
         </button>
       </form>
-      <p className="mt-6 text-xs text-gray-500">
-        حساب نمونه: مرکز <code>demo</code>، ایمیل <code>admin@lp.local</code>، رمز <code>changeme</code>
-      </p>
+      {process.env.NODE_ENV !== "production" ? (
+        <p className="mt-6 text-xs text-gray-500">
+          حساب نمونه: مرکز <code>demo</code>، ایمیل <code>admin@lp.local</code>، رمز <code>changeme</code>
+        </p>
+      ) : null}
     </main>
   );
 }
