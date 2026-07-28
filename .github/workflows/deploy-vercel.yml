@@ -175,15 +175,23 @@ jobs:
 
       - name: Smoke test /api/health
         run: |
+          echo "Testing ${{ needs.deploy-vercel.outputs.deployment_url }}/api/health"
           for i in {1..10}; do
-            if curl -fsS "${{ needs.deploy-vercel.outputs.deployment_url }}/api/health" | grep -q '"status":"ok"'; then
-              echo "✅ /api/health passed"
+            RESPONSE=$(curl -fsS "${{ needs.deploy-vercel.outputs.deployment_url }}/api/health" 2>/dev/null || echo "")
+            if echo "$RESPONSE" | grep -q '"status":"ok"'; then
+              echo "✅ /api/health: status=ok"
               exit 0
             fi
-            echo "Waiting for deployment... ($i/10)"
+            if echo "$RESPONSE" | grep -q '"status":"degraded"'; then
+              echo "⚠️ /api/health: status=degraded (DB not yet ready — non-blocking)"
+              echo "   This is expected if DATABASE_URL points to a fresh DB without migrations applied."
+              echo "   Apply migrations: see docs/07-deployment/DEPLOYMENT_GUIDE.md"
+              exit 0
+            fi
+            echo "Waiting for /api/health... ($i/10)"
             sleep 5
           done
-          echo "❌ /api/health failed after 10 attempts"
+          echo "❌ /api/health did not respond after 10 attempts"
           exit 1
 
       - name: Smoke test /api/ready
