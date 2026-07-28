@@ -18,7 +18,6 @@ async function attempt(label, poolOpts) {
     console.error(`FAILED_MSG: ${e.message}`);
     console.error(`FAILED_CODE: ${e.code || "(none)"}`);
     console.error(`FAILED_KEYS: ${JSON.stringify(Object.getOwnPropertyNames(e))}`);
-    // Print first 8 stack lines individually (avoids GitHub truncation)
     const stackLines = (e.stack || "").split("\n").slice(0, 8);
     stackLines.forEach((line, i) => console.error(`STACK_${i}: ${line.trim()}`));
     if (e.cause) {
@@ -54,14 +53,16 @@ async function main() {
     process.exit(1);
   }
 
-  // 2. Try three configs
+  // Attempt 1: as-is (let pg negotiate)
   if (await attempt("Attempt 1: as-is (let pg negotiate)", { connectionString: raw })) return;
+
+  // Attempt 2: ssl={rejectUnauthorized:false}
   if (await attempt("Attempt 2: ssl={rejectUnauthorized:false}", {
     connectionString: raw,
     ssl: { rejectUnauthorized: false },
   })) return;
 
-  // Attempt 3: strip sslmode from URL
+  // Attempt 3: strip sslmode from URL + rejectUnauthorized:false
   let url3 = raw;
   try {
     const u = new URL(raw);
@@ -98,7 +99,7 @@ async function main() {
     connectionString: url5,
   })) return;
 
-  // Attempt 6: sslmode=no-verify (pg v9 will support, but try anyway)
+  // Attempt 6: sslmode=no-verify
   let url6 = raw;
   try {
     const u = new URL(raw);
@@ -116,35 +117,21 @@ async function main() {
     ssl: true,
   })) return;
 
-  // Attempt 8: use pg.Client (single connection) to get better error reporting
-  console.log("\n--- Attempt 8: pg.Client (single connection) with ssl:false ---");
+  // Attempt 8: sslmode=disable + ssl:false (Railway TCP proxy is plain TCP)
+  let url8 = raw;
   try {
-    const url8 = raw.replace(/[?&]sslmode=[^&]*/g, "");
-    const client = new pg.Client({
-      connectionString: url8,
-      connectionTimeoutMillis: 10_000,
-      ssl: false,
-    });
-    client.on("error", (e) => {
-      console.error(`CLIENT_ERROR_EVENT: ${e.constructor?.name}: ${e.message}`);
-      console.error(`CLIENT_ERROR_CODE: ${e.code || "(none)"}`);
-      const stackLines = (e.stack || "").split("\n").slice(0, 10);
-      stackLines.forEach((line, i) => console.error(`CLIENT_STACK_${i}: ${line.trim()}`));
-    });
-    await client.connect();
-    const r = await client.query("SELECT current_database()");
-    console.log(`SUCCESS — db=${r.rows[0].current_database}`);
-    await client.end();
-    return true;
-  } catch (e) {
-    console.error(`FAILED_TYPE: ${e.constructor.name}`);
-    console.error(`FAILED_MSG: ${e.message}`);
-    console.error(`FAILED_CODE: ${e.code || "(none)"}`);
-    const stackLines = (e.stack || "").split("\n").slice(0, 15);
-    stackLines.forEach((line, i) => console.error(`STACK_${i}: ${line.trim()}`));
-  }
+    const u = new URL(raw);
+    u.searchParams.delete("sslmode");
+    u.searchParams.delete("uselibpqcompat");
+    u.searchParams.set("sslmode", "disable");
+    url8 = u.toString();
+  } catch {}
+  if (await attempt("Attempt 8: sslmode=disable + ssl:false (Railway plain TCP)", {
+    connectionString: url8,
+    ssl: false,
+  })) return;
 
-  // Attempt 9: raw tls.connect to bypass pg entirely
+  // Attempt 9: raw tls.connect to see if TLS is even offered
   console.log("\n--- Attempt 9: raw tls.connect (bypass pg) ---");
   try {
     const u = new URL(raw);
