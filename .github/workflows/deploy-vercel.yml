@@ -1,0 +1,201 @@
+name: Deploy to Vercel (Production)
+
+on:
+  push:
+    branches: [main]
+    paths-ignore:
+      - 'docs/**'
+      - '*.md'
+      - 'templates/**'
+      - 'evidence/**'
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Deploy environment'
+        required: true
+        default: 'production'
+        type: choice
+        options:
+          - production
+          - preview
+
+permissions:
+  contents: read
+  deployments: write
+  id-token: write
+
+env:
+  VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+  VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+
+jobs:
+  # 1. Quality gates (must pass before deploy)
+  quality-gates:
+    name: Quality Gates (typecheck, lint, test, build)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          run_install: false
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Typecheck
+        run: pnpm typecheck
+
+      - name: Lint
+        run: pnpm lint
+
+      - name: Test
+        run: pnpm test
+
+      - name: Build (verify production build works)
+        run: pnpm --filter web build
+
+  # 2. Database migration check (dry-run)
+  db-migration-check:
+    name: Database Migration Check
+    runs-on: ubuntu-latest
+    needs: quality-gates
+    env:
+      DATABASE_URL: ${{ secrets.DATABASE_URL }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Generate Drizzle migration (dry-run, no apply)
+        run: |
+          cd packages/core
+          pnpm db:generate --no-migrate
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+
+  # 3. Deploy to Vercel
+  deploy-vercel:
+    name: Deploy to Vercel
+    needs: [quality-gates, db-migration-check]
+    runs-on: ubuntu-latest
+    environment: ${{ github.event.inputs.environment || 'production' }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Vercel CLI
+        run: npm i -g vercel@latest
+
+      - name: Pull Vercel Environment (production)
+        if: github.event.inputs.environment == 'production' || github.ref == 'refs/heads/main'
+        run: vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
+
+      - name: Pull Vercel Environment (preview)
+        if: github.event.inputs.environment == 'preview' && github.ref != 'refs/heads/main'
+        run: vercel pull --yes --environment=preview --token=${{ secrets.VERCEL_TOKEN }}
+
+      - name: Build Project Artifacts
+        run: vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
+
+      - name: Deploy to Vercel (production)
+        if: github.event.inputs.environment == 'production' || github.ref == 'refs/heads/main'
+        run: vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }}
+
+      - name: Deploy to Vercel (preview)
+        if: github.event.inputs.environment == 'preview' && github.ref != 'refs/heads/main'
+        run: vercel deploy --prebuilt --token=${{ secrets.VERCEL_TOKEN }}
+
+      - name: Get Deployment URL
+        id: deployment
+        run: |
+          URL=$(vercel inspect $(vercel ls --scope=${{ secrets.VERCEL_ORG_ID }} --prod --meta=gitCommitSha=${{ github.sha }} --limit=1 --token=${{ secrets.VERCEL_TOKEN }} 2>/dev/null | grep -E 'https://.*\.vercel\.app' | head -1 | awk '{print $1}') --token=${{ secrets.VERCEL_TOKEN }} 2>/dev/null | grep -E '"url":' | head -1 | sed 's/.*"url": *"\([^"]*\)".*/\1/')
+          if [ -z "$URL" ]; then
+            # Fallback: get latest deployment
+            URL=$(vercel ls --scope=${{ secrets.VERCEL_ORG_ID }} --prod --meta=gitCommitSha=${{ github.sha }} --limit=1 --token=${{ secrets.VERCEL_TOKEN }} 2>/dev/null | grep -E 'https://.*\.vercel\.app' | head -1 | awk '{print $1}')
+          fi
+          echo "deployment_url=$URL" >> $GITHUB_OUTPUT
+
+  # 4. Smoke test production deployment
+  smoke-test:
+    name: Smoke Test Production
+    needs: deploy-vercel
+    if: github.ref == 'refs/heads/main' || github.event.inputs.environment == 'production'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Wait for deployment to propagate
+        run: sleep 15
+
+      - name: Smoke test /api/health
+        run: |
+          for i in {1..10}; do
+            if curl -fsS "${{ needs.deploy-vercel.outputs.deployment_url }}/api/health" | grep -q '"status":"ok"'; then
+              echo "✅ /api/health passed"
+              exit 0
+            fi
+            echo "Waiting for deployment... ($i/10)"
+            sleep 5
+          done
+          echo "❌ /api/health failed after 10 attempts"
+          exit 1
+
+      - name: Smoke test /api/ready
+        run: |
+          for i in {1..10}; do
+            if curl -fsS "${{ needs.deploy-vercel.outputs.deployment_url }}/api/ready" | grep -q '"status":"ready"'; then
+              echo "✅ /api/ready passed"
+              exit 0
+            fi
+            echo "Waiting for readiness... ($i/10)"
+            sleep 5
+          done
+          echo "❌ /api/ready failed after 10 attempts"
+          exit 1
+
+      - name: Smoke test /api/metrics (if METRICS_TOKEN set)
+        if: env.METRICS_TOKEN != ''
+        env:
+          METRICS_TOKEN: ${{ secrets.METRICS_TOKEN }}
+        run: |
+          curl -fsS -H "Authorization: Bearer $METRICS_TOKEN" "${{ needs.deploy-vercel.outputs.deployment_url }}/api/metrics" | grep -q 'http_requests_total' && echo "✅ /api/metrics passed" || echo "⚠️ /api/metrics check failed (non-blocking)"
+
+  # 5. Notify
+  notify:
+    name: Notify
+    needs: [deploy-vercel, smoke-test]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deployment status
+        run: |
+          STATUS="${{ needs.deploy-vercel.result }}"
+          URL="${{ needs.deploy-vercel.outputs.deployment_url }}"
+          echo "Deployment ${{ job.status }} — ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          if [ -n "$URL" ]; then
+            echo "Production URL: $URL"
+          fi
+
+      - name: Slack/Email/Telegram placeholder
+        run: |
+          echo "Add your notification integration here (Slack webhook, email, Telegram bot, etc.)"

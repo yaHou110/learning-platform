@@ -44,11 +44,14 @@ docker rm -f "$PROXY_NAME" >/dev/null 2>&1 || true
 
 # --- 3. Run nginx on lp-network, fronting the app, TLS on 8443 -------------
 echo "[harness] starting $PROXY_NAME on lp-network (https://localhost:8443) ..."
+# Use Windows-style paths for Docker bind mounts on Windows to avoid Git Bash path mangling
+TLS_DIR_WIN="$(cygpath -w "$TLS_DIR")"
+NGINX_CONF_WIN="$(cygpath -w "$NGINX_CONF")"
 docker run -d --name "$PROXY_NAME" \
   --network lp-network \
   -p 8443:443 \
-  -v "$NGINX_CONF:/etc/nginx/conf.d/default.conf:ro" \
-  -v "$TLS_DIR:/etc/nginx/tls:ro" \
+  -v "$NGINX_CONF_WIN:/etc/nginx/conf.d/default.conf:ro" \
+  -v "$TLS_DIR_WIN:/etc/nginx/tls:ro" \
   "$NGINX_IMG" >/dev/null
 
 # --- 4. nginx -t (syntax check the EXACT mounted config) -------------------

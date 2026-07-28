@@ -14,7 +14,7 @@
  */
 import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
-const { rateLimit, __resetRateLimitStoreForTests } = await import(
+const { rateLimit, ipKey, __resetRateLimitStoreForTests } = await import(
   "../src/lib/rate-limit.js"
 );
 
@@ -102,5 +102,49 @@ describe("rateLimit (M4.2)", () => {
     expect(() =>
       rateLimit({ key: "x", capacity: 1, refillPerSec: 0 })
     ).toThrow();
+  });
+});
+
+/**
+ * ipKey resolves the caller's IP from what the reverse proxy recorded, NOT
+ * from a client-supplied X-Forwarded-For chain (which an attacker mints a
+ * fresh leftmost entry of to reset their rate-limit bucket). See HIGH-2 fix.
+ */
+import type { NextRequest } from "next/server";
+
+function reqWith(headers: Record<string, string>): NextRequest {
+  return { headers: new Headers(headers) } as unknown as NextRequest;
+}
+
+describe("ipKey (HIGH-2: un-spoofable caller IP)", () => {
+  it("prefers X-Real-IP even when a forged XFF claims a different leftmost", () => {
+    const key = ipKey(
+      reqWith({
+        "x-real-ip": "203.0.113.9",
+        // attacker tried to forge the leftmost hop:
+        "x-forwarded-for": "1.1.1.1, 203.0.113.9",
+      })
+    );
+    expect(key).toBe("ip:203.0.113.9");
+  });
+
+  it("falls back to the single-hop XFF leftmost when X-Real-IP is absent", () => {
+    // After the nginx overwrite fix, XFF carries one entry = the real client.
+    const key = ipKey(reqWith({ "x-forwarded-for": "198.51.100.7" }));
+    expect(key).toBe("ip:198.51.100.7");
+  });
+
+  it("ignores a forged XFF whenever a trusted X-Real-IP is present", () => {
+    const key = ipKey(
+      reqWith({
+        "x-real-ip": "  10.0.0.5  ",
+        "x-forwarded-for": "spoofed-attacker-ip",
+      })
+    );
+    expect(key).toBe("ip:10.0.0.5"); // trims whitespace
+  });
+
+  it("falls back to a constant when neither IP header is present", () => {
+    expect(ipKey(reqWith({}))).toBe("ip:anonymous");
   });
 });

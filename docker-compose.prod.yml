@@ -86,7 +86,14 @@ services:
     # is missing locally and pulls if `pull_policy` requests it. On the VPS, CI
     # pushes the image first, then `deploy.yml` runs `pull`+`up` — so the host
     # never builds. (This fixes the M6 defect where pull had no image to fetch.)
-    image: ghcr.io/yahou110/learning-platform/web:latest
+    #
+    # `WEB_IMAGE` override: deploy.yml pins the deploy to a resolved SHA tag by
+    # exporting WEB_IMAGE and letting compose substitute it here (fallback
+    # `:latest` for local use). ROLLBACK also uses this: it sets WEB_IMAGE to the
+    # previously-deployed SHA recorded in /opt/learning-platform/.last-good-image,
+    # so a failed deploy recreates the OLD image rather than the moving :latest.
+    # (Gordon Docker review 2026-07-25 — Finding #3.)
+    image: ${WEB_IMAGE:-ghcr.io/yahou110/learning-platform/web:latest}
     build:
       # Context MUST be repo root (where this compose file lives). A parent
       # repo previously set `context: ..`, which only worked if the compose file

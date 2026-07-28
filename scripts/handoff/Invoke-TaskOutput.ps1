@@ -247,16 +247,32 @@ try {
     & git add -A
     if ($LASTEXITCODE -ne 0) { Fail 5 "git add -A failed." }
 
-    & git --no-pager diff --cached --stat
-    if ($LASTEXITCODE -ne 0) { Fail 5 "git diff --cached --stat failed." }
+    # Idempotency: detect empty staged set after add -A. If nothing is
+    # staged the working tree already matches HEAD — this is a re-run of an
+    # interrupted handoff where the intended commit was made but the push
+    # never completed (e.g. the M7 incident: commit existed locally for
+    # days but was never on origin). Skip re-committing (which would
+    # fail "nothing to commit" and block the Stop hook) and proceed
+    # straight to push so the already-made work ships.
+    & git diff --cached --quiet
+    $nothingStaged = ($LASTEXITCODE -eq 0)
 
-    # Commit message from JSON (intent — Agent 1 owns the WHY; this script does
-    # NOT derive the commit message from the diff, by design decision: conventional-
-    # commit type and scope are intent, and diff-derived messages lose them).
-    & git commit -m "$($task.commit_message)"
-    if ($LASTEXITCODE -ne 0) { Fail 5 "git commit failed (possibly nothing staged — check --stat above)." }
+    if ($nothingStaged) {
+        Write-Host "Nothing new staged (working tree == HEAD). Skipping commit; pushing existing commits." -ForegroundColor Gray
+        & git --no-pager diff --cached --stat  # empty; informational
+        Write-Host "Skipping commit — existing commits will be pushed." -ForegroundColor Gray
+    } else {
+        & git --no-pager diff --cached --stat
+        if ($LASTEXITCODE -ne 0) { Fail 5 "git diff --cached --stat failed." }
 
-    Write-Host "Commit created." -ForegroundColor Green
+        # Commit message from JSON (intent — Agent 1 owns the WHY; this script
+        # does NOT derive the commit message from the diff, by its original design:
+        # conventional-commit type and scope are intent, diff-derived messages lose them).
+        & git commit -m "$($task.commit_message)"
+        if ($LASTEXITCODE -ne 0) { Fail 5 "git commit failed (see --stat above)." }
+
+        Write-Host "Commit created." -ForegroundColor Green
+    }
 
     # Push (set upstream). `-u` so subsequent gh pr create knows the head.
     & git push -u origin $branch

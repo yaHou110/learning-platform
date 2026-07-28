@@ -130,13 +130,31 @@ export function rateLimit(opts: RateLimitOptions): RateLimitResult {
 
 /**
  * Derive a limiter key from a request for unauthenticated calls.
- * Prefers the leftmost x-forwarded-for entry (set by the reverse proxy in
- * M6); falls back to a constant so the limiter never accidentally no-ops on
- * a missing identity.
+ *
+ * Trust the peer IP as the **reverse proxy recorded it** — never the
+ * client-supplied leftmost `x-forwarded-for`. nginx (M6 nginx.conf) sets
+ * `X-Real-IP: $remote_addr` and **overwrites** `X-Forwarded-For` with
+ * `$remote_addr` (so the header carries a single hop = the real client,
+ * discarding any forged value the client sent). Prefer `X-Real-IP`; fall back
+ * to that single-hop `X-Forwarded-For`; fall back to a constant so the limiter
+ * never accidentally no-ops on a missing identity.
+ *
+ * Why not the leftmost XFF chain entry: a proxy that appends
+ * (`proxy_add_x_forwarded_for`) keeps a client-supplied chain, so an attacker
+ * can mint a fresh leftmost entry per request and reset their own rate-limit
+ * bucket — defeating every ip-keyed limiter (login brute-force, session
+ * probing). The overwrite + this resolver make those buckets un-spoofable.
  */
 export function ipKey(req: NextRequest): string {
+  const realIp = req.headers.get("x-real-ip");
+  if (realIp) {
+    const ip = realIp.trim();
+    if (ip) return "ip:" + ip;
+  }
   const xff = req.headers.get("x-forwarded-for");
   if (xff) {
+    // After the nginx overwrite fix, XFF is a single hop = the real client.
+    // Leftmost is the real client because no append occurs.
     const first = xff.split(",")[0]?.trim();
     if (first) return "ip:" + first;
   }

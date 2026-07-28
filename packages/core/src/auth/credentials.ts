@@ -58,7 +58,13 @@ export async function verifyPassword(
     .where(eq(schema.tenants.slug, input.tenantSlug))
     .limit(1);
   const tenant = tenantRows[0];
-  if (!tenant) return { ok: false, reason: "unknown_tenant" };
+  if (!tenant) {
+    // Timing equalization: pay the same bcrypt cost as a real check before
+    // returning, so a login attempt reveals no information about whether the
+    // tenant exists via response latency. Closes the user-enumeration oracle.
+    await timingEqualize(input.password);
+    return { ok: false, reason: "unknown_tenant" };
+  }
 
   const [user] = await db
     .select({
@@ -75,8 +81,14 @@ export async function verifyPassword(
       sql`${schema.users.tenantId} = ${tenant.id} AND lower(${schema.users.email}) = lower(${input.email})`
     )
     .limit(1);
-  if (!user) return { ok: false, reason: "unknown_user" };
-  if (!user.isActive) return { ok: false, reason: "inactive" };
+  if (!user) {
+    await timingEqualize(input.password);
+    return { ok: false, reason: "unknown_user" };
+  }
+  if (!user.isActive) {
+    await timingEqualize(input.password);
+    return { ok: false, reason: "inactive" };
+  }
 
   const ok = await bcrypt.compare(input.password, user.passwordHash);
   if (!ok) return { ok: false, reason: "bad_password" };
@@ -98,3 +110,28 @@ export async function hashPassword(plain: string): Promise<string> {
 }
 
 export const BCRYPT_COST_FACTOR = BCRYPT_COST;
+
+/**
+ * Timing-equalization dummy compare (med-severity fix).
+ *
+ * On the unknown_tenant / unknown_user / inactive early-return paths we still
+ * pay a `bcrypt.compare` at the same cost factor as a real password check, so
+ * every login attempt costs ~BCRYPT_COST regardless of outcome. Without this,
+ * a missing tenant/user returns in <1 ms while a bad password pays ~250 ms —
+ * a latency oracle that enumerates valid tenant+email pairs despite the
+ * generic "username or password incorrect" UI message.
+ *
+ * The hash is lazily generated once and memoized; its plaintext is a throwaway
+ * and NOT a secret. The compare result is discarded.
+ */
+let _dummyHashPromise: Promise<string> | null = null;
+function dummyHash(): Promise<string> {
+  if (!_dummyHashPromise) {
+    _dummyHashPromise = bcrypt.hash("timing-equalization-dummy", BCRYPT_COST);
+  }
+  return _dummyHashPromise;
+}
+async function timingEqualize(password: string): Promise<void> {
+  const hash = await dummyHash();
+  await bcrypt.compare(password, hash);
+}

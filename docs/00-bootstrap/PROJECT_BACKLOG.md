@@ -11,12 +11,12 @@
 
 | Field | Value |
 | --- | --- |
-| Session # | 023 — M7 pre-provision prep complete |
-| Date opened | 2026-07-22 |
+| Session # | 024 — M7 closed: Vercel + Railway cloud target live, feature gate lifted |
+| Date opened | 2026-07-23 |
 | Driver | contributor |
-| Sprint | SPRINT-001 — Production Foundation |
-| Goal | **M1–M6 closed (M1–M5 ✅, **M6 ✅**). M6 Deployment/CI-CD merged to main (PR #6). M7 pre-provision prep complete (PR #7 merged): ADR-0017 containerized DB migrations, docker-compose.prod.yml `image:` fix, DEPLOYMENT_GUIDE.md heredoc fix, local TLS nginx harness. M7 gate active — awaiting founder VPS provisioning + live smoke test → M7 sign-off.** |
-| Status | 🟢 **M6 + M7 prep complete.** M7 gate: founder VPS + DNS + GitHub un-park → live deploy → sign-off. |
+| Sprint | SPRINT-001 — Production Foundation (M1–M7 all closed) |
+| Goal | **M1–M7 all closed.** M6 Deployment/CI-CD merged to main (PR #6). M7 pre-provision prep merged (PR #7): ADR-0017 containerized DB migrations, docker-compose.prod.yml `image:` fix, DEPLOYMENT_GUIDE.md heredoc fix, local TLS nginx harness. **M7 gate lifted 2026-07-23:** founder cancelled VPS plan; Vercel + Railway Postgres is the v1 cloud deployment target per ADR-0018 (supersedes ADR-0007). Docker Compose prod stack stays as the local full-stack verification lane (ADR-0017). Feature work (Catalog, Learning, Dashboard, Credentials, PWA) unblocked. |
+| Status | 🟢 **M7 gate lifted.** Vercel project provisioned, Railway Postgres running. Founder to set 4 env vars on Vercel (DATABASE_URL, AUTH_SECRET, AUTH_TRUST_HOST, NEXTAUTH_URL) → redeploy → `/api/health` smoke check. |
 
 ---
 
@@ -59,39 +59,43 @@ Sessions 013–017 closed the M4 sprint (dependency upgrades, authorization gate
 
 ---
 
-## What to do next (Session 024+)
+## What to do next (Session 025+)
 
-**M7 — Production Readiness Review** — final checklist, no red, founder sign-off → feature gate lifts.
+**M7 — Production Readiness Review** ✅ **COMPLETE.** Vercel + Railway cloud target is the v1 deployment model (ADR-0018). Feature gate lifted.
 
-**Founder steps (in order, per `pre-provision-checklist.md`):**
+**Founder steps (env vars on Vercel dashboard):**
 
 | Step | Description |
 | --- | --- |
-| F0.1 | Domain name decision (e.g. `hawza.example.ir`) |
-| F0.2 | GitHub decision: un-park GitHub (use `deploy.yml` CI/CD) or stay parked (manual deploy) |
-| F1.1 | Purchase VPS ≤ 4 GB RAM, 50 GB SSD, Ubuntu 22.04/24.04 LTS |
-| F1.2 | DNS — point A/AAAA record for domain at VPS IP |
-| F1.3 | First login + harden SSH (deploy user, key-only auth, fail2ban, UFW) |
-| F1.4 | Install stack deps (docker, compose plugin, certbot, minio-client, nginx) |
-| F1.5 | Get code onto host (`git clone` or `scp -r`) |
-| F2.1 | GitHub repo secrets (if F0.2a): GHCR_TOKEN, PROD_HOST, PROD_USER, PROD_SSH_KEY, PROD_ENV |
-| F2.2 | Host env file — write `/etc/learning-platform/env` from CP0.4 template + real secrets |
-| F3.1 | certbot — Let's Encrypt cert for domain |
-| F3.2 | Install nginx.conf (already validated in CP0.5) |
-| F4.1 | systemd unit install + enable |
-| F4.2 | `docker compose -f docker-compose.prod.yml up -d` (or next push runs deploy.yml) |
-| F4.3 | Live smoke: `/api/health` 200, `/api/ready` 200, `/api/metrics` 401/200 |
-| F5.1 | Founder sign-off → gate lifts |
+| F1 | Set `DATABASE_URL` on Vercel — from Railway (e.g., `postgresql://user:pass@host:5432/db?sslmode=require`) |
+| F2 | Set `AUTH_SECRET` on Vercel — 32+ byte base64 random (`openssl rand -base64 32`) |
+| F3 | Set `AUTH_TRUST_HOST=true` on Vercel — required by Auth.js v5 on Vercel serverless |
+| F4 | Set `NEXTAUTH_URL` on Vercel — the production Vercel URL (e.g., `https://learning-platform.vercel.app`) |
+| F5 | Redeploy (push to `main` or trigger deploy from Vercel dashboard) |
+| F6 | Smoke: `curl https://<vercel-url>/api/health` → expect `{"status":"ok","checks":{"db":true,"auth":true,"storage":"skipped"}}` (object storage not wired in v1 — "skipped" is healthy) |
 
-**Q7 — PWA / offline** — founder decided **YES (2026-07-21, ADR-0016)**: PWA is necessary. Drives a new bounded context (Learning) + service-worker/offline infra. **Implementation parked until M7 sign-off** per the 2026-07-11 directive.
+**Cloud provisioning (already done by founder 2026-07-23):**
 
-**Independent follow-ups (no founder decision required):**
-- HSTS header at M6 behind TLS (M4.2 §4.3).
-- CSP nonces — per-request infra to remove `'unsafe-inline'` from `style-src` (M4.2 §4.3).
-- `security.txt` real `Contact` address — founder needs to supply.
-- `pnpm audit` endpoint retirement — future audits need a substitute (`osv-scanner`, GitHub Dependabot, Snyk).
+| Step | Description |
+| --- | --- |
+| C1 | ✅ Vercel project created — wired to this GitHub repo |
+| C2 | ✅ Railway Postgres provisioned — `DATABASE_URL` / `DATABASE_PUBLIC_URL` available |
+| C3 | ✅ `vercel.json` at repo root — monorepo build config (buildCommand, framework, installCommand) |
+| C4 | ✅ `next.config.mjs` — `output:"standalone"` gated behind `NEXTJS_STANDALONE=1` (Dockerfile sets it) |
+| C5 | ✅ `apps/web/Dockerfile` — sets `NEXTJS_STANDALONE=1` so Docker still gets standalone output |
 
-**Out of scope until M7 sign-off** (per founder directive 2026-07-11): all new business features — Catalog, Learning, Credentials, Localization, Dashboard, Event Bus, PWA.
+**Agent/contributor work (now unblocked — SPRINT-002 / Feature Sprint):**
+
+- **Catalog plugin** — course cards, lesson list, course API routes (parked since Session 008)
+- **Learning plugin** — enrollment, progress tracking
+- **Dashboard** — real dashboard UI with metrics/status cards
+- **Credentials plugin** — certificate issuance, verification
+- **PWA / offline** — ADR-0016 YES; Learning bounded context + service-worker/offline infra
+- **Independent follow-ups (no founder decision required):**
+  - HSTS header behind TLS (M4.2 §4.3)
+  - CSP nonces — per-request infra to remove `'unsafe-inline'` from `style-src`
+  - `security.txt` real `Contact` address
+  - `osv-scanner` / GitHub Dependabot substitute for retired `pnpm audit`
 
 ---
 
