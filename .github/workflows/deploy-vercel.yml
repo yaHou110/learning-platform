@@ -197,7 +197,9 @@ jobs:
         run: |
           echo "Testing ${DEPLOYMENT_URL}/api/health"
           for i in {1..10}; do
-            RESPONSE=$(curl -fsS "${DEPLOYMENT_URL}/api/health" 2>/dev/null || echo "")
+            HTTP_CODE=$(curl -s -o /tmp/health-response.json -w '%{http_code}' "${DEPLOYMENT_URL}/api/health" 2>/dev/null || echo "000")
+            RESPONSE=$(cat /tmp/health-response.json 2>/dev/null || echo "")
+            echo "  Attempt $i: HTTP $HTTP_CODE — $(echo "$RESPONSE" | head -c 120)"
             if echo "$RESPONSE" | grep -q '"status":"ok"'; then
               echo "✅ /api/health: status=ok"
               exit 0
@@ -219,7 +221,10 @@ jobs:
         run: |
           echo "Testing ${DEPLOYMENT_URL}/api/ready"
           for i in {1..10}; do
-            if curl -fsS "${DEPLOYMENT_URL}/api/ready" | grep -q '"status":"ready"'; then
+            HTTP_CODE=$(curl -s -o /tmp/ready-response.json -w '%{http_code}' "${DEPLOYMENT_URL}/api/ready" 2>/dev/null || echo "000")
+            RESPONSE=$(cat /tmp/ready-response.json 2>/dev/null || echo "")
+            echo "  Attempt $i: HTTP $HTTP_CODE — $(echo "$RESPONSE" | head -c 120)"
+            if echo "$RESPONSE" | grep -q '"status":"ready"'; then
               echo "✅ /api/ready passed"
               exit 0
             fi
