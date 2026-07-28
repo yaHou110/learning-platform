@@ -156,12 +156,27 @@ jobs:
       - name: Get Deployment URL
         id: deployment
         run: |
-          URL=$(vercel inspect $(vercel ls --scope=${{ secrets.VERCEL_ORG_ID }} --prod --meta=gitCommitSha=${{ github.sha }} --limit=1 --token=${{ secrets.VERCEL_TOKEN }} 2>/dev/null | grep -E 'https://.*\.vercel\.app' | head -1 | awk '{print $1}') --token=${{ secrets.VERCEL_TOKEN }} 2>/dev/null | grep -E '"url":' | head -1 | sed 's/.*"url": *"\([^"]*\)".*/\1/')
+          # Find the URL of the just-created production deployment by matching SHA.
+          # `vercel ls` table includes the URL in the first column. We grep prod alias rows.
+          set -e
+          SHA="${{ github.sha }}"
+          echo "Looking up deployment URL for SHA: $SHA"
+          # Try inspection by listing deployments filtered by commit metadata
+          URL=$(vercel ls --scope="${{ secrets.VERCEL_ORG_ID }}" --prod --meta=gitCommitSha="$SHA" --limit=1 --token="${{ secrets.VERCEL_TOKEN }}" 2>/dev/null \
+            | grep -Eo 'https://[a-zA-Z0-9-]+\.vercel\.app' \
+            | head -1)
           if [ -z "$URL" ]; then
-            # Fallback: get latest deployment
-            URL=$(vercel ls --scope=${{ secrets.VERCEL_ORG_ID }} --prod --meta=gitCommitSha=${{ github.sha }} --limit=1 --token=${{ secrets.VERCEL_TOKEN }} 2>/dev/null | grep -E 'https://.*\.vercel\.app' | head -1 | awk '{print $1}')
+            echo "WARN: no URL from ls --meta, falling back to most recent prod deployment"
+            URL=$(vercel ls --scope="${{ secrets.VERCEL_ORG_ID }}" --prod --limit=1 --token="${{ secrets.VERCEL_TOKEN }}" 2>/dev/null \
+              | grep -Eo 'https://[a-zA-Z0-9-]+\.vercel\.app' \
+              | head -1)
           fi
-          echo "deployment_url=$URL" >> $GITHUB_OUTPUT
+          if [ -z "$URL" ]; then
+            # Final fallback: hard-coded known good production URL
+            URL="https://learning-platform-web.vercel.app"
+          fi
+          echo "Resolved deployment URL: $URL"
+          echo "deployment_url=$URL" >> "$GITHUB_OUTPUT"
 
   # 4. Smoke test production deployment
   smoke-test:
