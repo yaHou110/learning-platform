@@ -39,21 +39,10 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      - name: Diagnose connection
+        run: node --import tsx scripts/db-diagnose.mjs
+
       - name: Apply migrations
+        if: success()
         working-directory: packages/core
         run: pnpm db:migrate
-
-      - name: Verify schema
-        working-directory: packages/core
-        run: |
-          node --import tsx -e "
-            import('pg').then(async ({ default: pg }) => {
-              const pool = new pg.Pool({ connectionString: process.env.DATABASE_URL, ssl: { rejectUnauthorized: false }, connectionTimeoutMillis: 15000 });
-              const r = await pool.query(\"SELECT table_schema, table_name FROM information_schema.tables WHERE table_schema='public' ORDER BY 2\");
-              console.log('Tables in public schema:', r.rows.length);
-              r.rows.forEach(t => console.log('  ✓', t.table_name));
-              await pool.end();
-            }).catch(e => { console.error(e); process.exit(1); });
-          "
-        env:
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}
