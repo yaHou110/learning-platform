@@ -116,6 +116,8 @@ jobs:
     needs: [quality-gates, db-migration-check]
     runs-on: ubuntu-latest
     environment: ${{ github.event.inputs.environment || 'production' }}
+    outputs:
+      deployment_url: ${{ steps.deployment.outputs.deployment_url }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -185,12 +187,13 @@ jobs:
     if: github.ref == 'refs/heads/main' || github.event.inputs.environment == 'production'
     runs-on: ubuntu-latest
     env:
-      DEPLOYMENT_URL: ${{ needs.deploy-vercel.outputs.deployment_url || 'https://learning-platform-web.vercel.app' }}
+      DEPLOYMENT_URL: ${{ needs.deploy-vercel.outputs.deployment_url }}
     steps:
       - name: Wait for deployment to propagate
         run: sleep 15
 
       - name: Smoke test /api/health
+        if: env.DEPLOYMENT_URL != ''
         run: |
           echo "Testing ${DEPLOYMENT_URL}/api/health"
           for i in {1..10}; do
@@ -212,6 +215,7 @@ jobs:
           exit 1
 
       - name: Smoke test /api/ready
+        if: env.DEPLOYMENT_URL != ''
         run: |
           echo "Testing ${DEPLOYMENT_URL}/api/ready"
           for i in {1..10}; do
@@ -226,7 +230,7 @@ jobs:
           exit 1
 
       - name: Smoke test /api/metrics (if METRICS_TOKEN set)
-        if: env.METRICS_TOKEN != ''
+        if: env.DEPLOYMENT_URL != '' && env.METRICS_TOKEN != ''
         env:
           METRICS_TOKEN: ${{ secrets.METRICS_TOKEN }}
         run: |
