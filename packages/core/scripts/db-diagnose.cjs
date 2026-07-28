@@ -117,7 +117,8 @@ async function main() {
       socket.write(buf);
     });
     socket.on("data", (data) => {
-      console.log(`TCP_DATA (${data.length} bytes): ${data.toString("hex").slice(0, 40)}...`);
+      console.log(`TCP_DATA hex (${data.length} bytes): ${data.toString("hex")}`);
+      console.log(`TCP_DATA utf8: ${data.toString("utf8")}`);
       chunks.push(data);
       // Check for error response ('E' = error)
       if (data[0] === 0x45) {
