@@ -17,10 +17,29 @@ import pg from "pg";
 
 loadEnvOnce();
 
-async function main(): Promise<void> {
+function buildPoolOptions(): pg.PoolConfig {
   const connectionString =
-    process.env.DATABASE_URL ?? "postgres://learning_platform:learning_platform@localhost:5432/learning_platform";
-  const pool = new pg.Pool({ connectionString });
+    process.env.DATABASE_URL ?? "postgres://learning_platform:***@localhost:5432/learning_platform";
+
+  // Parse URL to detect sslmode and SSL requirements.
+  let needsSsl = false;
+  try {
+    const u = new URL(connectionString);
+    const sslmode = u.searchParams.get("sslmode");
+    needsSsl = sslmode !== null && sslmode !== "disable";
+  } catch {
+    // Invalid URL — fall through to default (no SSL).
+  }
+
+  return {
+    connectionString,
+    connectionTimeoutMillis: 15_000,
+    ssl: needsSsl ? { rejectUnauthorized: false } : undefined,
+  };
+}
+
+async function main(): Promise<void> {
+  const pool = new pg.Pool(buildPoolOptions());
   const db = drizzle(pool);
   console.log("Applying migrations…");
   await migrate(db, { migrationsFolder: "./src/db/migrations" });
