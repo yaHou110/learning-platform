@@ -14,16 +14,20 @@ async function attempt(label, poolOpts) {
     await pool.end();
     return true;
   } catch (e) {
-    console.error(`FAILED — ${e.constructor.name}: ${e.message}`);
-    console.error(`  raw error object: ${JSON.stringify(Object.keys(e))}`);
-    console.error(`  full stack:\n${e.stack}`);
+    console.error(`FAILED_TYPE: ${e.constructor.name}`);
+    console.error(`FAILED_MSG: ${e.message}`);
+    console.error(`FAILED_CODE: ${e.code || "(none)"}`);
+    console.error(`FAILED_KEYS: ${JSON.stringify(Object.getOwnPropertyNames(e))}`);
+    // Print first 8 stack lines individually (avoids GitHub truncation)
+    const stackLines = (e.stack || "").split("\n").slice(0, 8);
+    stackLines.forEach((line, i) => console.error(`STACK_${i}: ${line.trim()}`));
     if (e.cause) {
-      console.error(`  cause.constructor: ${e.cause.constructor?.name}`);
-      console.error(`  cause.message: ${e.cause.message || e.cause}`);
-      if (e.cause.code) console.error(`  cause.code: ${e.cause.code}`);
-      if (e.cause.stack) console.error(`  cause.full stack:\n${e.cause.stack}`);
+      console.error(`CAUSE_TYPE: ${e.cause.constructor?.name}`);
+      console.error(`CAUSE_MSG: ${e.cause.message || String(e.cause)}`);
+      console.error(`CAUSE_CODE: ${e.cause.code || "(none)"}`);
+      const causeStackLines = (e.cause.stack || "").split("\n").slice(0, 12);
+      causeStackLines.forEach((line, i) => console.error(`CAUSE_STACK_${i}: ${line.trim()}`));
     }
-    if (e.code) console.error(`  e.code: ${e.code}`);
     return false;
   }
 }
