@@ -40,7 +40,8 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Diagnose connection
-        run: node --import tsx scripts/db-diagnose.mjs
+        working-directory: packages/core
+        run: node ../../scripts/db-diagnose.cjs
 
       - name: Apply migrations
         if: success()
