@@ -37,6 +37,11 @@ RUN pnpm install --frozen-lockfile
 # Copy source
 COPY . .
 
+# Build only the web app (standalone output). NEXTJS_STANDALONE=1 tells
+# next.config.mjs to emit the standalone layout this runner image expects.
+# Vercel/cloud builds don't set it, so they get the default `.next` layout.
+ENV NEXTJS_STANDALONE=1
+
 # Build only the web app (standalone output)
 RUN pnpm --filter web build
 

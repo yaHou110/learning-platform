@@ -9,6 +9,23 @@
  * Plugins may NOT declare DDL migrations in v1. DDL is owned by `@learning-platform/core`.
  * Plugins contribute only `jsonb` Zod schemas (via `metadataSchemas`) and event
  * payload types.
+ *
+ * The `migrations: []` rule is enforced HERE in the schema (`max(0)`), not left to
+ * a never-materialized ESLint rule: a plugin that declares DDL fails
+ * `PluginManifestSchema.parse()`. The previous "policy lives in lint" design was
+ * aspirational — no such lint rule ever existed (verified: the 5 plugin eslintrc
+ * files only restrict `drizzle-orm`/`pg` imports), so the registry test that pinned
+ * the non-enforcing behavior is now flipped to assert rejection.
+ *
+ * `domainEvents[].name` is intentionally a loose `z.string().min(1)` here (NOT a
+ * `z.enum` of the contracts `EventNames`): pulling `@learning-platform/contracts`
+ * source into `core`'s program trips TS6059 (core builds with `rootDir: "src"` +
+ * `declaration`, and contracts ships `main` → source). The single-source-of-truth
+ * enforcement that a `z.enum` would give is instead realized at the composition
+ * root — `apps/web/tests/contracts-coverage.test.ts` imports both
+ * `getPluginRegistry()` and `EventNames` and fails on any drift — so contracts is a
+ * real enforcement layer (CI-gated) without crossing the build boundary the wrong
+ * way.
  */
 import { z } from "zod";
 
@@ -49,8 +66,8 @@ export const PluginManifestSchema = z.object({
   permissions: z.array(PermissionSchema).default([]),
   apiRoutes: z.array(ApiRouteSchema).default([]),
   metadataSchemas: z.array(MetadataSchema).default([]),
-  /** DDL is owned by core. v1 plugins MUST declare `migrations: []`. */
-  migrations: z.array(z.string()).default([]),
+  /** DDL is owned by core. v1 plugins MUST declare `migrations: []` — enforced. */
+  migrations: z.array(z.string()).max(0).default([]),
 });
 export type PluginManifest = z.infer<typeof PluginManifestSchema>;
 

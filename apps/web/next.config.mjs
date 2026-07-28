@@ -16,8 +16,12 @@ const nextConfig = {
   // empty for future native modules if needed.
   serverExternalPackages: [],
   reactStrictMode: true,
-  // Produce a standalone output for Docker (M6 deployment).
-  output: "standalone",
+  // Produce a standalone output ONLY for the Docker image build (M6 deployment).
+  // On Vercel (serverless), `standalone` is unnecessary and can perturb the
+  // build-output mapping — Vercel builds its own serverless functions from the
+  // standard `.next` output. Gate it on a build-time flag the Dockerfile sets
+  // (NEXTJS_STANDALONE=1) so a cloud build gets the default `.next` layout.
+  ...(process.env.NEXTJS_STANDALONE === "1" ? { output: "standalone" } : {}),
   // Hide the X-Powered-By header (security best practice).
   poweredByHeader: false,
   // Security headers applied to all routes.

@@ -30,7 +30,11 @@ describe("plugin registry", () => {
     expect(() => reg.register(manifest)).toThrow(/already registered/);
   });
 
-  it("rejects a manifest with DDL migrations in v1 (plugins own no DDL)", () => {
+  it("enforces migrations: [] (DDL is owned by core, schema is the enforcer)", () => {
+    // The schema now rejects non-empty migrations (max(0)). The previous
+    // "policy lives in the lint rule" design never materialized — no lint rule
+    // ever inspected the migrations array — so enforcement moved into the
+    // schema. This test pins the corrected behavior.
     expect(() =>
       PluginManifestSchema.parse({
         name: "plugin-bad",
@@ -38,7 +42,22 @@ describe("plugin registry", () => {
         description: "bad",
         migrations: ["0001_evil.sql"],
       })
-    ).not.toThrow(); // schema doesn't reject — the lint rule is the enforcer.
-    // The policy lives in the plugin-typing story + the ESLint rule, not the schema.
+    ).toThrow(/migrations/);
+  });
+
+  it("accepts a domain event with a non-empty name", () => {
+    // EventRefSchema.name is loose (z.string().min(1)); the EventNames SSOT
+    // constraint is enforced at the composition root — see
+    // apps/web/tests/contracts-coverage.test.ts — to avoid importing
+    // @learning-platform/contracts source into core's rootDir-checked program.
+    expect(() =>
+      PluginManifestSchema.parse({
+        name: "plugin-ok",
+        version: "0.1.0",
+        description: "ok",
+        domainEvents: [{ name: "user.invited", direction: "emit" }],
+      })
+    ).not.toThrow();
   });
 });
+
