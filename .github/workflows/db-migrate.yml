@@ -1,0 +1,59 @@
+name: Apply Database Migrations
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Database environment'
+        required: true
+        default: 'production'
+        type: choice
+        options:
+          - production
+          - preview
+
+permissions:
+  contents: read
+
+jobs:
+  migrate:
+    name: Apply migrations to ${{ github.event.inputs.environment }}
+    runs-on: ubuntu-latest
+    env:
+      DATABASE_URL: ${{ secrets.DATABASE_URL }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          run_install: false
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Apply migrations
+        working-directory: packages/core
+        run: pnpm db:migrate
+
+      - name: Verify schema
+        working-directory: packages/core
+        run: |
+          node --import tsx -e "
+            import('pg').then(async ({ default: pg }) => {
+              const pool = new pg.Pool({ connectionString: process.env.DATABASE_URL, ssl: { rejectUnauthorized: false }, connectionTimeoutMillis: 15000 });
+              const r = await pool.query(\"SELECT table_schema, table_name FROM information_schema.tables WHERE table_schema='public' ORDER BY 2\");
+              console.log('Tables in public schema:', r.rows.length);
+              r.rows.forEach(t => console.log('  ✓', t.table_name));
+              await pool.end();
+            }).catch(e => { console.error(e); process.exit(1); });
+          "
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
