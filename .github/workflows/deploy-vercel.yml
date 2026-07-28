@@ -185,7 +185,7 @@ jobs:
     if: github.ref == 'refs/heads/main' || github.event.inputs.environment == 'production'
     runs-on: ubuntu-latest
     env:
-      DEPLOYMENT_URL: ${{ needs.deploy-vercel.outputs.deployment_url }}
+      DEPLOYMENT_URL: ${{ needs.deploy-vercel.outputs.deployment_url || 'https://learning-platform-web.vercel.app' }}
     steps:
       - name: Wait for deployment to propagate
         run: sleep 15
