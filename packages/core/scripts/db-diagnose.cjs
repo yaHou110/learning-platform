@@ -8,7 +8,7 @@ async function attempt(label, poolOpts) {
   console.log(`\n--- ${label} ---`);
   console.log(`Config: ${JSON.stringify(poolOpts)}`);
   try {
-    const pool = new pg.Pool({ connectionTimeoutMillis: 10_000, ...poolOpts });
+    const pool = new pg.Pool({ connectionTimeoutMillis: 15_000, ...poolOpts });
     const r = await pool.query("SELECT current_database() AS db, current_user AS user");
     console.log(`SUCCESS — db=${r.rows[0].db}, user=${r.rows[0].user}`);
     await pool.end();
@@ -39,7 +39,7 @@ async function main() {
     process.exit(1);
   }
 
-  // 1. URL parts (mask password)
+  // 1. URL parts
   try {
     const u = new URL(raw);
     console.log(`Host:     ${u.hostname}`);
@@ -53,86 +53,98 @@ async function main() {
     process.exit(1);
   }
 
-  // Attempt 1: as-is (let pg negotiate)
-  if (await attempt("Attempt 1: as-is (let pg negotiate)", { connectionString: raw })) return;
-
-  // Attempt 2: ssl={rejectUnauthorized:false}
-  if (await attempt("Attempt 2: ssl={rejectUnauthorized:false}", {
-    connectionString: raw,
-    ssl: { rejectUnauthorized: false },
-  })) return;
-
-  // Attempt 3: strip sslmode from URL + rejectUnauthorized:false
-  let url3 = raw;
-  try {
-    const u = new URL(raw);
-    if (u.searchParams.get("sslmode")) {
-      u.searchParams.delete("sslmode");
-      url3 = u.toString();
-    }
-  } catch {}
-  if (await attempt("Attempt 3: sslmode stripped + rejectUnauthorized:false", {
-    connectionString: url3,
-    ssl: { rejectUnauthorized: false },
-  })) return;
-
-  // Attempt 4: uselibpqcompat=true + sslmode=require (libpq semantics)
-  let url4 = raw;
-  try {
-    const u = new URL(raw);
-    u.searchParams.set("uselibpqcompat", "true");
-    if (!u.searchParams.get("sslmode")) u.searchParams.set("sslmode", "require");
-    url4 = u.toString();
-  } catch {}
-  if (await attempt("Attempt 4: uselibpqcompat=true + sslmode=require", {
-    connectionString: url4,
-  })) return;
-
-  // Attempt 5: sslmode=prefer (no cert check)
-  let url5 = raw;
-  try {
-    const u = new URL(raw);
-    u.searchParams.set("sslmode", "prefer");
-    url5 = u.toString();
-  } catch {}
-  if (await attempt("Attempt 5: sslmode=prefer", {
-    connectionString: url5,
-  })) return;
-
-  // Attempt 6: sslmode=no-verify
-  let url6 = raw;
-  try {
-    const u = new URL(raw);
-    u.searchParams.set("sslmode", "no-verify");
-    url6 = u.toString();
-  } catch {}
-  if (await attempt("Attempt 6: sslmode=no-verify", {
-    connectionString: url6,
-    ssl: { rejectUnauthorized: false },
-  })) return;
-
-  // Attempt 7: ssl:true (raw TLS, no verification)
-  if (await attempt("Attempt 7: ssl:true (raw TLS, no verification)", {
-    connectionString: raw,
-    ssl: true,
-  })) return;
-
-  // Attempt 8: sslmode=disable + ssl:false (Railway TCP proxy is plain TCP)
-  let url8 = raw;
+  // Attempt A: strip sslmode, ssl:false (plain TCP)
+  let urlA = raw;
   try {
     const u = new URL(raw);
     u.searchParams.delete("sslmode");
     u.searchParams.delete("uselibpqcompat");
-    u.searchParams.set("sslmode", "disable");
-    url8 = u.toString();
+    urlA = u.toString();
   } catch {}
-  if (await attempt("Attempt 8: sslmode=disable + ssl:false (Railway plain TCP)", {
-    connectionString: url8,
+  if (await attempt("A: sslmode stripped + ssl:false", {
+    connectionString: urlA,
     ssl: false,
   })) return;
 
-  // Attempt 9: raw tls.connect to see if TLS is even offered
-  console.log("\n--- Attempt 9: raw tls.connect (bypass pg) ---");
+  // Attempt B: strip sslmode, ssl:{rejectUnauthorized:false}
+  if (await attempt("B: sslmode stripped + ssl:{rejectUnauthorized:false}", {
+    connectionString: urlA,
+    ssl: { rejectUnauthorized: false },
+  })) return;
+
+  // Attempt C: strip sslmode, ssl:{rejectUnauthorized:false, checkServerIdentity: ()=>undefined}
+  if (await attempt("C: sslmode stripped + ssl:{rejectUnauthorized:false, checkServerIdentity skip}", {
+    connectionString: urlA,
+    ssl: {
+      rejectUnauthorized: false,
+      checkServerIdentity: () => undefined,
+    },
+  })) return;
+
+  // Attempt D: Keep sslmode=require, uselibpqcompat=true
+  let urlD = raw;
+  try {
+    const u = new URL(raw);
+    u.searchParams.set("uselibpqcompat", "true");
+    urlD = u.toString();
+  } catch {}
+  if (await attempt("D: uselibpqcompat=true + sslmode=require (as-is)", {
+    connectionString: urlD,
+  })) return;
+
+  // Attempt E: raw net.connect (plain TCP, no TLS) to see if Railway accepts
+  console.log("\n--- E: raw net.connect (plain TCP, no TLS) ---");
+  try {
+    const u = new URL(raw);
+    const net = require("net");
+    const socket = net.connect(
+      parseInt(u.port || "5432", 10),
+      u.hostname
+    );
+    const chunks = [];
+    socket.on("connect", () => {
+      console.log("TCP_CONNECTED");
+      // Send PostgreSQL StartupMessage (version 3, no SSL request)
+      // Format: length (4) + protocol version (4) = 8 bytes
+      // Then parameters: user=postgres\0 + database=railway\0 + \0
+      const params = `user\u0000${u.username}\u0000database\u0000${u.pathname.slice(1)}\u0000\u0000`;
+      const paramBuf = Buffer.from(params, "utf8");
+      const len = 4 + 4 + paramBuf.length;
+      const buf = Buffer.alloc(len);
+      buf.writeInt32BE(len, 0);       // length
+      buf.writeInt32BE(196608, 4);    // protocol version 3.0
+      paramBuf.copy(buf, 8);
+      socket.write(buf);
+    });
+    socket.on("data", (data) => {
+      console.log(`TCP_DATA (${data.length} bytes): ${data.toString("hex").slice(0, 40)}...`);
+      chunks.push(data);
+      // Check for error response ('E' = error)
+      if (data[0] === 0x45) {
+        const msg = data.toString("utf8", 5);
+        console.log(`PG_ERROR_RESPONSE: ${msg}`);
+      }
+      // Check for authentication request ('R')
+      if (data[0] === 0x52) {
+        const authType = data.readInt32BE(5);
+        console.log(`PG_AUTH_REQUEST type: ${authType}`);
+      }
+      socket.end();
+    });
+    socket.on("error", (e) => {
+      console.error(`TCP_ERROR: ${e.constructor?.name}: ${e.message}`);
+      console.error(`TCP_ERROR_CODE: ${e.code || "(none)"}`);
+    });
+    socket.on("close", () => {
+      console.log("TCP_CLOSED");
+    });
+    await new Promise((resolve) => setTimeout(resolve, 5000));
+  } catch (e) {
+    console.error(`FAILED_TYPE: ${e.constructor.name}: ${e.message}`);
+  }
+
+  // Attempt F: raw tls.connect with checkServerIdentity skip
+  console.log("\n--- F: raw tls.connect (TLS, checkServerIdentity skip) ---");
   try {
     const u = new URL(raw);
     const tls = require("tls");
@@ -142,22 +154,26 @@ async function main() {
         port: parseInt(u.port || "5432", 10),
         rejectUnauthorized: false,
         servername: u.hostname,
+        checkServerIdentity: () => undefined,
       },
       () => {
-        console.log(`TLS_HANDSHAKE_OK — peer cert subject: ${socket.getPeerCertificate()?.subject?.CN || "(none)"}`);
+        console.log(`TLS_HANDSHAKE_OK`);
         console.log(`TLS_PROTOCOL: ${socket.getProtocol()}`);
         console.log(`TLS_AUTHORIZED: ${socket.authorized}`);
         console.log(`TLS_AUTHORIZATION_ERROR: ${socket.authorizationError || "(none)"}`);
+        const cert = socket.getPeerCertificate();
+        if (cert) {
+          console.log(`TLS_CERT_SUBJECT_CN: ${cert.subject?.CN || "(none)"}`);
+          console.log(`TLS_CERT_ISSUER_CN: ${cert.issuer?.CN || "(none)"}`);
+        }
         socket.end();
       }
     );
     socket.on("error", (e) => {
       console.error(`TLS_ERROR: ${e.constructor?.name}: ${e.message}`);
       console.error(`TLS_ERROR_CODE: ${e.code || "(none)"}`);
-      const stackLines = (e.stack || "").split("\n").slice(0, 10);
-      stackLines.forEach((line, i) => console.error(`TLS_STACK_${i}: ${line.trim()}`));
     });
-    await new Promise((resolve) => setTimeout(resolve, 3000));
+    await new Promise((resolve) => setTimeout(resolve, 5000));
   } catch (e) {
     console.error(`FAILED_TYPE: ${e.constructor.name}: ${e.message}`);
   }
