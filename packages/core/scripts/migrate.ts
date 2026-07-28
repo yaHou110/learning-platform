@@ -34,7 +34,7 @@ function buildPoolOptions(): pg.PoolConfig {
   return {
     connectionString,
     connectionTimeoutMillis: 15_000,
-    ssl: needsSsl ? { rejectUnauthorized: false } : undefined,
+    ssl: needsSsl ? true : undefined,
   };
 }
 
