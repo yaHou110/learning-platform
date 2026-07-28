@@ -184,15 +184,17 @@ jobs:
     needs: deploy-vercel
     if: github.ref == 'refs/heads/main' || github.event.inputs.environment == 'production'
     runs-on: ubuntu-latest
+    env:
+      DEPLOYMENT_URL: ${{ needs.deploy-vercel.outputs.deployment_url }}
     steps:
       - name: Wait for deployment to propagate
         run: sleep 15
 
       - name: Smoke test /api/health
         run: |
-          echo "Testing ${{ needs.deploy-vercel.outputs.deployment_url }}/api/health"
+          echo "Testing ${DEPLOYMENT_URL}/api/health"
           for i in {1..10}; do
-            RESPONSE=$(curl -fsS "${{ needs.deploy-vercel.outputs.deployment_url }}/api/health" 2>/dev/null || echo "")
+            RESPONSE=$(curl -fsS "${DEPLOYMENT_URL}/api/health" 2>/dev/null || echo "")
             if echo "$RESPONSE" | grep -q '"status":"ok"'; then
               echo "✅ /api/health: status=ok"
               exit 0
@@ -211,8 +213,9 @@ jobs:
 
       - name: Smoke test /api/ready
         run: |
+          echo "Testing ${DEPLOYMENT_URL}/api/ready"
           for i in {1..10}; do
-            if curl -fsS "${{ needs.deploy-vercel.outputs.deployment_url }}/api/ready" | grep -q '"status":"ready"'; then
+            if curl -fsS "${DEPLOYMENT_URL}/api/ready" | grep -q '"status":"ready"'; then
               echo "✅ /api/ready passed"
               exit 0
             fi
@@ -227,7 +230,8 @@ jobs:
         env:
           METRICS_TOKEN: ${{ secrets.METRICS_TOKEN }}
         run: |
-          curl -fsS -H "Authorization: Bearer $METRICS_TOKEN" "${{ needs.deploy-vercel.outputs.deployment_url }}/api/metrics" | grep -q 'http_requests_total' && echo "✅ /api/metrics passed" || echo "⚠️ /api/metrics check failed (non-blocking)"
+          echo "Testing ${DEPLOYMENT_URL}/api/metrics"
+          curl -fsS -H "Authorization: Bearer ***" "${DEPLOYMENT_URL}/api/metrics" | grep -q 'http_requests_total' && echo "✅ /api/metrics passed" || echo "⚠️ /api/metrics check failed (non-blocking)"
 
   # 5. Notify
   notify:
