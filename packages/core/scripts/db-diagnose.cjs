@@ -110,11 +110,70 @@ async function main() {
     ssl: { rejectUnauthorized: false },
   })) return;
 
-  // Attempt 7: ssl:true (raw TLS, no cert verification by node-postgres)
+  // Attempt 7: ssl:true (raw TLS, no verification)
   if (await attempt("Attempt 7: ssl:true (raw TLS, no verification)", {
     connectionString: raw,
     ssl: true,
   })) return;
+
+  // Attempt 8: use pg.Client (single connection) to get better error reporting
+  console.log("\n--- Attempt 8: pg.Client (single connection) with ssl:false ---");
+  try {
+    const url8 = raw.replace(/[?&]sslmode=[^&]*/g, "");
+    const client = new pg.Client({
+      connectionString: url8,
+      connectionTimeoutMillis: 10_000,
+      ssl: false,
+    });
+    client.on("error", (e) => {
+      console.error(`CLIENT_ERROR_EVENT: ${e.constructor?.name}: ${e.message}`);
+      console.error(`CLIENT_ERROR_CODE: ${e.code || "(none)"}`);
+      const stackLines = (e.stack || "").split("\n").slice(0, 10);
+      stackLines.forEach((line, i) => console.error(`CLIENT_STACK_${i}: ${line.trim()}`));
+    });
+    await client.connect();
+    const r = await client.query("SELECT current_database()");
+    console.log(`SUCCESS — db=${r.rows[0].current_database}`);
+    await client.end();
+    return true;
+  } catch (e) {
+    console.error(`FAILED_TYPE: ${e.constructor.name}`);
+    console.error(`FAILED_MSG: ${e.message}`);
+    console.error(`FAILED_CODE: ${e.code || "(none)"}`);
+    const stackLines = (e.stack || "").split("\n").slice(0, 15);
+    stackLines.forEach((line, i) => console.error(`STACK_${i}: ${line.trim()}`));
+  }
+
+  // Attempt 9: raw tls.connect to bypass pg entirely
+  console.log("\n--- Attempt 9: raw tls.connect (bypass pg) ---");
+  try {
+    const u = new URL(raw);
+    const tls = require("tls");
+    const socket = tls.connect(
+      {
+        host: u.hostname,
+        port: parseInt(u.port || "5432", 10),
+        rejectUnauthorized: false,
+        servername: u.hostname,
+      },
+      () => {
+        console.log(`TLS_HANDSHAKE_OK — peer cert subject: ${socket.getPeerCertificate()?.subject?.CN || "(none)"}`);
+        console.log(`TLS_PROTOCOL: ${socket.getProtocol()}`);
+        console.log(`TLS_AUTHORIZED: ${socket.authorized}`);
+        console.log(`TLS_AUTHORIZATION_ERROR: ${socket.authorizationError || "(none)"}`);
+        socket.end();
+      }
+    );
+    socket.on("error", (e) => {
+      console.error(`TLS_ERROR: ${e.constructor?.name}: ${e.message}`);
+      console.error(`TLS_ERROR_CODE: ${e.code || "(none)"}`);
+      const stackLines = (e.stack || "").split("\n").slice(0, 10);
+      stackLines.forEach((line, i) => console.error(`TLS_STACK_${i}: ${line.trim()}`));
+    });
+    await new Promise((resolve) => setTimeout(resolve, 3000));
+  } catch (e) {
+    console.error(`FAILED_TYPE: ${e.constructor.name}: ${e.message}`);
+  }
 
   console.log("\n=== ALL ATTEMPTS FAILED ===");
   process.exit(1);
