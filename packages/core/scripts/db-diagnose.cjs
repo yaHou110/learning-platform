@@ -6,6 +6,7 @@ const pg = require("pg");
 
 async function attempt(label, poolOpts) {
   console.log(`\n--- ${label} ---`);
+  console.log(`Config: ${JSON.stringify(poolOpts)}`);
   try {
     const pool = new pg.Pool({ connectionTimeoutMillis: 10_000, ...poolOpts });
     const r = await pool.query("SELECT current_database() AS db, current_user AS user");
@@ -14,8 +15,14 @@ async function attempt(label, poolOpts) {
     return true;
   } catch (e) {
     console.error(`FAILED — ${e.constructor.name}: ${e.message}`);
-    if (e.cause) console.error(`  cause: ${e.cause.message || e.cause}`);
-    if (e.code) console.error(`  code: ${e.code}`);
+    if (e.cause) {
+      console.error(`  cause.constructor: ${e.cause.constructor?.name}`);
+      console.error(`  cause.message: ${e.cause.message || e.cause}`);
+      if (e.cause.code) console.error(`  cause.code: ${e.cause.code}`);
+      if (e.cause.stack) console.error(`  cause.stack: ${e.cause.stack.split("\n").slice(0, 3).join(" | ")}`);
+    }
+    if (e.code) console.error(`  e.code: ${e.code}`);
+    if (e.stack) console.error(`  e.stack (first 3): ${e.stack.split("\n").slice(0, 3).join(" | ")}`);
     return false;
   }
 }
