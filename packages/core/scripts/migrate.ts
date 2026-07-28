@@ -21,27 +21,23 @@ function buildPoolOptions(): pg.PoolConfig {
   const raw =
     process.env.DATABASE_URL ?? "postgres://learning_platform:***@localhost:5432/learning_platform";
 
-  // Detect sslmode and strip it — node-postgres v8 maps sslmode=require to
-  // verify-full (strict CA validation), which breaks on Railway's proxy.
-  // We handle SSL via the ssl: PoolConfig option instead.
-  let needsSsl = false;
+  // Railway public proxy is plain TCP — pg must NOT attempt TLS.
+  // Strip sslmode entirely; pass ssl: undefined (no TLS).
   let connectionString = raw;
   try {
     const u = new URL(raw);
-    const sslmode = u.searchParams.get("sslmode");
-    needsSsl = sslmode !== null && sslmode !== "disable";
-    if (sslmode) {
+    if (u.searchParams.get("sslmode")) {
       u.searchParams.delete("sslmode");
       connectionString = u.toString();
     }
   } catch {
-    // Invalid URL — fall through to default (no SSL).
+    // Invalid URL — fall through.
   }
 
   return {
     connectionString,
     connectionTimeoutMillis: 15_000,
-    ssl: needsSsl ? { rejectUnauthorized: false } : undefined,
+    // ssl: undefined → plain TCP (Railway proxy terminates TLS at transport layer)
   };
 }
 
