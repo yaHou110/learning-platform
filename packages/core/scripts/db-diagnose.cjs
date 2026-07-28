@@ -63,6 +63,47 @@ async function main() {
     ssl: { rejectUnauthorized: false },
   })) return;
 
+  // Attempt 4: uselibpqcompat=true + sslmode=require (libpq semantics)
+  let url4 = raw;
+  try {
+    const u = new URL(raw);
+    u.searchParams.set("uselibpqcompat", "true");
+    if (!u.searchParams.get("sslmode")) u.searchParams.set("sslmode", "require");
+    url4 = u.toString();
+  } catch {}
+  if (await attempt("Attempt 4: uselibpqcompat=true + sslmode=require", {
+    connectionString: url4,
+  })) return;
+
+  // Attempt 5: sslmode=prefer (no cert check)
+  let url5 = raw;
+  try {
+    const u = new URL(raw);
+    u.searchParams.set("sslmode", "prefer");
+    url5 = u.toString();
+  } catch {}
+  if (await attempt("Attempt 5: sslmode=prefer", {
+    connectionString: url5,
+  })) return;
+
+  // Attempt 6: sslmode=no-verify (pg v9 will support, but try anyway)
+  let url6 = raw;
+  try {
+    const u = new URL(raw);
+    u.searchParams.set("sslmode", "no-verify");
+    url6 = u.toString();
+  } catch {}
+  if (await attempt("Attempt 6: sslmode=no-verify", {
+    connectionString: url6,
+    ssl: { rejectUnauthorized: false },
+  })) return;
+
+  // Attempt 7: ssl:true (raw TLS, no cert verification by node-postgres)
+  if (await attempt("Attempt 7: ssl:true (raw TLS, no verification)", {
+    connectionString: raw,
+    ssl: true,
+  })) return;
+
   console.log("\n=== ALL ATTEMPTS FAILED ===");
   process.exit(1);
 }
