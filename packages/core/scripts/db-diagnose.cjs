@@ -15,14 +15,15 @@ async function attempt(label, poolOpts) {
     return true;
   } catch (e) {
     console.error(`FAILED — ${e.constructor.name}: ${e.message}`);
+    console.error(`  raw error object: ${JSON.stringify(Object.keys(e))}`);
+    console.error(`  full stack:\n${e.stack}`);
     if (e.cause) {
       console.error(`  cause.constructor: ${e.cause.constructor?.name}`);
       console.error(`  cause.message: ${e.cause.message || e.cause}`);
       if (e.cause.code) console.error(`  cause.code: ${e.cause.code}`);
-      if (e.cause.stack) console.error(`  cause.stack: ${e.cause.stack.split("\n").slice(0, 3).join(" | ")}`);
+      if (e.cause.stack) console.error(`  cause.full stack:\n${e.cause.stack}`);
     }
     if (e.code) console.error(`  e.code: ${e.code}`);
-    if (e.stack) console.error(`  e.stack (first 3): ${e.stack.split("\n").slice(0, 3).join(" | ")}`);
     return false;
   }
 }
