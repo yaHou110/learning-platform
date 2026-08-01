@@ -11,12 +11,12 @@
 
 | Field | Value |
 | --- | --- |
-| Session # | 025 — SPRINT-002 S1: Catalog + Learning API shipped |
+| Session # | 025 — SPRINT-002 S1+S2: Catalog & Learning API + UI shipped |
 | Date opened | 2026-08-01 |
 | Driver | contributor |
-| Sprint | SPRINT-002 — Feature Sprint (first slice) |
-| Goal | **First feature slice on the M7-unblocked surface:** Catalog + Learning bounded-context APIs (courses, lessons, enrollments, progress) with authz, rate limits, observability envelope, unit tests, and real-Postgres integration evidence. Also unblocked production deploy (Vercel Root Directory + dead cron removal) and merged the governance docs PR #12. |
-| Status | 🟢 **S1 merged.** 39 new unit tests + 20/20 integration checks green. `pnpm verify` green. Next: catalog UI (course cards/lesson list) or Dashboard slice. |
+| Sprint | SPRINT-002 — Feature Sprint |
+| Goal | **First feature slices on the M7-unblocked surface:** S1 = Catalog + Learning APIs (courses, lessons, enrollments, progress); S2 = full RTL Persian UI (student catalog/detail/lesson flow, admin course+lesson management, role-aware dashboard) + demo seed. Also unblocked production deploy (Vercel Root Directory + dead cron removal) and merged governance PR #12. |
+| Status | 🟢 **S1+S2 merged.** 82 web + 19 core tests green, integration 22/22 PASS, live smoke verified (login → catalog → admin → dashboard), `pnpm verify` green, Vercel production Ready. Next: security follow-ups (security.txt contact, CSP nonces, Dependabot), Credentials plugin, PWA. |
 
 ---
 
@@ -26,12 +26,13 @@ Session 024 closed M7 (Vercel + Railway target). Sessions after M7 (024b) added 
 
 - **PR #12 merged** — `AGENTS.md` + `ENGINEERING_STANDARDS.md` governance docs (fix: PR body DoD checkbox needed backtick form `` `pnpm verify` ``).
 - **Vercel production deploy unblocked** — project Root Directory set to `apps/web` via project API (framework detection previously failed: "No Next.js version detected"); dead `crons` block (nonexistent `/api/cron/daily-maintenance`) removed from `vercel.json` on main. Production deployment now `Ready`. Note: the project sits behind Vercel org SSO (`all_except_custom_domains`), so external smoke curls hit the SSO redirect — the local Docker lane (ADR-0018) is the endpoint-verification path until a custom domain is added.
-- **SPRINT-002 S1 — Catalog & Learning API** (`feat/sprint2-catalog-learning-api`):
-  - `packages/core/src/api/catalog.ts` + `learning.ts` (tenant-scoped, soft-delete aware, published-only for students, idempotent enroll, completion flip).
-  - 8 routes: courses (list/create/get/patch/publish/lessons), lessons (create/get), enrollments (list/enroll), progress.
-  - `apps/web/src/lib/api-route.ts` shared envelope; `parseQuery`/`parseBody` surface Zod issues.
-  - Tests: 8 core rules + 20 catalog routes + 11 learning routes (DB-free).
-  - Integration: `packages/core/scripts/verify-sprint2-integration.ts` → 20/20 PASS on real Postgres (evidence below).
+- **SPRINT-002 S2 — Catalog & Learning UI** (`feat/sprint2-catalog-learning-ui`):
+  - `AppShell.tsx` shared RTL header/nav + sign-out; 7 pages: `/`, `/courses`, `/courses/[id]`, `/courses/[id]/lessons/[lessonId]`, `/dashboard`, `/admin/courses`, `/admin/courses/[id]/lessons`.
+  - Student flow: browse published courses → detail (enroll) → lessons with ✓/progress bar → «دیدم» marks progress (completion flip).
+  - Admin: create course, publish, add lessons (type/contentRef).
+  - Dashboard: admin stats + courses table; student progress list.
+  - `learning.listProgress` added; demo seed (published course + 5 lessons, idempotent).
+  - Live smoke passed (login → pages 200; unauthenticated → 307).
 
 ---
 
@@ -94,15 +95,14 @@ Session 024 closed M7 (Vercel + Railway target). Sessions after M7 (024b) added 
 
 - ✅ **Catalog plugin API** — courses + lessons CRUD/publish routes shipped (S1)
 - ✅ **Learning plugin API** — enroll + progress routes shipped (S1)
-- **Catalog UI** — course cards, lesson list pages (next slice)
-- **Dashboard** — real dashboard UI with metrics/status cards
+- ✅ **Catalog UI** — course cards, course/lesson pages, «دیدم» progress flow (S2)
+- ✅ **Dashboard** — role-aware dashboard with metrics/status cards (S2)
 - **Credentials plugin** — certificate issuance, verification
 - **PWA / offline** — ADR-0016 YES; Learning bounded context + service-worker/offline infra
 - **Independent follow-ups (no founder decision required):**
-  - HSTS header behind TLS (M4.2 §4.3)
-  - CSP nonces — per-request infra to remove `'unsafe-inline'` from `style-src`
-  - `security.txt` real `Contact` address
-  - `osv-scanner` / GitHub Dependabot substitute for retired `pnpm audit`
+  - ✅ `security.txt` real contact — pending S3
+  - CSP nonces — per-request infra to remove `'unsafe-inline'` from `style-src` (S3)
+  - GitHub Dependabot substitute for retired `pnpm audit` (S3)
   - Vercel org SSO blocks external smoke curls — add a custom domain when public access is desired
 
 ---

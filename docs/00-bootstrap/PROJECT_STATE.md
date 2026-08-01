@@ -2,13 +2,13 @@
 
 > **Current snapshot of the project.** This is the *first* file to read after `DEVELOPMENT_GUIDE.md`.
 
-> Last updated: 2026-08-01 (v1.15 — SPRINT-002 S1 shipped: Catalog + Learning API; production deploy unblocked)
+> Last updated: 2026-08-01 (v1.16 — SPRINT-002 S1+S2 shipped: Catalog & Learning API + full RTL UI + demo seed)
 
 ---
 
 ## One-line status
 
-**SPRINT-002 Feature Sprint — S1 shipped (Catalog + Learning API).** Production Foundation Sprint M1–M7 closed; v1 deploys to Vercel (serverless Next.js, Root Directory `apps/web`) + Railway Postgres. The Catalog and Learning bounded contexts now expose a tested API: courses/lessons (create, list, get, patch, publish) and enrollments/progress (idempotent enroll, per-lesson progress with course-completion flip) — tenant-scoped, students see published only, admins get a management view. 39 new unit tests + 20/20 real-Postgres integration checks. `pnpm verify` green. Production deployment is `Ready` (project sits behind Vercel org SSO; local Docker lane remains the endpoint-verification path). Next: catalog UI (course cards / lesson list) or Dashboard slice.
+**SPRINT-002 Feature Sprint — S1+S2 shipped.** Production Foundation Sprint M1–M7 closed; v1 deploys to Vercel (serverless Next.js, Root Directory `apps/web`) + Railway Postgres. The Catalog and Learning bounded contexts are now fully usable: tested APIs (courses/lessons CRUD + publish, idempotent enroll, per-lesson progress with course-completion flip) AND a complete RTL Persian UI — student catalog → course detail → lessons with «دیدم» progress marking, admin course/lesson management, role-aware dashboard, and an idempotent demo seed (published course + 5 lessons). `pnpm verify` green (101 unit tests + 22/22 integration + build), live smoke verified against local Postgres. Production deployment `Ready` (behind Vercel org SSO — local Docker lane remains the endpoint-verification path). Next: security follow-ups (security.txt contact, CSP nonces, Dependabot), Credentials plugin, PWA.
 
 ---
 

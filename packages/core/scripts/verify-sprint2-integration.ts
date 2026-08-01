@@ -123,6 +123,11 @@ async function main(): Promise<void> {
   T("last lesson completes enrollment", p2?.enrollment.status === "completed", p2?.enrollment.status);
   T("completion stamps completedAt", p2?.enrollment.completedAt !== null);
 
+  // Progress listing for UI.
+  const progressRows = await learning.listProgress(tenant.id, enrollment!.id);
+  T("listProgress returns both rows", progressRows.length === 2, String(progressRows.length));
+  T("listProgress marks lesson2 completed", progressRows.some((r) => r.lessonId === lesson2.id && r.status === "completed"));
+
   const own = await learning.listEnrollments(tenant.id, { userId: student.id });
   T("listEnrollments(userId) returns own", own.some((e) => e.id === enrollment?.id));
 
