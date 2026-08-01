@@ -1,0 +1,48 @@
+# GitHub Dependabot — automated dependency update checks.
+# Replaces the retired `pnpm audit` (removed from pnpm v8+); the existing
+# `security-audit.yml` workflow runs OSV-Scanner on lockfile changes and
+# weekly. Dependabot complements it by opening PRs for outdated deps.
+# See: docs/00-bootstrap/PROJECT_HANDOVER.md "Independent follow-ups".
+
+version: 2
+
+updates:
+  # Root monorepo — pnpm-lock.yaml
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "06:00"
+      timezone: "UTC"
+    open-pull-requests-limit: 10
+    commit-message:
+      prefix: "chore(deps)"
+      include: "scope"
+    labels:
+      - "dependencies"
+      - "automated"
+    # Group minor/patch updates to reduce PR noise; major versions get
+    # individual PRs for review.
+    groups:
+      minor-patch:
+        update-types:
+          - "minor"
+          - "patch"
+
+  # GitHub Actions workflows
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "06:00"
+      timezone: "UTC"
+    open-pull-requests-limit: 5
+    commit-message:
+      prefix: "chore(ci)"
+      include: "scope"
+    labels:
+      - "dependencies"
+      - "github-actions"
+      - "automated"

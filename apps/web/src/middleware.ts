@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { env } from "@/lib/env";
 
-export async function middleware(request: NextRequest) {
+export async function middleware(request: NextRequest): Promise<NextResponse> {
   const token = await getToken({
     req: request,
     secret: env.AUTH_SECRET,
@@ -22,6 +22,46 @@ export async function middleware(request: NextRequest) {
   const isSecurityTxt =
     request.nextUrl.pathname === "/.well-known/security.txt";
 
+  // --- Per-request CSP nonce (S3 security hardening) ---
+  // Generate a 128-bit nonce using Web Crypto API (Edge Runtime compatible,
+  // unlike Node's `crypto.randomBytes`). We inject it into the CSP style-src
+  // so inline <style> injected by React Server Components (next/font,
+  // Tailwind) loads without a blanket 'unsafe-inline'. script-src stays
+  // 'self' + nonce (no inline scripts beyond what Next controls). CSP3
+  // browsers prefer the nonce and effectively downgrade 'unsafe-inline' to
+  // a no-op for nonce-bearing responses.
+  const nonceBytes = new Uint8Array(16);
+  crypto.getRandomValues(nonceBytes);
+  const nonce = btoa(String.fromCharCode(...nonceBytes));
+  const csp = [
+    "default-src 'self'",
+    "script-src 'self' 'nonce-${nonce}'",
+    "style-src 'self' 'unsafe-inline' 'nonce-${nonce}'",
+    "img-src 'self' data:",
+    "font-src 'self' fonts.gstatic.com",
+    "connect-src 'self'",
+    "frame-ancestors 'none'",
+    "base-uri 'self'",
+    "object-src 'none'",
+    "form-action 'self'",
+  ]
+    .join("; ")
+    .replace(/\$\{nonce\}/g, nonce);
+
+  const securityHeaders: Record<string, string> = {
+    "X-Content-Type-Options": "nosniff",
+    "X-Frame-Options": "DENY",
+    "X-XSS-Protection": "1; mode=block",
+    "Referrer-Policy": "strict-origin-when-cross-origin",
+    "Permissions-Policy": "camera=(), microphone=(), geolocation=()",
+    "Content-Security-Policy": csp,
+    // HSTS — only meaningful over TLS; Vercel serves HTTPS by default.
+    // Safe to set unconditionally now that production is on Vercel (HTTPS).
+    "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+  };
+
+  let response: NextResponse;
+
   if (
     isApiAuthPage ||
     isHealthPage ||
@@ -29,23 +69,27 @@ export async function middleware(request: NextRequest) {
     isMetricsPage ||
     isSecurityTxt
   ) {
-    return NextResponse.next();
-  }
-
-  if (isAuthPage) {
+    response = NextResponse.next();
+  } else if (isAuthPage) {
     if (token) {
-      return NextResponse.redirect(new URL("/", request.url));
+      response = NextResponse.redirect(new URL("/", request.url));
+    } else {
+      response = NextResponse.next();
     }
-    return NextResponse.next();
-  }
-
-  if (!token) {
+  } else if (!token) {
     const loginUrl = new URL("/login", request.url);
     loginUrl.searchParams.set("callbackUrl", request.nextUrl.pathname);
-    return NextResponse.redirect(loginUrl);
+    response = NextResponse.redirect(loginUrl);
+  } else {
+    response = NextResponse.next();
   }
 
-  return NextResponse.next();
+  // Attach CSP + security headers to every middleware-handled response.
+  for (const [key, value] of Object.entries(securityHeaders)) {
+    response.headers.set(key, value);
+  }
+
+  return response;
 }
 
 export const config = {
