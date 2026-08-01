@@ -3,4 +3,5 @@
  * Drizzle Kit reads from here (`drizzle.config.ts`).
  */
 export * from "./identity";
-// Future: export * from "./catalog.js"; export * from "./learning.js"; ...
+export * from "./catalog";
+export * from "./learning";
