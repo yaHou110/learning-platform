@@ -13,8 +13,8 @@ export const dynamic = "force-static";
  */
 export function GET(): NextResponse {
   const body = [
-    "Contact: mailto:security@example.com",
-    "Expires: 2027-07-15T00:00:00.000Z",
+    "Contact: mailto:dani.rassell@gmail.com",
+    "Expires: 2027-08-01T00:00:00.000Z",
     "Preferred-Languages: fa, en",
     "Canonical: /.well-known/security.txt",
   ].join("\n");
