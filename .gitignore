@@ -32,3 +32,5 @@ packages/**/src/**/*.d.ts.map
 # never commit (throwaway dev certs; real secrets live in gitignored root .env).
 .tls-local/
 .secrets-generated.env
+.vercel
+.env*

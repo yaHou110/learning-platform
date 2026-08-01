@@ -25,6 +25,20 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Guard — reject masked secrets
+        run: |
+          if [[ "$DATABASE_URL" == *"***"* ]]; then
+            echo "::error::DATABASE_URL contains masked value (***). The secret is likely a placeholder, not a real connection string."
+            echo "::error::Update the GitHub secret with the real DATABASE_URL value."
+            exit 1
+          fi
+          if [ ${#DATABASE_URL} -lt 40 ]; then
+            echo "::error::DATABASE_URL is too short (${#DATABASE_URL} chars). Expected a full postgres://... connection string."
+            exit 1
+          fi
+          echo "DATABASE_URL length: ${#DATABASE_URL} chars"
+          echo "DATABASE_URL starts with: ${DATABASE_URL:0:20}..."
+
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
         with:
