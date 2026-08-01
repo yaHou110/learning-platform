@@ -217,6 +217,23 @@ export const learning = {
     return { progress, enrollment };
   },
 
+  /** All progress rows for one enrollment (for course progress UI). */
+  async listProgress(
+    tenantId: string,
+    enrollmentId: string
+  ): Promise<LessonProgress[]> {
+    const db = getDb();
+    return db
+      .select()
+      .from(schema.lessonProgress)
+      .where(
+        and(
+          eq(schema.lessonProgress.tenantId, tenantId),
+          eq(schema.lessonProgress.enrollmentId, enrollmentId)
+        )
+      );
+  },
+
   async countLessons(tenantId: string, courseId: string): Promise<number> {
     const db = getDb();
     const [row] = await db
