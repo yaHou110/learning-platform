@@ -21,8 +21,10 @@ function buildPoolOptions(): pg.PoolConfig {
   const raw =
     process.env.DATABASE_URL ?? "postgres://learning_platform:***@localhost:5432/learning_platform";
 
-  // Railway public proxy is plain TCP — pg must NOT attempt TLS.
-  // Strip sslmode entirely; pass ssl: undefined (no TLS).
+  // Railway public proxy (nozomi.proxy.rlwy.net:18242) supports TLS with
+  // self-signed / Railway-issued certs. Strip sslmode from the URL (pg v8
+  // maps it to verify-full which fails on certs outside system trust store)
+  // and pass ssl: { rejectUnauthorized: false } explicitly.
   let connectionString = raw;
   try {
     const u = new URL(raw);
@@ -36,8 +38,8 @@ function buildPoolOptions(): pg.PoolConfig {
 
   return {
     connectionString,
-    connectionTimeoutMillis: 15_000,
-    // ssl: undefined → plain TCP (Railway proxy terminates TLS at transport layer)
+    connectionTimeoutMillis: 30_000,
+    ssl: { rejectUnauthorized: false },
   };
 }
 
