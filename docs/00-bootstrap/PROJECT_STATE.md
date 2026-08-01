@@ -2,13 +2,13 @@
 
 > **Current snapshot of the project.** This is the *first* file to read after `DEVELOPMENT_GUIDE.md`.
 
-> Last updated: 2026-07-23 (v1.14 — M7 gate lifted: Vercel + Railway is the v1 deployment target; ADR-0018 supersedes ADR-0007; feature gate open)
+> Last updated: 2026-08-01 (v1.15 — SPRINT-002 S1 shipped: Catalog + Learning API; production deploy unblocked)
 
 ---
 
 ## One-line status
 
-**Production Foundation Sprint — M1–M6 closed (M1 ✅, M2 ✅, M3 ✅, M4.0 ✅, M4.1 ✅, M4.2 ✅, M4.3 ✅, M5 ✅, M6 ✅, **M7 ✅ — Vercel + Railway target live**).** M5 added structured JSON logging (pino, request-scoped + redaction), Prometheus-format metrics (`http_requests_total`, `http_request_duration_seconds`, `process_uptime_seconds`), error capture with sanitized stacks + `x-request-id` correlation, deep `/api/health` (`db`+`auth`+`storage`), shallow `/api/ready` (config + maintenance), and bearer-token-gated `/api/metrics` endpoint. `/api/users` wired as the first consumer. **M7 gate lifted: v1 deploys to Vercel (serverless Next.js) + Railway Postgres (managed)**. Docker Compose prod stack (ADR-0017) stays as the local full-stack verification lane on the founder's Docker Desktop (Windows). Feature development (Catalog / Learning / Dashboard / Credentials / PWA) is unblocked.
+**SPRINT-002 Feature Sprint — S1 shipped (Catalog + Learning API).** Production Foundation Sprint M1–M7 closed; v1 deploys to Vercel (serverless Next.js, Root Directory `apps/web`) + Railway Postgres. The Catalog and Learning bounded contexts now expose a tested API: courses/lessons (create, list, get, patch, publish) and enrollments/progress (idempotent enroll, per-lesson progress with course-completion flip) — tenant-scoped, students see published only, admins get a management view. 39 new unit tests + 20/20 real-Postgres integration checks. `pnpm verify` green. Production deployment is `Ready` (project sits behind Vercel org SSO; local Docker lane remains the endpoint-verification path). Next: catalog UI (course cards / lesson list) or Dashboard slice.
 
 ---
 

@@ -22,6 +22,9 @@ export default defineConfig({
       { find: "@/lib/env", replacement: path.join(webSrc, "lib/env.ts") },
       { find: "@/lib/authz", replacement: path.join(webSrc, "lib/authz.ts") },
       { find: "@/lib/plugins", replacement: path.join(webSrc, "lib/plugins.ts") },
+      { find: "@/lib/validation", replacement: path.join(webSrc, "lib/validation.ts") },
+      { find: "@/lib/rate-limit", replacement: path.join(webSrc, "lib/rate-limit.ts") },
+      { find: "@/lib/api-route", replacement: path.join(webSrc, "lib/api-route.ts") },
     ],
   },
 });

@@ -29,6 +29,7 @@ export const manifest: PluginManifest = {
     { method: "GET", path: "/api/courses/:id" },
     { method: "PATCH", path: "/api/courses/:id" },
     { method: "POST", path: "/api/courses/:id/publish" },
+    { method: "GET", path: "/api/courses/:id/lessons" },
     { method: "GET", path: "/api/lessons/:id" },
     { method: "POST", path: "/api/lessons" },
   ],

@@ -25,10 +25,17 @@ function buildPoolOptions(): pg.PoolConfig {
   // self-signed / Railway-issued certs. Strip sslmode from the URL (pg v8
   // maps it to verify-full which fails on certs outside system trust store)
   // and pass ssl: { rejectUnauthorized: false } explicitly.
+  // Local dev Postgres (docker-compose.yml, no TLS): URL must carry
+  // `?sslmode=disable`, which keeps plain TCP (ssl: undefined).
   let connectionString = raw;
+  let ssl: pg.PoolConfig["ssl"] = { rejectUnauthorized: false };
   try {
     const u = new URL(raw);
-    if (u.searchParams.get("sslmode")) {
+    const mode = u.searchParams.get("sslmode");
+    if (mode === "disable") {
+      ssl = undefined;
+    }
+    if (mode) {
       u.searchParams.delete("sslmode");
       connectionString = u.toString();
     }
@@ -39,7 +46,7 @@ function buildPoolOptions(): pg.PoolConfig {
   return {
     connectionString,
     connectionTimeoutMillis: 30_000,
-    ssl: { rejectUnauthorized: false },
+    ssl,
   };
 }
 
