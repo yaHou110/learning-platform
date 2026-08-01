@@ -16,6 +16,8 @@ import { getDb } from "../db/client.js";
 import * as schema from "../db/schema/index.js";
 import { hashPassword, type AuthedUser } from "../auth/credentials.js";
 import type { Role } from "../db/schema/index.js";
+export { catalog, COURSE_STATUSES, CONTENT_TYPES } from "./catalog.js";
+export { learning, ENROLLMENT_STATUSES, PROGRESS_STATUSES } from "./learning.js";
 
 /**
  * Public projection of a user. NEVER includes `passwordHash`. The DB-level

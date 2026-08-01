@@ -21,7 +21,12 @@ import type { NextRequest } from "next/server";
 import type { ZodType } from "zod";
 
 export type ParseOk<T> = { ok: true; data: T };
-export type ParseErr = { ok: false; response: NextResponse };
+export type ParseErr = {
+  ok: false;
+  response: NextResponse;
+  /** Zod issues from the failed parse — surfaced so routes can reuse them. */
+  issues: unknown;
+};
 export type ParseResult<T> = ParseOk<T> | ParseErr;
 
 /** Parse + validate `request.nextUrl.searchParams` against a Zod schema. */
@@ -38,10 +43,12 @@ export function parseQuery<T>(
   if (parsed.success) {
     return { ok: true, data: parsed.data };
   }
+  const issues = parsed.error.issues;
   return {
     ok: false,
+    issues,
     response: NextResponse.json(
-      { error: "Invalid query parameters", issues: parsed.error.issues },
+      { error: "Invalid query parameters", issues },
       { status: 400 }
     ),
   };
@@ -58,6 +65,7 @@ export async function parseBody<T>(
   } catch {
     return {
       ok: false,
+      issues: [],
       response: NextResponse.json({ error: "Invalid JSON body" }, { status: 400 }),
     };
   }
@@ -65,10 +73,12 @@ export async function parseBody<T>(
   if (parsed.success) {
     return { ok: true, data: parsed.data };
   }
+  const issues = parsed.error.issues;
   return {
     ok: false,
+    issues,
     response: NextResponse.json(
-      { error: "Invalid request body", issues: parsed.error.issues },
+      { error: "Invalid request body", issues },
       { status: 400 }
     ),
   };

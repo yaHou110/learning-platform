@@ -1,0 +1,26 @@
+
+> @learning-platform/core@0.1.0 verify:sprint2 D:\code\learning-platform\packages\core
+> tsx --tsconfig tsconfig.scripts.json scripts/verify-sprint2-integration.ts
+
+PASS  createCourse returns draft — draft
+PASS  createLesson auto-orders — orderIndex=0,1
+PASS  draft hidden from student
+PASS  publishCourse flips to published — published
+PASS  published visible to student
+PASS  admin lists draft+published
+PASS  student lists published only
+PASS  listLessons returns both in order
+PASS  enroll returns active — active
+PASS  re-enroll is idempotent
+PASS  progress row carries position — 120
+PASS  started keeps enrollment active — active
+PASS  first lesson completed keeps enrollment active — active
+PASS  last lesson completes enrollment — completed
+PASS  completion stamps completedAt
+PASS  listEnrollments(userId) returns own
+PASS  admin enrolls in draft (allowNonPublished) — active
+PASS  student cannot enroll in draft
+PASS  cross-tenant isolation holds
+PASS  cross-tenant lesson hidden
+
+INTEGRATION PASSED

@@ -11,21 +11,27 @@
 
 | Field | Value |
 | --- | --- |
-| Session # | 024 — M7 closed: Vercel + Railway cloud target live, feature gate lifted |
-| Date opened | 2026-07-23 |
+| Session # | 025 — SPRINT-002 S1: Catalog + Learning API shipped |
+| Date opened | 2026-08-01 |
 | Driver | contributor |
-| Sprint | SPRINT-001 — Production Foundation (M1–M7 all closed) |
-| Goal | **M1–M7 all closed.** M6 Deployment/CI-CD merged to main (PR #6). M7 pre-provision prep merged (PR #7): ADR-0017 containerized DB migrations, docker-compose.prod.yml `image:` fix, DEPLOYMENT_GUIDE.md heredoc fix, local TLS nginx harness. **M7 gate lifted 2026-07-23:** founder cancelled VPS plan; Vercel + Railway Postgres is the v1 cloud deployment target per ADR-0018 (supersedes ADR-0007). Docker Compose prod stack stays as the local full-stack verification lane (ADR-0017). Feature work (Catalog, Learning, Dashboard, Credentials, PWA) unblocked. |
-| Status | 🟢 **M7 gate lifted.** Vercel project provisioned, Railway Postgres running. Founder to set 4 env vars on Vercel (DATABASE_URL, AUTH_SECRET, AUTH_TRUST_HOST, NEXTAUTH_URL) → redeploy → `/api/health` smoke check. |
+| Sprint | SPRINT-002 — Feature Sprint (first slice) |
+| Goal | **First feature slice on the M7-unblocked surface:** Catalog + Learning bounded-context APIs (courses, lessons, enrollments, progress) with authz, rate limits, observability envelope, unit tests, and real-Postgres integration evidence. Also unblocked production deploy (Vercel Root Directory + dead cron removal) and merged the governance docs PR #12. |
+| Status | 🟢 **S1 merged.** 39 new unit tests + 20/20 integration checks green. `pnpm verify` green. Next: catalog UI (course cards/lesson list) or Dashboard slice. |
 
 ---
 
 ## Context
 
-Sessions 013–017 closed the M4 sprint (dependency upgrades, authorization gate, security headers, security contact point, residual advisories, M2 real-Postgres smoke test). Session 018 added M5 Observability. Session 019–022 handled governance (precedence + Product Vision + AI-instruction policy, ADR-0014 reusable-platform vision + English artifacts rule, ADR-0007/0008 for Q5/Q6). **Session 023 (2026-07-22) completed M6 Deployment/CI-CD (merged via PR #6) and M7 pre-provision prep (merged via PR #7):**
+Session 024 closed M7 (Vercel + Railway target). Sessions after M7 (024b) added the schema foundation (PR #11, 5 tables) and the security audit fixes (PR #9). **Session 025 delivered SPRINT-002 S1:**
 
-- **M6 — Deployment / CI-CD (merged PR #6):** Docker Compose prod (app + Postgres 16 + MinIO), host Nginx (TLS/HSTS/rate-limit/metrics gate), systemd unit, backup/restore scripts, DEPLOYMENT_GUIDE.md, deploy.yml CI/CD (build → GHCR → SSH → smoke → rollback). Locally verified: image builds, all three services healthy, endpoints `/api/health` 200 / `/api/ready` 200 / `/api/metrics` 401→200(bearer), backup→destroy→restore round-trip recovers Postgres + MinIO byte-identical.
-- **M7 pre-provision prep (merged PR #7):** ADR-0017 containerized DB migrations (one-shot `migrate` service in compose, reuses app builder stage with tsx+drizzle-orm+migrations, runs against prod DATABASE_URL before app boots). Fixed deploy defects: `docker-compose.prod.yml` `app` service gains `image:` field (fixes CI `pull`), `DEPLOYMENT_GUIDE.md` §3 heredoc fixed (real secrets not literal `$(...)`), new `env.template` (keys-only). Local TLS nginx harness validates HSTS/headers/metrics gate. Observed gap before fix: fresh stack → `/api/health` degraded (`db:false, auth:false`) → deploy.yml smoke grep would roll back good release.
+- **PR #12 merged** — `AGENTS.md` + `ENGINEERING_STANDARDS.md` governance docs (fix: PR body DoD checkbox needed backtick form `` `pnpm verify` ``).
+- **Vercel production deploy unblocked** — project Root Directory set to `apps/web` via project API (framework detection previously failed: "No Next.js version detected"); dead `crons` block (nonexistent `/api/cron/daily-maintenance`) removed from `vercel.json` on main. Production deployment now `Ready`. Note: the project sits behind Vercel org SSO (`all_except_custom_domains`), so external smoke curls hit the SSO redirect — the local Docker lane (ADR-0018) is the endpoint-verification path until a custom domain is added.
+- **SPRINT-002 S1 — Catalog & Learning API** (`feat/sprint2-catalog-learning-api`):
+  - `packages/core/src/api/catalog.ts` + `learning.ts` (tenant-scoped, soft-delete aware, published-only for students, idempotent enroll, completion flip).
+  - 8 routes: courses (list/create/get/patch/publish/lessons), lessons (create/get), enrollments (list/enroll), progress.
+  - `apps/web/src/lib/api-route.ts` shared envelope; `parseQuery`/`parseBody` surface Zod issues.
+  - Tests: 8 core rules + 20 catalog routes + 11 learning routes (DB-free).
+  - Integration: `packages/core/scripts/verify-sprint2-integration.ts` → 20/20 PASS on real Postgres (evidence below).
 
 ---
 
@@ -86,8 +92,9 @@ Sessions 013–017 closed the M4 sprint (dependency upgrades, authorization gate
 
 **Agent/contributor work (now unblocked — SPRINT-002 / Feature Sprint):**
 
-- **Catalog plugin** — course cards, lesson list, course API routes (parked since Session 008)
-- **Learning plugin** — enrollment, progress tracking
+- ✅ **Catalog plugin API** — courses + lessons CRUD/publish routes shipped (S1)
+- ✅ **Learning plugin API** — enroll + progress routes shipped (S1)
+- **Catalog UI** — course cards, lesson list pages (next slice)
 - **Dashboard** — real dashboard UI with metrics/status cards
 - **Credentials plugin** — certificate issuance, verification
 - **PWA / offline** — ADR-0016 YES; Learning bounded context + service-worker/offline infra
@@ -96,6 +103,7 @@ Sessions 013–017 closed the M4 sprint (dependency upgrades, authorization gate
   - CSP nonces — per-request infra to remove `'unsafe-inline'` from `style-src`
   - `security.txt` real `Contact` address
   - `osv-scanner` / GitHub Dependabot substitute for retired `pnpm audit`
+  - Vercel org SSO blocks external smoke curls — add a custom domain when public access is desired
 
 ---
 
