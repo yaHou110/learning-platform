@@ -28,7 +28,7 @@ function buildPoolOptions(): pg.PoolConfig {
   // Local dev Postgres (docker-compose.yml, no TLS): URL must carry
   // `?sslmode=disable`, which keeps plain TCP (ssl: undefined).
   let connectionString = raw;
-  let ssl: pg.PoolConfig["ssl"] = { rejectUnauthorized: false };
+  let ssl: pg.PoolConfig["ssl"] = process.env.NODE_ENV === 'production' ? false : { rejectUnauthorized: false };
   try {
     const u = new URL(raw);
     const mode = u.searchParams.get("sslmode");
