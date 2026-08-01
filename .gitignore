@@ -34,14 +34,3 @@ packages/**/src/**/*.d.ts.map
 .secrets-generated.env
 .vercel
 .env*
-
-# --- TEMP: governance docs staged for separate review (DB-layer PR) ---
-# AGENTS.md and ENGINEERING_STANDARDS.md are untracked governance/process
-# documents that pre-date the current work. They are intentionally being
-# split into a SEPARATE PR (review lifecycle independent of the DB-layer
-# feature PR) per the agreed two-PR plan.
-# TODO (must-do, do not forget): after the DB-layer PR is merged, REMOVE
-# these two lines and commit AGENTS.md + ENGINEERING_STANDARDS.md in their
-# own PR. If left in place, these files will never reach the repo.
-AGENTS.md
-ENGINEERING_STANDARDS.md
