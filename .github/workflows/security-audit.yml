@@ -58,7 +58,7 @@ jobs:
         # whole job even though the OSV scan itself succeeded. The scan output is
         # still printed to the run log; making the upload non-fatal keeps the
         # authoritative result (the scan) as the job's pass/fail signal.
-        uses: github/codeql-action/upload-sarif@v3
+        uses: github/codeql-action/upload-sarif@v4.37.3
         if: always()
         continue-on-error: true
         with:
