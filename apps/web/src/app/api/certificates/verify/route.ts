@@ -1,7 +1,8 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { eq } from 'drizzle-orm';
-import { getDb } from '@learning-platform/core';
-import { certificates } from '@learning-platform/core/db/schema';
+import type { NextRequest } from 'next/server';
+import { NextResponse } from 'next/server';
+import { credentials } from '@learning-platform/core/api';
+
+export const dynamic = 'force-dynamic';
 
 export async function GET(request: NextRequest): Promise<NextResponse> {
   try {
@@ -15,18 +16,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
       );
     }
 
-    const db = getDb();
-    const [cert] = await db
-      .select()
-      .from(certificates)
-      .where(eq(certificates.certificateHash, hash));
-
-    if (!cert) {
-      return NextResponse.json(
-        { error: 'Certificate not found' },
-        { status: 404 }
-      );
-    }
+    const cert = await credentials.verifyCertificate(hash);
 
     const now = new Date();
     if (cert.status !== 'active') {
@@ -43,28 +33,23 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
       );
     }
 
-    const {
-      id,
-      tenantId,
-      userId,
-      courseId,
-      enrollmentId,
-      issueDate,
-      expirationDate,
-      status,
-    } = cert;
-
     return NextResponse.json({
-      id,
-      tenantId,
-      userId,
-      courseId,
-      enrollmentId,
-      issueDate,
-      expirationDate,
-      status,
+      id: cert.id,
+      tenantId: cert.tenantId,
+      userId: cert.userId,
+      courseId: cert.courseId,
+      enrollmentId: cert.enrollmentId,
+      issueDate: cert.issueDate,
+      expirationDate: cert.expirationDate,
+      status: cert.status,
     });
   } catch (error) {
+    if (error instanceof Error && error.message === 'CERTIFICATE_NOT_FOUND') {
+      return NextResponse.json(
+        { error: 'Certificate not found' },
+        { status: 404 }
+      );
+    }
     console.error('Error verifying certificate:', error);
     return NextResponse.json(
       { error: 'Internal server error' },

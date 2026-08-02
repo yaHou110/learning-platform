@@ -18,29 +18,33 @@ import pg from "pg";
 loadEnvOnce();
 
 function buildPoolOptions(): pg.PoolConfig {
-  const raw =
-    process.env.DATABASE_URL ?? "postgres://learning_platform:***@localhost:5432/learning_platform";
+  const raw = process.env.DATABASE_URL ?? "postgres://learning_platform:***@localhost:5432/learning_platform";
 
-  // Railway public proxy (nozomi.proxy.rlwy.net:18242) supports TLS with
-  // self-signed / Railway-issued certs. Strip sslmode from the URL (pg v8
-  // maps it to verify-full which fails on certs outside system trust store)
-  // and pass ssl: { rejectUnauthorized: false } explicitly.
   // Local dev Postgres (docker-compose.yml, no TLS): URL must carry
   // `?sslmode=disable`, which keeps plain TCP (ssl: undefined).
+  // Railway public proxy (tokaido.proxy.rlwy.net:45305) is plain TCP
+  // but pg v8 maps sslmode=require to verify-full — we strip it.
   let connectionString = raw;
-  let ssl: pg.PoolConfig["ssl"] = process.env.NODE_ENV === 'production' ? false : { rejectUnauthorized: false };
+  let ssl: pg.PoolConfig["ssl"] = undefined;
+
   try {
     const u = new URL(raw);
     const mode = u.searchParams.get("sslmode");
     if (mode === "disable") {
+      // Explicitly plain TCP — no TLS at all.
       ssl = undefined;
+    } else if (mode === "require" || mode === "verify-full" || mode === "verify-ca") {
+      // Railway proxy uses self-signed certs. Reject unauthorized = false.
+      ssl = { rejectUnauthorized: false };
     }
+    // If sslmode is absent (raw URL has no param), leave ssl undefined
+    // (pg will use its default, which is no TLS for localhost).
     if (mode) {
       u.searchParams.delete("sslmode");
       connectionString = u.toString();
     }
   } catch {
-    // Invalid URL — fall through.
+    // Invalid URL — fall through to defaults.
   }
 
   return {

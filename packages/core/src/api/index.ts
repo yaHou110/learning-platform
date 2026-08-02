@@ -19,6 +19,8 @@ import type { Role } from "../db/schema/index.js";
 export { catalog, COURSE_STATUSES, CONTENT_TYPES } from "./catalog.js";
 export type { Course, Lesson } from "./catalog.js";
 export { learning, ENROLLMENT_STATUSES, PROGRESS_STATUSES } from "./learning.js";
+export { credentials } from "./credentials.js";
+export type { Certificate } from "./credentials.js";
 
 /**
  * Public projection of a user. NEVER includes `passwordHash`. The DB-level
