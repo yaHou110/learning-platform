@@ -1,31 +1,27 @@
 /**
- * `@learning-platform/plugin-credentials` — Credentials bounded context.
+ * @learning-platform/plugin-credentials — Credentials Plugin (certificate issuance & verification).
  *
- * Issues and verifies completion certificates. Consumes `course.completed`.
+ * This plugin owns the *registration surface* (manifest + permissions + API routes).
+ * The actual `certificates` table and the Drizzle client live in `@learning-platform/core`.
+ *
+ * The plugin MUST NOT import `drizzle-orm` or `pg` — the ESLint rule in `.eslintrc.cjs` enforces this.
  */
 import type { PluginManifest } from "@learning-platform/core/plugins";
 
 export const manifest: PluginManifest = {
   name: "@learning-platform/plugin-credentials",
   version: "0.1.0",
-  description: "Credentials: issuing and verifying completion certificates.",
+  description: "Credentials: certificate issuance & verification",
   domainEvents: [
-    { name: "course.completed", direction: "consume" },
-    { name: "certificate.issued", direction: "emit" },
-    { name: "certificate.verified", direction: "emit" },
+    { name: "course.completed", direction: "consume" }
   ],
-  permissions: [
-    { key: "certificate.read", description: "View own issued certificates." },
-    { key: "certificate.verify", description: "Public verification endpoint." },
-  ],
+  permissions: [],
   apiRoutes: [
-    { method: "GET", path: "/api/certificates" },
-    { method: "GET", path: "/api/certificates/verify/:code" },
+    { method: "POST", path: "/api/certificates" },
+    { method: "GET", path: "/api/certificates/verify" }
   ],
-  metadataSchemas: [
-    // certificate template fields — defined by this plugin, validated at write time.
-    // (A real Zod schema is wired in when the table lands.)
-  ],
+  metadataSchemas: [],
+  /** DDL is owned by core. v1 plugins must declare `migrations: []`. */
   migrations: [],
 };
 

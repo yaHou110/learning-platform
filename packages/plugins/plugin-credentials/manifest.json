@@ -1,0 +1,19 @@
+{
+  "name": "@learning-platform/plugin-credentials",
+  "description": "Credentials Plugin — certificate issuance & verification",
+  "domainEvents": [
+    { "name": "course.completed", "direction": "consume" }
+  ],
+  "apiRoutes": [
+    {
+      "path": "/api/certificates",
+      "methods": ["POST"],
+      "description": "Issue a certificate for a completed enrollment"
+    },
+    {
+      "path": "/api/certificates/verify",
+      "methods": ["GET"],
+      "description": "Verify a certificate by its HMAC signature"
+    }
+  ]
+}
