@@ -5,6 +5,7 @@ import { redirect, notFound } from "next/navigation";
 import { catalog, CONTENT_TYPES } from "@learning-platform/core/api";
 import AppShell from "@/components/AppShell";
 import type { Role } from "@learning-platform/core/db/schema";
+import type { JSX } from "react";
 
 export const dynamic = "force-dynamic";
 
