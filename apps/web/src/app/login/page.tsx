@@ -2,11 +2,7 @@ import LoginForm from './LoginForm';
 
 export const dynamic = 'force-dynamic';
 
-export default function LoginPage({
-  searchParams,
-}: {
-  searchParams: Promise<{ error?: string; callbackUrl?: string }>;
-}): Promise<JSX.Element> {
+export default function LoginPage(): JSX.Element {
   return (
     <main dir="rtl" lang="fa" className="mx-auto max-w-md p-8">
       <h1 className="mb-6 text-2xl font-bold">ورود</h1>
