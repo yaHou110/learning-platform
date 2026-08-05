@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { signIn } from '@/auth';
+import { signIn } from 'next-auth/react';
 
 export default function LoginForm() {
   const [error, setError] = useState<string | null>(null);
