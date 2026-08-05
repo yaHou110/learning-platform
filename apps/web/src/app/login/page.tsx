@@ -2,6 +2,7 @@ import { signIn } from "@/auth";
 import { headers } from "next/headers";
 import { safeCallbackUrl } from "@/lib/redirect";
 import { env } from "@/lib/env";
+import { redirect } from "next/navigation";
 
 export const dynamic = "force-dynamic";
 
@@ -24,17 +25,23 @@ export default async function LoginPage({
   const callbackUrl = safeCallbackUrl(sp?.callbackUrl, origin);
 
   async function action(formData: FormData): Promise<void> {
-    "use server";
-    const tenantSlug = String(formData.get("tenantSlug") ?? "");
-    const email = String(formData.get("email") ?? "");
-    const password = String(formData.get("password") ?? "");
-    await signIn("credentials", {
-      tenantSlug,
-      email,
-      password,
-      redirectTo: callbackUrl,
-    });
-  }
+      "use server";
+      const tenantSlug = String(formData.get("tenantSlug") ?? "");
+      const email = String(formData.get("email") ?? "");
+      const password = String(formData.get("password") ?? "");
+      const result = await signIn("credentials", {
+        tenantSlug,
+        email,
+        password,
+        redirect: false,
+      });
+      if (result?.error) {
+        // Redirect back to login with error
+        redirect(`${origin}/login?error=CredentialsSignin`);
+      }
+      // Successful login - redirect to callbackUrl or dashboard
+      redirect(callbackUrl || "/dashboard");
+    }
 
   return (
     <main dir="rtl" lang="fa" className="mx-auto max-w-md p-8">
