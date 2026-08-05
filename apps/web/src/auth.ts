@@ -56,7 +56,15 @@ const authConfig: NextAuthConfig = {
     }),
   ],
   callbacks: {
-    async jwt({ token, user }) {
+      async redirect({ url, baseUrl }) {
+        // Allow same-origin relative URLs
+        if (url.startsWith("/")) return `${baseUrl}${url}`;
+        // Allow same-origin absolute URLs
+        if (url.startsWith(baseUrl)) return url;
+        // Default to dashboard
+        return `${baseUrl}/dashboard`;
+      },
+      async jwt({ token, user }) {
       if (user) {
         const u = user as { id: string; role: Role; tenantId: string };
         token.id = u.id;
