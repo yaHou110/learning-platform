@@ -15,6 +15,13 @@
       "when": 1785572496539,
       "tag": "0001_solid_victor_mancha",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1785900225138,
+      "tag": "0002_rich_gabe_jones",
+      "breakpoints": true
     }
   ]
 }
