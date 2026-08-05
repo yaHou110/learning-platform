@@ -30,34 +30,36 @@ export async function middleware(request: NextRequest): Promise<NextResponse> {
     isSecurityTxt ||
     isLoginApiPage;
 
-  // --- Per-request CSP nonce (S3 security hardening) ---
-  const nonceBytes = new Uint8Array(16);
-  crypto.getRandomValues(nonceBytes);
-  const nonce = btoa(String.fromCharCode(...nonceBytes));
-  const csp = [
-    "default-src 'self'",
-    "script-src 'self' 'nonce-${nonce}'",
-    "style-src 'self' 'unsafe-inline' 'nonce-${nonce}'",
-    "img-src 'self' data:",
-    "font-src 'self' fonts.gstatic.com",
-    "connect-src 'self'",
-    "frame-ancestors 'none'",
-    "base-uri 'self'",
-    "object-src 'none'",
-    "form-action 'self'",
-  ]
-    .join("; ")
-    .replace(/\$\{nonce\}/g, nonce);
+  // --- Security headers (S3 hardening) ---
+    // NOTE: We deliberately set CSP WITHOUT a nonce here. Next.js 15 embeds its
+    // own per-SSR inline <script>/<style> (the `self.__next_f` RSC serialization
+    // payload and next/font styles). A middleware-generated nonce does NOT match
+    // the nonce Next baked into the HTML, so a nonce-bearing CSP blocks those
+    // inline scripts → React never hydrates → blank page + login never runs.
+    // Relaxing script-src/style-src to 'unsafe-inline' (with all other directives
+    // strict: default-src 'self', no inline handlers/scripts from arbitrary
+    // origins) is the reliable way to keep the server-rendered app working.
+    const csp = [
+      "default-src 'self'",
+      "script-src 'self' 'unsafe-inline'",
+      "style-src 'self' 'unsafe-inline'",
+      "img-src 'self' data:",
+      "font-src 'self' fonts.gstatic.com",
+      "connect-src 'self'",
+      "frame-ancestors 'none'",
+      "base-uri 'self'",
+      "object-src 'none'",
+    ].join("; ");
 
-  const securityHeaders: Record<string, string> = {
-    "X-Content-Type-Options": "nosniff",
-    "X-Frame-Options": "DENY",
-    "X-XSS-Protection": "1; mode=block",
-    "Referrer-Policy": "strict-origin-when-cross-origin",
-    "Permissions-Policy": "camera=(), microphone=(), geolocation=()",
-    "Content-Security-Policy": csp,
-    "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
-  };
+    const securityHeaders: Record<string, string> = {
+      "X-Content-Type-Options": "nosniff",
+      "X-Frame-Options": "DENY",
+      "X-XSS-Protection": "1; mode=block",
+      "Referrer-Policy": "strict-origin-when-cross-origin",
+      "Permissions-Policy": "camera=(), microphone=(), geolocation=()",
+      "Content-Security-Policy": csp,
+      "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+    };
 
   let response: NextResponse;
 
