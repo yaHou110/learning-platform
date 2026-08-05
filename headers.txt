@@ -1,8 +1,8 @@
 HTTP/1.1 302 Found
 Cache-Control: public, max-age=0, must-revalidate
 Content-Length: 0
-Content-Security-Policy: default-src 'self'; script-src 'self' 'nonce-YahUdo29LhL8I3YGnr76SQ=='; style-src 'self' 'unsafe-inline' 'nonce-YahUdo29LhL8I3YGnr76SQ=='; img-src 'self' data:; font-src 'self' fonts.gstatic.com; connect-src 'self'; frame-ancestors 'none'; base-uri 'self'; object-src 'none'; form-action 'self'
-Date: Wed, 05 Aug 2026 04:31:33 GMT
+Content-Security-Policy: default-src 'self'; script-src 'self' 'nonce-ZJbItggRriyR04C0hmjkxQ=='; style-src 'self' 'unsafe-inline' 'nonce-ZJbItggRriyR04C0hmjkxQ=='; img-src 'self' data:; font-src 'self' fonts.gstatic.com; connect-src 'self'; frame-ancestors 'none'; base-uri 'self'; object-src 'none'; form-action 'self'
+Date: Wed, 05 Aug 2026 04:40:02 GMT
 Location: https://learning-platform-gcgnt9tzi-yahou.vercel.app/login?error=MissingCSRF
 Permissions-Policy: camera=(), microphone=(), geolocation=()
 Referrer-Policy: strict-origin-when-cross-origin
@@ -14,6 +14,6 @@ X-Frame-Options: DENY
 X-Matched-Path: /api/auth/[...nextauth]
 X-Robots-Tag: noindex
 X-Vercel-Cache: MISS
-X-Vercel-Id: fra1::iad1::nw9j8-1785904292782-0a2fa37a0b52
+X-Vercel-Id: fra1::iad1::qdk4r-1785904802291-b29ad7447582
 X-Xss-Protection: 1; mode=block
 
