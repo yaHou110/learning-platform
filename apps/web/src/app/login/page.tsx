@@ -1,6 +1,7 @@
 import { signIn } from "@/auth";
 import { headers } from "next/headers";
 import { safeCallbackUrl } from "@/lib/redirect";
+import { env } from "@/lib/env";
 
 export const dynamic = "force-dynamic";
 
@@ -14,7 +15,9 @@ export default async function LoginPage({
   const hdrs = await headers();
   const proto = hdrs.get("x-forwarded-proto") ?? "https";
   const host = hdrs.get("x-forwarded-host") ?? hdrs.get("host") ?? "";
-  const origin = host ? `${proto}://${host}` : "";
+  // Use NEXTAUTH_URL if available, otherwise fall back to computed origin
+  const nextAuthUrl = env.NEXTAUTH_URL;
+  const origin = nextAuthUrl ?? (host ? `${proto}://${host}` : "");
   // Open-redirect defense (HIGH): see lib/redirect.ts. `signIn`'s redirectTo
   // flows straight into a 302 with no same-origin check, so a crafted
   // callbackUrl is collapsed to "/" unless it resolves to this app's origin.
