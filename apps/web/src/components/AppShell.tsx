@@ -50,7 +50,7 @@ export default function AppShell({
         {/* Logo */}
         <div className="flex items-center gap-3 border-b border-gray-100 px-5 py-5 dark:border-gray-800">
           <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-600 to-emerald-800 text-white shadow-sm">
-            <Icon.GraduationCap className="h-6 w-6" />
+            <Icon.Mosque className="h-6 w-6" />
           </div>
           <div>
             <div className="text-sm font-bold leading-tight text-gray-900 dark:text-gray-100">
@@ -131,7 +131,7 @@ export default function AppShell({
       <div className="sticky top-0 z-30 flex items-center justify-between border-b border-gray-200 bg-white px-4 py-3 dark:border-gray-800 dark:bg-gray-900 lg:hidden">
         <div className="flex items-center gap-2">
           <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-emerald-600 to-emerald-800 text-white">
-            <Icon.GraduationCap className="h-5 w-5" />
+            <Icon.Mosque className="h-5 w-5" />
           </div>
           <span className="text-sm font-bold text-gray-900 dark:text-gray-100">پلتفرم یادگیری حوزوی</span>
         </div>

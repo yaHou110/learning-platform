@@ -264,6 +264,41 @@ export const Icon = {
     );
   },
 
+  /** Mosque-dome emblem — the hawza identity mark (dome + arch + finial). */
+  Mosque({ className }: IconProps) {
+    return (
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        viewBox="0 0 24 24"
+        strokeWidth={1.8}
+        stroke="currentColor"
+        className={base(className)}
+      >
+        {/* Dome */}
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          d="M12 3c-4.2 0-7.5 2.9-8.1 6.8a13 13 0 0016.2 0C19.5 5.9 16.2 3 12 3z"
+        />
+        {/* Finial on top of the dome */}
+        <path strokeLinecap="round" strokeLinejoin="round" d="M12 3V1.8" />
+        {/* Base / walls (top edge meets the dome's base) */}
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          d="M4.5 10.2V20a1 1 0 001 1h13a1 1 0 001-1v-9.8"
+        />
+        {/* Arched entrance */}
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          d="M9.8 21v-3a2.2 2.2 0 014.4 0v3"
+        />
+      </svg>
+    );
+  },
+
   Search({ className }: IconProps) {
     return (
       <svg
