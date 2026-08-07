@@ -14,14 +14,14 @@ export default function LoginForm() {
       return match ? decodeURIComponent(match[1]) : '';
     };
     const token = getCsrfToken();
-    if (token) setCsrfToken(token);
+    setCsrfToken(token);
     // Also listen for changes
     const interval = setInterval(() => {
       const t = getCsrfToken();
-      if (t && t !== csrfToken) setCsrfToken(t);
+      setCsrfToken(t);
     }, 500);
     return () => clearInterval(interval);
-  }, [csrfToken]);
+  }, []);
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -34,9 +34,6 @@ export default function LoginForm() {
       email: String(formData.get('email') ?? ''),
       password: String(formData.get('password') ?? ''),
       redirect: false,
-      // Include csrfToken if needed
-      // next-auth/react will automatically use the cookie, but we also send it as form data?
-      // Some versions expect it as a form field named csrfToken
     });
 
     if (result?.error) {
