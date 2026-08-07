@@ -40,6 +40,8 @@ export async function middleware(request: NextRequest): Promise<NextResponse> {
 
   // Presence check only — never decrypt in Edge.
   const sessionCookie =
+    request.cookies.get("__Secure-next-auth.session-token") ??
+    request.cookies.get("next-auth.session-token") ??
     request.cookies.get("__Secure-authjs.session-token") ??
     request.cookies.get("authjs.session-token");
   const hasSession = Boolean(sessionCookie);
