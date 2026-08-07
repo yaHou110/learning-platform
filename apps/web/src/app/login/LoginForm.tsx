@@ -9,21 +9,12 @@ export default function LoginForm() {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
-  const getCsrfToken = () => {
-    const match = document.cookie.match(/(?:^|; )__Host-authjs\.csrf-token=([^;]*)/);
-    return match ? decodeURIComponent(match[1]) : '';
-  };
-
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setLoading(true);
     setError(null);
 
     const formData = new FormData(e.currentTarget);
-    const csrfToken = getCsrfToken();
-    if (csrfToken) {
-      formData.append('csrfToken', csrfToken);
-    }
 
     const result = await signIn('credentials', {
       tenantSlug: String(formData.get('tenantSlug') ?? ''),
