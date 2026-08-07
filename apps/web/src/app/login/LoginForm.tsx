@@ -17,12 +17,20 @@ export default function LoginForm(): JSX.Element {
 
     const formData = new FormData(e.currentTarget);
 
-    const result = await signIn("credentials", {
-      tenantSlug: String(formData.get("tenantSlug") ?? ""),
-      email: String(formData.get("email") ?? ""),
-      password: String(formData.get("password") ?? ""),
-      redirect: false,
-    });
+    let result;
+    try {
+      result = await signIn("credentials", {
+        tenantSlug: String(formData.get("tenantSlug") ?? ""),
+        email: String(formData.get("email") ?? ""),
+        password: String(formData.get("password") ?? ""),
+        redirect: false,
+      });
+    } catch {
+      // Network/server failure — never leave the button stuck loading.
+      setError("خطای برقراری ارتباط با سرور؛ دوباره تلاش کنید.");
+      setLoading(false);
+      return;
+    }
 
     if (result?.error) {
       setError("نام کاربری یا رمز عبور اشتباه است.");
