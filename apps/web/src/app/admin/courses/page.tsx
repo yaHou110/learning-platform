@@ -56,24 +56,24 @@ export default async function AdminCoursesPage(): Promise<JSX.Element> {
   return (
     <AppShell user={{ name: session.user.name, role }}>
       <h1 className="mb-1 text-2xl font-bold">مدیریت دوره‌ها</h1>
-      <p className="mb-6 text-sm text-gray-600">
+      <p className="mb-6 text-sm text-gray-600 dark:text-gray-400 dark:text-gray-500">
         ساخت دوره، انتشار پیش‌نویس‌ها و مدیریت درس‌ها.
       </p>
 
-      <div className="rounded-lg border border-gray-200 bg-white p-5 shadow-sm">
+      <div className="rounded-lg border border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-900 p-5 shadow-sm">
         <h2 className="mb-3 text-base font-bold">دوره جدید</h2>
         <form action={createCourseAction} className="flex flex-col gap-3">
           <input
             name="title"
             required
             placeholder="عنوان دوره (مثلاً: دوره مقدماتی فقه)"
-            className="rounded border border-gray-300 p-2 text-sm"
+            className="rounded border border-gray-300 dark:border-gray-600 p-2 text-sm"
           />
           <textarea
             name="description"
             rows={2}
             placeholder="توضیح کوتاه (اختیاری)"
-            className="rounded border border-gray-300 p-2 text-sm"
+            className="rounded border border-gray-300 dark:border-gray-600 p-2 text-sm"
           />
           <button
             type="submit"
@@ -89,11 +89,11 @@ export default async function AdminCoursesPage(): Promise<JSX.Element> {
         {courses.map((course) => (
           <div
             key={course.id}
-            className="flex items-center justify-between gap-4 rounded-lg border border-gray-200 bg-white px-4 py-3 shadow-sm"
+            className="flex items-center justify-between gap-4 rounded-lg border border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-900 px-4 py-3 shadow-sm"
           >
             <div className="min-w-0">
               <div className="font-medium">{course.title}</div>
-              <div className="text-xs text-gray-400">
+              <div className="text-xs text-gray-400 dark:text-gray-500">
                 {STATUS_LABEL[course.status] ?? course.status} ·{" "}
                 {course.createdAt.toLocaleDateString("fa-IR")}
               </div>
@@ -111,13 +111,13 @@ export default async function AdminCoursesPage(): Promise<JSX.Element> {
               ) : null}
               <Link
                 href={`/admin/courses/${course.id}/lessons`}
-                className="rounded border border-gray-300 px-3 py-1.5 text-xs text-gray-700 hover:bg-gray-100"
+                className="rounded border border-gray-300 dark:border-gray-600 px-3 py-1.5 text-xs text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
               >
                 درس‌ها
               </Link>
               <Link
                 href={`/courses/${course.id}`}
-                className="rounded border border-gray-300 px-3 py-1.5 text-xs text-gray-700 hover:bg-gray-100"
+                className="rounded border border-gray-300 dark:border-gray-600 px-3 py-1.5 text-xs text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
               >
                 مشاهده
               </Link>

@@ -19,10 +19,10 @@ function CourseCard({ course, isAdmin }: { course: Course; isAdmin: boolean }): 
   return (
     <Link
       href={`/courses/${course.id}`}
-      className="block rounded-lg border border-gray-200 bg-white p-5 shadow-sm transition hover:border-emerald-300"
+      className="block rounded-lg border border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-900 p-5 shadow-sm transition hover:border-emerald-300"
     >
       <div className="flex items-start justify-between gap-2">
-        <h3 className="text-base font-bold text-gray-900">{course.title}</h3>
+        <h3 className="text-base font-bold text-gray-900 dark:text-gray-100">{course.title}</h3>
         {isAdmin && course.status !== "published" ? (
           <span className="shrink-0 rounded bg-amber-100 px-2 py-0.5 text-xs text-amber-800">
             {STATUS_LABEL[course.status] ?? course.status}
@@ -30,9 +30,9 @@ function CourseCard({ course, isAdmin }: { course: Course; isAdmin: boolean }): 
         ) : null}
       </div>
       {course.description ? (
-        <p className="mt-2 line-clamp-2 text-sm text-gray-600">{course.description}</p>
+        <p className="mt-2 line-clamp-2 text-sm text-gray-600 dark:text-gray-400 dark:text-gray-500">{course.description}</p>
       ) : null}
-      <div className="mt-3 text-xs text-gray-400">
+      <div className="mt-3 text-xs text-gray-400 dark:text-gray-500">
         {course.status === "published" ? "دوره فعال — مشاهده و ثبت‌نام" : "در حال آماده‌سازی"}
       </div>
     </Link>
@@ -56,7 +56,7 @@ export default async function CoursesPage(): Promise<JSX.Element> {
       <div className="mb-6 flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold">دوره‌های آموزشی</h1>
-          <p className="mt-1 text-sm text-gray-600">
+          <p className="mt-1 text-sm text-gray-600 dark:text-gray-400 dark:text-gray-500">
             {isAdmin
               ? "نمای مدیریتی — همه وضعیت‌ها (پیش‌نویس، منتشرشده، بایگانی)."
               : "دوره‌های منتشرشده مرکز شما."}
@@ -73,7 +73,7 @@ export default async function CoursesPage(): Promise<JSX.Element> {
       </div>
 
       {courses.length === 0 ? (
-        <div className="rounded-lg border border-dashed border-gray-300 p-10 text-center text-sm text-gray-500">
+        <div className="rounded-lg border border-dashed border-gray-300 dark:border-gray-600 dark:border-gray-600 p-10 text-center text-sm text-gray-500 dark:text-gray-400 dark:text-gray-500">
           {isAdmin
             ? "هنوز دوره‌ای نساخته‌اید. از «مدیریت دوره‌ها» شروع کنید."
             : "هنوز دوره‌ای منتشر نشده است."}
