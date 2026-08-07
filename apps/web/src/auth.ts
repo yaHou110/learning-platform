@@ -41,30 +41,41 @@ const authConfig: NextAuthConfig = {
         password: { label: "Password", type: "password" },
       },
       async authorize(raw) {
-        const parsed = CredentialsInputSchema.safeParse(raw);
-        if (!parsed.success) return null;
-        const result = await verifyPassword(getDb(), parsed.data);
-        if (!result.ok) return null;
-        return {
-          id: result.user.id,
-          email: result.user.email,
-          name: result.user.displayName,
-          role: result.user.role,
-          tenantId: result.user.tenantId,
-        };
+        try {
+          const parsed = CredentialsInputSchema.safeParse(raw);
+          if (!parsed.success) {
+            console.error("Credentials validation failed:", parsed.error);
+            return null;
+          }
+          const result = await verifyPassword(getDb(), parsed.data);
+          if (!result.ok) {
+            console.error("Password verification failed:", result.reason);
+            return null;
+          }
+          return {
+            id: result.user.id,
+            email: result.user.email,
+            name: result.user.displayName,
+            role: result.user.role,
+            tenantId: result.user.tenantId,
+          };
+        } catch (err) {
+          console.error("Authorization error:", err);
+          return null;
+        }
       },
     }),
   ],
   callbacks: {
-      async redirect({ url, baseUrl }) {
-        // Allow same-origin relative URLs
-        if (url.startsWith("/")) return `${baseUrl}${url}`;
-        // Allow same-origin absolute URLs
-        if (url.startsWith(baseUrl)) return url;
-        // Default to dashboard
-        return `${baseUrl}/dashboard`;
-      },
-      async jwt({ token, user }) {
+    async redirect({ url, baseUrl }) {
+      // Allow same-origin relative URLs
+      if (url.startsWith("/")) return `${baseUrl}${url}`;
+      // Allow same-origin absolute URLs
+      if (url.startsWith(baseUrl)) return url;
+      // Default to dashboard
+      return `${baseUrl}/dashboard`;
+    },
+    async jwt({ token, user }) {
       if (user) {
         const u = user as { id: string; role: Role; tenantId: string };
         token.id = u.id;
@@ -96,6 +107,7 @@ const authConfig: NextAuthConfig = {
   pages: {
     signIn: "/login",
   },
+  debug: process.env.NODE_ENV === 'development',
 };
 
 const _nextAuth = NextAuth(authConfig);
