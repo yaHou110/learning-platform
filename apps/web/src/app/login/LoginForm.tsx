@@ -1,29 +1,18 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { signIn } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 
 export default function LoginForm() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
-  const [csrfToken, setCsrfToken] = useState<string>('');
   const router = useRouter();
 
-  useEffect(() => {
-    const getCsrfToken = () => {
-      const match = document.cookie.match(/(?:^|; )__Host-authjs\.csrf-token=([^;]*)/);
-      return match ? decodeURIComponent(match[1]) : '';
-    };
-    const token = getCsrfToken();
-    setCsrfToken(token);
-    // Also listen for changes
-    const interval = setInterval(() => {
-      const t = getCsrfToken();
-      setCsrfToken(t);
-    }, 500);
-    return () => clearInterval(interval);
-  }, []);
+  const getCsrfToken = () => {
+    const match = document.cookie.match(/(?:^|; )__Host-authjs\.csrf-token=([^;]*)/);
+    return match ? decodeURIComponent(match[1]) : '';
+  };
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -31,10 +20,9 @@ export default function LoginForm() {
     setError(null);
 
     const formData = new FormData(e.currentTarget);
-    // Append CSRF token from cookie
-    const csrfTokenValue = getCsrfToken();
-    if (csrfTokenValue) {
-      formData.append('csrfToken', csrfTokenValue);
+    const csrfToken = getCsrfToken();
+    if (csrfToken) {
+      formData.append('csrfToken', csrfToken);
     }
 
     const result = await signIn('credentials', {
@@ -89,13 +77,6 @@ export default function LoginForm() {
           dir="ltr"
         />
       </label>
-      {csrfToken && (
-        <input
-          type="hidden"
-          name="csrfToken"
-          value={csrfToken}
-        />
-      )}
       {error && (
         <p className="text-sm text-red-600" role="alert">
           {error}
