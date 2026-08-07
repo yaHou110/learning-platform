@@ -29,8 +29,17 @@ textarea {
   @apply w-full rounded-lg border border-gray-300 bg-white p-2.5 text-sm text-gray-900 transition-colors placeholder:text-gray-400 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/30 focus:outline-none dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100 dark:placeholder:text-gray-500;
 }
 
+/* Dark-mode focus border: the `.dark input` selector (0,2,1) outranks
+   `input:focus` (0,1,1), so re-assert the emerald border on focus in dark. */
+.dark input[type="text"]:focus,
+.dark input[type="email"]:focus,
+.dark input[type="password"]:focus,
+.dark textarea:focus {
+  @apply border-emerald-500/85;
+}
+
 button {
-  @apply rounded-lg px-4 py-2 text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed;
+  @apply rounded-lg px-4 py-2 text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed;
 }
 
 .btn-primary {
