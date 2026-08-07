@@ -16,10 +16,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Install PostgreSQL client
+      - name: Install PostgreSQL client + network tools
         run: |
           sudo apt-get update -qq
-          sudo apt-get install -y -qq postgresql-client
+          sudo apt-get install -y -qq postgresql-client netcat-openbsd
 
       - name: Test 1 — psql version
         run: |
@@ -28,8 +28,8 @@ jobs:
 
       - name: Test 2 — psql connect
         run: |
-          echo "=== TEST 2: psql connect to Railway ==="
-          # Extract parts from DATABASE_URL
+          echo "=== TEST 2: psql connect to DATABASE_URL ==="
+          # Extract parts from DATABASE_URL (safe: prints only a masked URL)
           DB_URL="$DATABASE_URL"
           echo "URL (masked): $(echo "$DB_URL" | sed 's/:[^:@]*@/:***@/')"
           PGPASSWORD=$(echo "$DB_URL" | sed -n 's|postgresql://[^:]*:\([^@]*\)@.*|\1|p')
@@ -42,6 +42,10 @@ jobs:
           echo "DB:   $PGDATABASE"
           echo "User: $PGUSER"
           echo "Pwd length: ${#PGPASSWORD}"
+          if [ -z "$PGHOST" ] || [ -z "$PGPORT" ]; then
+            echo "::error::Could not parse DATABASE_URL (host/port empty). Check the secret."
+            exit 1
+          fi
           echo "---"
           # Try plain TCP (no SSL)
           PGPASSWORD="$PGPASSWORD" psql -h "$PGHOST" -p "$PGPORT" -U "$PGUSER" -d "$PGDATABASE" -c "SELECT 1 AS test;" 2>&1 || true
@@ -49,21 +53,32 @@ jobs:
           # Try with sslmode=disable
           PGPASSWORD="$PGPASSWORD" psql "postgresql://$PGUSER:$PGPASSWORD@$PGHOST:$PGPORT/$PGDATABASE?sslmode=disable" -c "SELECT 1 AS test;" 2>&1 || true
           echo "---"
-          # Try with sslmode=require
-          PGPASSWORD="$PGPASSWORD" psql "postgresql://$PGUSER:$PGASSWORD@$PGHOST:$PGPORT/$PGDATABASE?sslmode=require" -c "SELECT 1 AS test;" 2>&1 || true
+          # Try with sslmode=require (Railway public connections enforce TLS)
+          PGPASSWORD="$PGPASSWORD" psql "postgresql://$PGUSER:$PGPASSWORD@$PGHOST:$PGPORT/$PGDATABASE?sslmode=require" -c "SELECT 1 AS test;" 2>&1 || true
 
-      - name: Test 3 — openssl s_client (TLS probe)
+      - name: Test 3 — openssl s_client (TLS probe, host from DATABASE_URL)
         run: |
           echo "=== TEST 3: openssl s_client ==="
-          echo "Q" | timeout 10 openssl s_client -connect tokaido.proxy.rlwy.net:45305 2>&1 || true
+          DB_URL="$DATABASE_URL"
+          PGHOST=$(echo "$DB_URL" | sed -n 's|.*@\([^:]*\):.*|\1|p')
+          PGPORT=$(echo "$DB_URL" | sed -n 's|.*:\([0-9]*\)/.*|\1|p')
+          echo "Q" | timeout 10 openssl s_client -connect "$PGHOST:$PGPORT" 2>&1 | head -6 || true
 
-      - name: Test 4 — nc TCP probe
+      - name: Test 4 — nc TCP probe (host from DATABASE_URL)
         run: |
           echo "=== TEST 4: nc -vz TCP probe ==="
-          nc -vz tokaido.proxy.rlwy.net 45305 2>&1 || true
+          DB_URL="$DATABASE_URL"
+          PGHOST=$(echo "$DB_URL" | sed -n 's|.*@\([^:]*\):.*|\1|p')
+          PGPORT=$(echo "$DB_URL" | sed -n 's|.*:\([0-9]*\)/.*|\1|p')
+          nc -vz "$PGHOST" "$PGPORT" 2>&1 || true
 
-      - name: Test 5 — raw TCP dump (what does the port actually respond with?)
+      - name: Test 5 — raw TCP dump (what does the port respond with?)
         run: |
-          echo "=== TEST 5: raw TCP — what does Railway respond with? ==="
-          # Send raw bytes and see what comes back
-          printf '\x00\x00\x00\x08\x04\xd2\x16\x2f' | timeout 5 nc tokaido.proxy.rlwy.net 45305 2>&1 | xxd | head -5 || true
+          echo "=== TEST 5: raw TCP — server banner ==="
+          DB_URL="$DATABASE_URL"
+          PGHOST=$(echo "$DB_URL" | sed -n 's|.*@\([^:]*\):.*|\1|p')
+          PGPORT=$(echo "$DB_URL" | sed -n 's|.*:\([0-9]*\)/.*|\1|p')
+          # Send a Postgres SSLRequest probe; the server replies with 'S' (TLS OK)
+          # or 'N' (no TLS). xxd may be missing on the runner — fall back to od.
+          printf '\x00\x00\x00\x08\x04\xd2\x16\x2f' | timeout 5 nc "$PGHOST" "$PGPORT" 2>&1 \
+            | (xxd 2>/dev/null || od -An -tx1) | head -5 || true
