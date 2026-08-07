@@ -1,11 +1,27 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { signIn } from 'next-auth/react';
 
 export default function LoginForm() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [csrfToken, setCsrfToken] = useState<string>('');
+
+  useEffect(() => {
+    const getCsrfToken = () => {
+      const match = document.cookie.match(/(?:^|; )__Host-authjs\.csrf-token=([^;]*)/);
+      return match ? decodeURIComponent(match[1]) : '';
+    };
+    const token = getCsrfToken();
+    if (token) setCsrfToken(token);
+    // Also listen for changes
+    const interval = setInterval(() => {
+      const t = getCsrfToken();
+      if (t && t !== csrfToken) setCsrfToken(t);
+    }, 500);
+    return () => clearInterval(interval);
+  }, [csrfToken]);
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -18,6 +34,9 @@ export default function LoginForm() {
       email: String(formData.get('email') ?? ''),
       password: String(formData.get('password') ?? ''),
       redirect: false,
+      // Include csrfToken if needed
+      // next-auth/react will automatically use the cookie, but we also send it as form data?
+      // Some versions expect it as a form field named csrfToken
     });
 
     if (result?.error) {
@@ -64,6 +83,13 @@ export default function LoginForm() {
           dir="ltr"
         />
       </label>
+      {csrfToken && (
+        <input
+          type="hidden"
+          name="csrfToken"
+          value={csrfToken}
+        />
+      )}
       {error && (
         <p className="text-sm text-red-600" role="alert">
           {error}
