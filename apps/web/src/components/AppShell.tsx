@@ -34,9 +34,7 @@ export default function AppShell({
 
   const navItems = [
     { href: "/dashboard", label: "داشبورد", icon: <Icon.Home className="h-5 w-5" /> },
-    { href: "/courses", label: "دوره‌ها", icon: <Icon.BookOpen className="h-5 w-5" /> },
-    { href: "/dashboard/learning", label: "یادگیری من", icon: <Icon.GraduationCap className="h-5 w-5" /> },
-    { href: "/dashboard/certificates", label: "گواهی‌ها", icon: <Icon.Trophy className="h-5 w-5" /> },
+    { href: "/courses", label: "محتوای تربیتی", icon: <Icon.BookOpen className="h-5 w-5" /> },
   ];
 
   const adminItems = [
@@ -54,9 +52,9 @@ export default function AppShell({
           </div>
           <div>
             <div className="text-sm font-bold leading-tight text-gray-900 dark:text-gray-100">
-              طوبی
+              رویش
             </div>
-            <div className="text-xs text-gray-500 dark:text-gray-400">سامانه تربیت و تعالی خانواده</div>
+            <div className="text-xs text-gray-500 dark:text-gray-400">سامانه فرهنگی، تربیتی و خانواده‌های حوزوی</div>
           </div>
         </div>
 
@@ -133,7 +131,7 @@ export default function AppShell({
           <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-emerald-600 to-emerald-800 text-white">
             <Icon.Mosque className="h-5 w-5" />
           </div>
-          <span className="text-sm font-bold text-gray-900 dark:text-gray-100">طوبی</span>
+          <span className="text-sm font-bold text-gray-900 dark:text-gray-100">رویش</span>
         </div>
         <div className="flex items-center gap-1">
           <ThemeToggle />

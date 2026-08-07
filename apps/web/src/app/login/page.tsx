@@ -95,10 +95,10 @@ export default function LoginPage(): JSX.Element {
               </div>
               <div className="text-right">
                 <div className="text-sm font-bold leading-5 text-white">
-                  طوبی
+                  رویش
                 </div>
                 <div className="text-[11px] text-emerald-200">
-                  سامانه تربیت و تعالی خانواده
+                  سامانه فرهنگی، تربیتی و خانواده‌های حوزوی
                 </div>
               </div>
             </div>
@@ -120,10 +120,10 @@ export default function LoginPage(): JSX.Element {
               </div>
               <div>
                 <div className="text-sm font-bold text-gray-900 dark:text-gray-100">
-                  طوبی
+                  رویش
                 </div>
                 <div className="text-xs text-gray-500 dark:text-gray-400">
-                  سامانه تربیت و تعالی خانواده
+                  سامانه فرهنگی، تربیتی و خانواده‌های حوزوی
                 </div>
               </div>
             </div>
@@ -168,7 +168,7 @@ export default function LoginPage(): JSX.Element {
             ) : null}
 
             <p className="mt-8 text-center text-xs text-gray-400 dark:text-gray-500">
-              © {jalaliYear} طوبی
+              © {jalaliYear} رویش
             </p>
           </div>
         </div>
@@ -211,10 +211,13 @@ export default function LoginPage(): JSX.Element {
           </div>
           <div className="min-w-0">
             <div className="text-base font-bold leading-6 text-white">
-              طوبی
+              رویش
             </div>
             <div className="text-xs text-emerald-200">
-              سامانه تربیت و تعالی خانواده
+              سامانه فرهنگی، تربیتی و خانواده‌های حوزوی
+            </div>
+            <div className="mt-0.5 text-[10px] tracking-normal text-emerald-300/80">
+              با هم برای رشد، با هم برای آینده
             </div>
           </div>
         </header>
