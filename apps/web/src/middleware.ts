@@ -30,9 +30,16 @@ export async function middleware(request: NextRequest): Promise<NextResponse> {
   const hasSession = Boolean(sessionCookie);
 
   // --- Security headers (S3 hardening) ---
+  // In dev mode, allow unsafe-eval for Next.js HMR/React Refresh.
+  // Note: we check hostname instead of process.env.NODE_ENV because NODE_ENV
+  // is unavailable in Edge runtime middleware.
+  const isDev = request.nextUrl.hostname === "localhost" || request.nextUrl.hostname === "127.0.0.1";
+  const scriptSrc = isDev
+    ? "'self' 'unsafe-inline' 'unsafe-eval'"
+    : "'self' 'unsafe-inline'";
   const csp = [
     "default-src 'self'",
-    "script-src 'self' 'unsafe-inline'",
+    `script-src ${scriptSrc}`,
     "style-src 'self' 'unsafe-inline'",
     "img-src 'self' data:",
     "font-src 'self' fonts.gstatic.com",
