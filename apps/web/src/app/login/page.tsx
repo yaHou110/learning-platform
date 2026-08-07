@@ -172,7 +172,7 @@ export default function LoginPage(): JSX.Element {
       {/* ══ Hero / visual panel (left in RTL, hidden on mobile) ══════ */}
       <aside
         aria-label="معرفی سامانه"
-        className="relative hidden w-1/2 overflow-hidden lg:block"
+        className="relative hidden w-1/2 overflow-hidden lg:flex lg:flex-col"
       >
         {/* Real photo — a madrasa courtyard, the archetype of seminary study */}
         <Image
@@ -214,30 +214,9 @@ export default function LoginPage(): JSX.Element {
           </div>
         </header>
 
-        {/* Editorial block — science → education → rising */}
+        {/* The verse — anchored at the base, the quiet cornerstone of the identity */}
         <div className="relative z-10 mt-auto p-8 pb-9">
-          <h2 className="max-w-md text-3xl font-bold leading-[1.7] text-white">
-            محیطی برای یادگیری، تدریس و تداوم مسیر علمی
-          </h2>
-          <p className="mt-3 max-w-md text-sm leading-7 text-emerald-100/90">
-            سامانهٔ تربیت و تعالی خانواده؛ جایی که طلبه و استاد کنار هم درس
-            می‌خوانند، مطالعه می‌کنند و میراث علمی حوزه را ادامه می‌دهند.
-          </p>
-
-          <QiyamVerse className="mt-6 border-r-2 border-emerald-300/60 pr-4" />
-
-          <div className="mt-7 flex flex-wrap items-end justify-between gap-4 border-t border-white/10 pt-5">
-            <p
-              dir="rtl"
-              lang="ar"
-              className="text-sm font-semibold leading-6 text-emerald-100/85"
-            >
-              طَلَبُ الْعِلْمِ فَرِيضَةٌ عَلَى كُلِّ مُسْلِمٍ
-            </p>
-            <p dir="ltr" className="text-[10px] leading-4 text-emerald-200/50">
-              photo: Agha Bozorg madrasa courtyard · CC0 · Erik Albers
-            </p>
-          </div>
+          <QiyamVerse className="border-r-2 border-emerald-300/60 pr-4" />
         </div>
       </aside>
     </main>
