@@ -41,7 +41,7 @@ export default async function HomePage(): Promise<JSX.Element> {
   return (
     <AppShell user={{ name: session.user.name, role }}>
       <h1 className="mb-1 text-2xl font-bold">خوش آمدید، {session.user.name}</h1>
-      <p className="mb-6 text-sm text-gray-600">
+      <p className="mb-6 text-sm text-gray-600 dark:text-gray-400 dark:text-gray-500">
         {isAdmin
           ? "پنل مدیریت مرکز شما — آمار کلی و دسترسی سریع."
           : "به فضای یادگیری خود خوش آمدید."}
@@ -50,35 +50,35 @@ export default async function HomePage(): Promise<JSX.Element> {
       <div className="grid gap-4 sm:grid-cols-3">
         <Link
           href="/courses"
-          className="rounded-lg border border-gray-200 bg-white p-5 shadow-sm transition hover:border-emerald-300"
+          className="rounded-lg border border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-900 p-5 shadow-sm transition hover:border-emerald-300"
         >
-          <div className="text-sm text-gray-500">دوره‌های در دسترس</div>
+          <div className="text-sm text-gray-500 dark:text-gray-400 dark:text-gray-500">دوره‌های در دسترس</div>
           <div className="mt-1 text-3xl font-bold text-emerald-800">
             {courseCount || "—"}
           </div>
-          <div className="mt-2 text-xs text-gray-400">مشاهده کاتالوگ دوره‌ها</div>
+          <div className="mt-2 text-xs text-gray-400 dark:text-gray-500">مشاهده کاتالوگ دوره‌ها</div>
         </Link>
         <Link
           href="/dashboard"
-          className="rounded-lg border border-gray-200 bg-white p-5 shadow-sm transition hover:border-emerald-300"
+          className="rounded-lg border border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-900 p-5 shadow-sm transition hover:border-emerald-300"
         >
-          <div className="text-sm text-gray-500">ثبت‌نام‌های من</div>
+          <div className="text-sm text-gray-500 dark:text-gray-400 dark:text-gray-500">ثبت‌نام‌های من</div>
           <div className="mt-1 text-3xl font-bold text-emerald-800">{enrollmentCount}</div>
-          <div className="mt-2 text-xs text-gray-400">
+          <div className="mt-2 text-xs text-gray-400 dark:text-gray-500">
             {completedCount} دوره تکمیل‌شده
           </div>
         </Link>
         <Link
           href={isAdmin ? "/admin/courses" : "/dashboard"}
-          className="rounded-lg border border-gray-200 bg-white p-5 shadow-sm transition hover:border-emerald-300"
+          className="rounded-lg border border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-900 p-5 shadow-sm transition hover:border-emerald-300"
         >
-          <div className="text-sm text-gray-500">
+          <div className="text-sm text-gray-500 dark:text-gray-400 dark:text-gray-500">
             {isAdmin ? "مدیریت محتوا" : "پیشرفت من"}
           </div>
           <div className="mt-1 text-3xl font-bold text-emerald-800">
             {isAdmin ? "ورود" : "ورود"}
           </div>
-          <div className="mt-2 text-xs text-gray-400">
+          <div className="mt-2 text-xs text-gray-400 dark:text-gray-500">
             {isAdmin ? "ایجاد و انتشار دوره‌ها" : "جزئیات پیشرفت یادگیری"}
           </div>
         </Link>

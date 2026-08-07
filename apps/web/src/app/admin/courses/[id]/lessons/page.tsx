@@ -78,7 +78,7 @@ export default async function AdminCourseLessonsPage({
       <div className="mt-4 flex items-start justify-between gap-4">
         <div>
           <h1 className="text-xl font-bold">{course.title}</h1>
-          <p className="mt-1 text-xs text-gray-500">
+          <p className="mt-1 text-xs text-gray-500 dark:text-gray-400 dark:text-gray-500">
             {lessons.length} درس · وضعیت:{" "}
             <span className="font-medium">{course.status}</span>
           </p>
@@ -95,20 +95,20 @@ export default async function AdminCourseLessonsPage({
         ) : null}
       </div>
 
-      <div className="mt-6 rounded-lg border border-gray-200 bg-white p-5 shadow-sm">
+      <div className="mt-6 rounded-lg border border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-900 p-5 shadow-sm">
         <h2 className="mb-3 text-base font-bold">درس جدید</h2>
         <form action={createLessonAction} className="flex flex-col gap-3">
           <input
             name="title"
             required
             placeholder="عنوان درس"
-            className="rounded border border-gray-300 p-2 text-sm"
+            className="rounded border border-gray-300 dark:border-gray-600 p-2 text-sm"
           />
           <div className="flex gap-3">
             <select
               name="contentType"
               defaultValue="text"
-              className="rounded border border-gray-300 p-2 text-sm"
+              className="rounded border border-gray-300 dark:border-gray-600 p-2 text-sm"
             >
               {CONTENT_TYPES.map((t) => (
                 <option key={t} value={t}>
@@ -119,7 +119,7 @@ export default async function AdminCourseLessonsPage({
             <input
               name="contentRef"
               placeholder="مرجع محتوا (اختیاری)"
-              className="flex-1 rounded border border-gray-300 p-2 text-sm"
+              className="flex-1 rounded border border-gray-300 dark:border-gray-600 p-2 text-sm"
             />
           </div>
           <button
@@ -136,15 +136,15 @@ export default async function AdminCourseLessonsPage({
         {lessons.map((lesson) => (
           <li
             key={lesson.id}
-            className="flex items-center justify-between rounded-lg border border-gray-200 bg-white px-4 py-3 shadow-sm"
+            className="flex items-center justify-between rounded-lg border border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-900 px-4 py-3 shadow-sm"
           >
             <span className="flex items-center gap-3 text-sm">
-              <span className="flex h-6 w-6 items-center justify-center rounded-full bg-gray-200 text-xs text-gray-600">
+              <span className="flex h-6 w-6 items-center justify-center rounded-full bg-gray-200 text-xs text-gray-600 dark:text-gray-400 dark:text-gray-500">
                 {lesson.orderIndex + 1}
               </span>
               <span>{lesson.title}</span>
             </span>
-            <span className="text-xs text-gray-400">
+            <span className="text-xs text-gray-400 dark:text-gray-500">
               {CONTENT_TYPE_LABEL[lesson.contentType] ?? lesson.contentType}
               {lesson.durationSeconds
                 ? ` · ${Math.round(lesson.durationSeconds / 60)} دقیقه`
@@ -153,7 +153,7 @@ export default async function AdminCourseLessonsPage({
           </li>
         ))}
         {lessons.length === 0 ? (
-          <li className="rounded-lg border border-dashed border-gray-300 p-6 text-center text-sm text-gray-500">
+          <li className="rounded-lg border border-dashed border-gray-300 dark:border-gray-600 p-6 text-center text-sm text-gray-500 dark:text-gray-400 dark:text-gray-500">
             هنوز درسی اضافه نشده است.
           </li>
         ) : null}

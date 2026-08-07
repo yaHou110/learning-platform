@@ -71,10 +71,10 @@ export default async function LessonPage({
         ← بازگشت به دوره
       </Link>
 
-      <div className="mt-4 rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
+      <div className="mt-4 rounded-lg border border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-900 p-6 shadow-sm">
         <div className="flex items-start justify-between gap-4">
           <div>
-            <div className="text-xs text-gray-400">
+            <div className="text-xs text-gray-400 dark:text-gray-500">
               {CONTENT_TYPE_LABEL[lesson.contentType] ?? lesson.contentType} · درس{" "}
               {lesson.orderIndex + 1}
             </div>
@@ -87,7 +87,7 @@ export default async function LessonPage({
           ) : null}
         </div>
 
-        <div className="mt-6 rounded-lg border border-dashed border-gray-300 bg-gray-50 p-10 text-center text-sm text-gray-500">
+        <div className="mt-6 rounded-lg border border-dashed border-gray-300 dark:border-gray-600 bg-gray-50 p-10 text-center text-sm text-gray-500 dark:text-gray-400 dark:text-gray-500">
           {lesson.contentType === "video" ? (
             <>
               <div className="mb-2 text-3xl">🎬</div>
@@ -122,7 +122,7 @@ export default async function LessonPage({
               </form>
             )
           ) : (
-            <p className="text-sm text-gray-500">
+            <p className="text-sm text-gray-500 dark:text-gray-400 dark:text-gray-500">
               برای ثبت پیشرفت، ابتدا در دوره{" "}
               <Link href={`/courses/${courseId}`} className="text-emerald-700 underline">
                 ثبت‌نام
@@ -131,7 +131,7 @@ export default async function LessonPage({
             </p>
           )}
           {lesson.durationSeconds ? (
-            <span className="text-xs text-gray-400">
+            <span className="text-xs text-gray-400 dark:text-gray-500">
               مدت: {Math.round(lesson.durationSeconds / 60)} دقیقه
             </span>
           ) : null}

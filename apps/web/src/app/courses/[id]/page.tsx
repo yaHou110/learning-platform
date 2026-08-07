@@ -61,7 +61,7 @@ export default async function CourseDetailPage({
         ← بازگشت به دوره‌ها
       </Link>
 
-      <div className="mt-4 rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
+      <div className="mt-4 rounded-lg border border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-900 p-6 shadow-sm">
         <div className="flex items-start justify-between gap-4">
           <div>
             <h1 className="text-2xl font-bold">{course.title}</h1>
@@ -92,12 +92,12 @@ export default async function CourseDetailPage({
         </div>
 
         {course.description ? (
-          <p className="mt-4 text-sm leading-7 text-gray-700">{course.description}</p>
+          <p className="mt-4 text-sm leading-7 text-gray-700 dark:text-gray-300">{course.description}</p>
         ) : null}
 
         {enrollment && lessons.length > 0 ? (
           <div className="mt-6">
-            <div className="mb-1 flex items-center justify-between text-xs text-gray-500">
+            <div className="mb-1 flex items-center justify-between text-xs text-gray-500 dark:text-gray-400 dark:text-gray-500">
               <span>پیشرفت دوره</span>
               <span>
                 {completedCount} از {lessons.length} درس ({pct}٪)
@@ -115,7 +115,7 @@ export default async function CourseDetailPage({
 
       <h2 className="mb-3 mt-8 text-lg font-bold">درس‌ها ({lessons.length})</h2>
       {lessons.length === 0 ? (
-        <div className="rounded-lg border border-dashed border-gray-300 p-8 text-center text-sm text-gray-500">
+        <div className="rounded-lg border border-dashed border-gray-300 dark:border-gray-600 p-8 text-center text-sm text-gray-500 dark:text-gray-400 dark:text-gray-500">
           {isAdmin
             ? "هنوز درسی به این دوره اضافه نشده — از «مدیریت دوره‌ها» درس اضافه کنید."
             : "درس‌های این دوره به‌زودی اضافه می‌شوند."}
@@ -128,23 +128,23 @@ export default async function CourseDetailPage({
               <li key={lesson.id}>
                 <Link
                   href={`/courses/${course.id}/lessons/${lesson.id}`}
-                  className="flex items-center justify-between rounded-lg border border-gray-200 bg-white px-4 py-3 shadow-sm transition hover:border-emerald-300"
+                  className="flex items-center justify-between rounded-lg border border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-900 px-4 py-3 shadow-sm transition hover:border-emerald-300"
                 >
                   <span className="flex items-center gap-3 text-sm">
                     <span
                       className={`flex h-6 w-6 items-center justify-center rounded-full text-xs ${
                         done
                           ? "bg-emerald-600 text-white"
-                          : "bg-gray-200 text-gray-600"
+                          : "bg-gray-200 text-gray-600 dark:text-gray-400 dark:text-gray-500"
                       }`}
                     >
                       {done ? "✓" : lesson.orderIndex + 1}
                     </span>
-                    <span className={done ? "text-gray-400 line-through" : ""}>
+                    <span className={done ? "text-gray-400 dark:text-gray-500 line-through" : ""}>
                       {lesson.title}
                     </span>
                   </span>
-                  <span className="text-xs text-gray-400">
+                  <span className="text-xs text-gray-400 dark:text-gray-500">
                     {done ? "مشاهده شده" : "مشاهده درس"}
                   </span>
                 </Link>
