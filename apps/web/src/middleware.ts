@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import type { NextRequest } = "next/server";
+import type { NextRequest } from "next/server";
 
 export async function middleware(request: NextRequest): Promise<NextResponse> {
   const { pathname } = request.nextUrl;
