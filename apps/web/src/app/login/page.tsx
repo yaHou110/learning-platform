@@ -6,6 +6,11 @@ import Image from "next/image";
 
 export const dynamic = "force-dynamic";
 
+/** Jalali (Persian) calendar year — e.g. ۱۴۰۵. */
+const jalaliYear = new Intl.DateTimeFormat("fa-IR", {
+  year: "numeric",
+}).format(new Date());
+
 /**
  * قیام لله — expressed as light, not text: vertical light columns rising
  * from the courtyard floor. The composition, not a headline, carries the
@@ -163,7 +168,7 @@ export default function LoginPage(): JSX.Element {
             ) : null}
 
             <p className="mt-8 text-center text-xs text-gray-400 dark:text-gray-500">
-              © {new Date().getFullYear()} طوبی
+              © {jalaliYear} طوبی
             </p>
           </div>
         </div>
