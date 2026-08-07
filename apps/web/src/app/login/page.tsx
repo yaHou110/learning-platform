@@ -7,9 +7,9 @@ import Image from "next/image";
 export const dynamic = "force-dynamic";
 
 /**
- * «باید برخاست» — expressed as light, not text: vertical light columns
- * rising from the courtyard floor. The composition, not a headline, carries
- * the idea of rising to study, act, and continue the scholarly path.
+ * قیام لله — expressed as light, not text: vertical light columns rising
+ * from the courtyard floor. The composition, not a headline, carries the
+ * idea of standing up to study, act, and continue the scholarly path.
  */
 function RisingLight(): JSX.Element {
   const beams = [
@@ -30,15 +30,40 @@ function RisingLight(): JSX.Element {
   );
 }
 
-/** Small refined motto — a quiet institutional line, never a banner. */
-function RisingMotto({ className = "" }: { className?: string }): JSX.Element {
+/**
+ * قُلْ إِنَّمَا أَعِظُكُمْ بِوَاحِدَةٍ… (سبأ ۴۶) — a quiet, scholarly element:
+ * the verse behind «باید برخاست», kept small and never a banner.
+ */
+function QiyamVerse({
+  className = "",
+  compact = false,
+}: {
+  className?: string;
+  compact?: boolean;
+}): JSX.Element {
   return (
-    <div className={`flex items-center gap-3 ${className}`}>
-      <span className="h-px w-8 bg-emerald-300/70" aria-hidden="true" />
-      <p className="text-sm font-light text-emerald-100">
-        «باید برخاست»
+    <div className={className}>
+      <p
+        lang="ar"
+        dir="rtl"
+        className={`font-semibold leading-8 text-emerald-50 ${
+          compact ? "text-xs leading-6" : "text-base"
+        }`}
+      >
+        قُلْ إِنَّمَا أَعِظُكُمْ بِوَاحِدَةٍ ۖ أَنْ تَقُومُوا لِلَّهِ
+        مَثْنَىٰ وَفُرَادَىٰ
       </p>
-      <span className="h-px w-8 bg-emerald-300/70" aria-hidden="true" />
+      {!compact ? (
+        <>
+          <p className="mt-1.5 text-[11px] leading-5 text-emerald-200/80">
+            «بگو: تنها به یک چیز اندرزتان می‌دهم که برای خدا، دو نفری یا یک
+            نفری به پا خیزید.»
+          </p>
+          <p className="mt-1 text-[10px] text-emerald-300/60">
+            سورهٔ سبأ · آیهٔ ۴۶
+          </p>
+        </>
+      ) : null}
     </div>
   );
 }
@@ -65,17 +90,14 @@ export default function LoginPage(): JSX.Element {
               </div>
               <div className="text-right">
                 <div className="text-sm font-bold leading-5 text-white">
-                  پلتفرم یادگیری خانواده حوزوی
+                  طوبی
                 </div>
                 <div className="text-[11px] text-emerald-200">
-                  سامانهٔ آموزش و دانش حوزوی
+                  سامانه تربیت و تعالی خانواده
                 </div>
               </div>
-              <span className="rounded-full border border-white/25 bg-white/10 px-2 py-0.5 text-[10px] font-bold text-white backdrop-blur-sm">
-                #حوزه
-              </span>
             </div>
-            <RisingMotto className="scale-90" />
+            <QiyamVerse className="scale-90" compact />
           </div>
         </div>
 
@@ -93,10 +115,10 @@ export default function LoginPage(): JSX.Element {
               </div>
               <div>
                 <div className="text-sm font-bold text-gray-900 dark:text-gray-100">
-                  پلتفرم یادگیری خانواده حوزوی
+                  طوبی
                 </div>
                 <div className="text-xs text-gray-500 dark:text-gray-400">
-                  سامانهٔ آموزش و دانش حوزوی
+                  سامانه تربیت و تعالی خانواده
                 </div>
               </div>
             </div>
@@ -141,7 +163,7 @@ export default function LoginPage(): JSX.Element {
             ) : null}
 
             <p className="mt-8 text-center text-xs text-gray-400 dark:text-gray-500">
-              © {new Date().getFullYear()} پلتفرم یادگیری خانواده حوزوی
+              © {new Date().getFullYear()} طوبی
             </p>
           </div>
         </div>
@@ -184,15 +206,12 @@ export default function LoginPage(): JSX.Element {
           </div>
           <div className="min-w-0">
             <div className="text-base font-bold leading-6 text-white">
-              سامانهٔ آموزش و دانش حوزوی
+              طوبی
             </div>
             <div className="text-xs text-emerald-200">
-              پلتفرم یادگیری خانواده‌های حوزوی
+              سامانه تربیت و تعالی خانواده
             </div>
           </div>
-          <span className="mr-auto shrink-0 rounded-full border border-white/20 bg-white/10 px-3 py-1 text-xs font-bold text-white backdrop-blur-sm">
-            #حوزه
-          </span>
         </header>
 
         {/* Editorial block — science → education → rising */}
@@ -201,11 +220,11 @@ export default function LoginPage(): JSX.Element {
             محیطی برای یادگیری، تدریس و تداوم مسیر علمی
           </h2>
           <p className="mt-3 max-w-md text-sm leading-7 text-emerald-100/90">
-            سامانهٔ آموزش و دانش حوزوی؛ جایی که طلبه و استاد کنار هم درس
+            سامانهٔ تربیت و تعالی خانواده؛ جایی که طلبه و استاد کنار هم درس
             می‌خوانند، مطالعه می‌کنند و میراث علمی حوزه را ادامه می‌دهند.
           </p>
 
-          <RisingMotto className="mt-6" />
+          <QiyamVerse className="mt-6 border-r-2 border-emerald-300/60 pr-4" />
 
           <div className="mt-7 flex flex-wrap items-end justify-between gap-4 border-t border-white/10 pt-5">
             <p
