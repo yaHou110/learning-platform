@@ -16,16 +16,24 @@
 #
 # Triggers: push to main (after governance + verify pass).
 
-name: Deploy to Production
+name: Deploy to Production (legacy VPS lane)
 
+# ADR-0018: production is Vercel + Railway (see deploy-vercel.yml). This
+# workflow is the legacy self-hosted VPS lane (ADR-0007) and is kept as a
+# MANUAL workflow only — it requires PROD_HOST/PROD_USER/PROD_SSH_KEY/
+# GHCR_TOKEN secrets that are not configured, so triggering it on every push
+# to main failed CI runs (red X on every commit).
 on:
-  push:
-    branches: [main]
-    paths-ignore:
-      - 'docs/**'
-      - '*.md'
-      - 'templates/**'
-      - 'evidence/**'
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'VPS environment to deploy'
+        required: true
+        default: 'production'
+        type: choice
+        options:
+          - production
+          - staging
 
 permissions:
   contents: read
