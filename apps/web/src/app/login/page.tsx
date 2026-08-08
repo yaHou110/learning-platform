@@ -98,7 +98,7 @@ export default function LoginPage(): JSX.Element {
                   رویش
                 </div>
                 <div className="text-[11px] text-emerald-200">
-                  سامانه فرهنگی، تربیتی و خانواده‌های حوزوی
+                  سامانه فرهنگی، تربیتی حوزه و خانواده
                 </div>
               </div>
             </div>
@@ -123,7 +123,7 @@ export default function LoginPage(): JSX.Element {
                   رویش
                 </div>
                 <div className="text-xs text-gray-500 dark:text-gray-400">
-                  سامانه فرهنگی، تربیتی و خانواده‌های حوزوی
+                  سامانه فرهنگی، تربیتی حوزه و خانواده
                 </div>
               </div>
             </div>
@@ -148,7 +148,13 @@ export default function LoginPage(): JSX.Element {
                   <div>
                     مرکز:{" "}
                     <code className="rounded bg-emerald-100 px-1.5 py-0.5 text-emerald-900 dark:bg-emerald-800 dark:text-emerald-200">
-                      demo
+                      1001
+                    </code>
+                  </div>
+                  <div>
+                    موبایل:{" "}
+                    <code className="rounded bg-emerald-100 px-1.5 py-0.5 text-emerald-900 dark:bg-emerald-800 dark:text-emerald-200">
+                      09123456789
                     </code>
                   </div>
                   <div>
@@ -214,7 +220,7 @@ export default function LoginPage(): JSX.Element {
               رویش
             </div>
             <div className="text-xs text-emerald-200">
-              سامانه فرهنگی، تربیتی و خانواده‌های حوزوی
+              سامانه فرهنگی، تربیتی حوزه و خانواده
             </div>
             <div className="mt-0.5 text-[10px] tracking-normal text-emerald-300/80">
               با هم برای رشد، با هم برای آینده

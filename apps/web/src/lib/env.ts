@@ -129,6 +129,12 @@ export const env = {
   ),
   AUTH_TRUST_HOST: process.env.AUTH_TRUST_HOST ?? "true",
   NEXTAUTH_URL: process.env.NEXTAUTH_URL ?? "http://localhost:3000",
+  // SMS provider for the password-reset flow. "mock" logs the code to the
+  // server console (and echoes it in non-production API responses);
+  // "kavenegar" sends a real SMS (requires KAVENEGAR_API_KEY + SENDER).
+  SMS_PROVIDER: process.env.SMS_PROVIDER ?? "mock",
+  KAVENEGAR_API_KEY: process.env.KAVENEGAR_API_KEY ?? "",
+  KAVENEGAR_SENDER: process.env.KAVENEGAR_SENDER ?? "",
 } as const;
 
 /**
