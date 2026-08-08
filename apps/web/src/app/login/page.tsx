@@ -152,9 +152,9 @@ export default function LoginPage(): JSX.Element {
                     </code>
                   </div>
                   <div>
-                    ایمیل:{" "}
+                    کد ملی:{" "}
                     <code className="rounded bg-emerald-100 px-1.5 py-0.5 text-emerald-900 dark:bg-emerald-800 dark:text-emerald-200">
-                      admin@lp.local
+                      1234567891
                     </code>
                   </div>
                   <div>

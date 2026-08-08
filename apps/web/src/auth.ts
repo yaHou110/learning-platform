@@ -37,7 +37,7 @@ const authConfig: NextAuthConfig = {
       name: "Credentials",
       credentials: {
         tenantSlug: { label: "Tenant", type: "text" },
-        email: { label: "Email", type: "email" },
+        nationalId: { label: "National ID", type: "text" },
         password: { label: "Password", type: "password" },
       },
       async authorize(raw) {

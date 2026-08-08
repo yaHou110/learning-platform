@@ -19,7 +19,16 @@ const BCRYPT_COST = 12;
 
 export const CredentialsInputSchema = z.object({
   tenantSlug: z.string().min(1),
-  email: z.string().email().transform((s) => s.toLowerCase()),
+  nationalId: z
+    .string()
+    .regex(/^\d{10}$/, "کد ملی باید ۱۰ رقم باشد")
+    .refine((v) => {
+      // Standard Iranian national-ID check digit (last digit).
+      const digits = v.split("").map(Number);
+      const sum = digits.slice(0, 9).reduce((acc, d, i) => acc + d * (10 - i), 0);
+      const r = sum % 11;
+      return r < 2 ? digits[9] === r : digits[9] === 11 - r;
+    }, "کد ملی نامعتبر است"),
   password: z.string().min(8).max(200),
 });
 export type CredentialsInput = z.infer<typeof CredentialsInputSchema>;
@@ -43,7 +52,7 @@ export interface VerifyPasswordErr {
 export type VerifyPasswordResult = VerifyPasswordOk | VerifyPasswordErr;
 
 /**
- * Verify email+password against a system-level Drizzle client.
+ * Verify nationalId+password against a system-level Drizzle client.
  * Returns a typed result; never throws on auth failure.
  *
  * Tenant is identified by slug because login happens before the session exists.
@@ -78,7 +87,7 @@ export async function verifyPassword(
     })
     .from(schema.users)
     .where(
-      sql`${schema.users.tenantId} = ${tenant.id} AND lower(${schema.users.email}) = lower(${input.email})`
+      sql`${schema.users.tenantId} = ${tenant.id} AND ${schema.users.nationalId} = ${input.nationalId}`
     )
     .limit(1);
   if (!user) {
