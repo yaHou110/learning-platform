@@ -15,10 +15,10 @@ async function main() {
   const adminId = randomUUID();
 
   await client.query(
-    `INSERT INTO users (id, tenant_id, email, password_hash, display_name, role, is_active, created_at)
-     VALUES ($1, $2, $3, $4, $5, $6, $7, NOW())
+    `INSERT INTO users (id, tenant_id, email, national_id, password_hash, display_name, role, is_active, created_at)
+     VALUES ($1, $2, $3, $4, $5, $6, $7, $8, NOW())
      ON CONFLICT DO NOTHING`,
-    [adminId, tenantId, 'admin@test.dev', hash, 'Admin', 'super_admin', true]
+    [adminId, tenantId, 'admin@test.dev', '1234567891', hash, 'Admin', 'super_admin', true]
   );
 
   console.log('Admin user created:');

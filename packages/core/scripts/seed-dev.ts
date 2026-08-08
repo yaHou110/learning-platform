@@ -25,6 +25,7 @@ loadEnvOnce();
 const SEED_TENANT_SLUG = "demo";
 const SEED_TENANT_NAME = "Learning Platform Demo";
 const SEED_USER_EMAIL = "admin@lp.local";
+const SEED_USER_NATIONAL_ID = "1234567891"; // 10 digits, passes the national-ID check digit
 const SEED_USER_PASSWORD = "changeme";
 const SEED_USER_NAME = "Super Admin";
 
@@ -53,11 +54,15 @@ async function main(): Promise<void> {
     .values({
       tenantId: tenantRow.id,
       email: SEED_USER_EMAIL,
+      nationalId: SEED_USER_NATIONAL_ID,
       displayName: SEED_USER_NAME,
       role: "super_admin",
       passwordHash,
     })
-    .onConflictDoNothing({ target: [users.tenantId, users.email] });
+    .onConflictDoUpdate({
+      target: [users.tenantId, users.email],
+      set: { nationalId: SEED_USER_NATIONAL_ID },
+    });
 
   // Demo catalog: one published course with 5 lessons (M3 DoD: "یک دوره
   // واقعی با ۵ درس"). Idempotent — keyed on (tenant, title).
@@ -113,6 +118,7 @@ async function main(): Promise<void> {
   console.log("Done.");
   console.log(`  tenant slug: ${SEED_TENANT_SLUG}`);
   console.log(`  user email:  ${SEED_USER_EMAIL}`);
+  console.log(`  user national ID: ${SEED_USER_NATIONAL_ID}`);
   console.log(`  password:    ${SEED_USER_PASSWORD}  ← change in production`);
   console.log(`  demo course: ${DEMO_COURSE_TITLE} (published, ${demoLessons.length} lessons)`);
 

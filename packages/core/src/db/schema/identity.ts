@@ -43,6 +43,7 @@ export const users = pgTable(
       .notNull()
       .references(() => tenants.id, { onDelete: "restrict" }),
     email: text("email").notNull(), // normalized to lower-case; citext extension added in migration
+    nationalId: text("national_id").notNull(), // 10-digit Iranian national ID — the login identifier
     passwordHash: text("password_hash").notNull(),
     displayName: text("display_name").notNull(),
     role: text("role").notNull(),
@@ -52,6 +53,10 @@ export const users = pgTable(
   },
   (t) => ({
     tenantEmailUnique: uniqueIndex("users_tenant_email_unique").on(t.tenantId, t.email),
+    tenantNationalIdUnique: uniqueIndex("users_tenant_national_id_unique").on(
+      t.tenantId,
+      t.nationalId
+    ),
     tenantIdx: index("users_tenant_idx").on(t.tenantId),
     roleCheck: check(
       "users_role_check",

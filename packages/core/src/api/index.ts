@@ -31,6 +31,7 @@ export type UserPublic = {
   id: string;
   tenantId: string;
   email: string;
+  nationalId: string;
   displayName: string;
   role: Role;
   isActive: boolean;
@@ -53,6 +54,7 @@ export const identity = {
         id: schema.users.id,
         tenantId: schema.users.tenantId,
         email: schema.users.email,
+        nationalId: schema.users.nationalId,
         displayName: schema.users.displayName,
         role: schema.users.role,
         isActive: schema.users.isActive,
@@ -77,6 +79,7 @@ export const identity = {
         id: schema.users.id,
         tenantId: schema.users.tenantId,
         email: schema.users.email,
+        nationalId: schema.users.nationalId,
         displayName: schema.users.displayName,
         role: schema.users.role,
         isActive: schema.users.isActive,
@@ -112,6 +115,7 @@ export const identity = {
   async createUser(input: {
     tenantId: string;
     email: string;
+    nationalId: string;
     displayName: string;
     role: AuthedUser["role"];
     password: string;
@@ -123,6 +127,7 @@ export const identity = {
       .values({
         tenantId: input.tenantId,
         email: input.email.toLowerCase(),
+        nationalId: input.nationalId,
         displayName: input.displayName,
         role: input.role,
         passwordHash,

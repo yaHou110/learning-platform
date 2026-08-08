@@ -4,6 +4,13 @@ import { useState } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 
+/** Convert Persian (۰-۹) and Arabic (٠-٩) digits to Latin (0-9). */
+function toLatinDigits(s: string): string {
+  return s
+    .replace(/[۰-۹]/g, (d) => String("۰۱۲۳۴۵۶۷۸۹".indexOf(d)))
+    .replace(/[٠-٩]/g, (d) => String("٠١٢٣٤٥٦٧٨٩".indexOf(d)));
+}
+
 export default function LoginForm(): JSX.Element {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -21,7 +28,7 @@ export default function LoginForm(): JSX.Element {
     try {
       result = await signIn("credentials", {
         tenantSlug: String(formData.get("tenantSlug") ?? ""),
-        email: String(formData.get("email") ?? ""),
+        nationalId: toLatinDigits(String(formData.get("nationalId") ?? "").trim()),
         password: String(formData.get("password") ?? ""),
         redirect: false,
       });
@@ -81,13 +88,13 @@ export default function LoginForm(): JSX.Element {
         </div>
       </div>
 
-      {/* Email */}
+      {/* National ID */}
       <div>
         <label
-          htmlFor="email"
+          htmlFor="nationalId"
           className="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-300"
         >
-          ایمیل
+          کد ملی
         </label>
         <div className="relative">
           <span className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-gray-400 dark:text-gray-500">
@@ -102,17 +109,21 @@ export default function LoginForm(): JSX.Element {
               <path
                 strokeLinecap="round"
                 strokeLinejoin="round"
-                d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75"
+                d="M15 9h3.75M15 12h3.75M15 15h3.75M4.5 19.5h15a2.25 2.25 0 002.25-2.25V6.75A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25v10.5A2.25 2.25 0 004.5 19.5zm6-10.125a1.875 1.875 0 11-3.75 0 1.875 1.875 0 013.75 0zm1.294 6.336a6.721 6.721 0 01-3.17.789 6.721 6.721 0 01-3.168-.789 3.376 3.376 0 016.338 0z"
               />
             </svg>
           </span>
           <input
-            id="email"
-            name="email"
-            type="email"
+            id="nationalId"
+            name="nationalId"
+            type="text"
             required
-            autoComplete="email"
-            placeholder="you@example.com"
+            inputMode="numeric"
+            autoComplete="off"
+            maxLength={10}
+            pattern="[0-9۰-۹٠-٩]{10}"
+            title="کد ملی باید ۱۰ رقم باشد"
+            placeholder="مثلاً ۱۲۳۴۵۶۷۸۹۱"
             className="pl-4 pr-10"
             dir="ltr"
           />
