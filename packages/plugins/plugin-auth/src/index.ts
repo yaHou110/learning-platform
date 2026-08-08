@@ -31,6 +31,8 @@ export const manifest: PluginManifest = {
   apiRoutes: [
     { method: "POST", path: "/api/auth/login" },
     { method: "POST", path: "/api/auth/logout" },
+    { method: "POST", path: "/api/auth/forgot-password" },
+    { method: "POST", path: "/api/auth/reset-password" },
     { method: "GET", path: "/api/auth/session" },
     { method: "GET", path: "/api/users" },
   ],
