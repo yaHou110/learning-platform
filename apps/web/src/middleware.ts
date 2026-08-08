@@ -4,7 +4,8 @@ import type { NextRequest } from "next/server";
 export async function middleware(request: NextRequest): Promise<NextResponse> {
   const { pathname } = request.nextUrl;
 
-  const isAuthPage = pathname.startsWith("/login");
+  const isAuthPage =
+    pathname.startsWith("/login") || pathname.startsWith("/forgot-password");
   const isApiAuthPage = pathname.startsWith("/api/auth");
   const isHealthPage = pathname === "/api/health";
   const isReadyPage = pathname === "/api/ready";

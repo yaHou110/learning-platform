@@ -54,7 +54,7 @@ export default function AppShell({
             <div className="text-sm font-bold leading-tight text-gray-900 dark:text-gray-100">
               رویش
             </div>
-            <div className="text-xs text-gray-500 dark:text-gray-400">سامانه فرهنگی، تربیتی و خانواده‌های حوزوی</div>
+            <div className="text-xs text-gray-500 dark:text-gray-400">سامانه فرهنگی، تربیتی حوزه و خانواده</div>
           </div>
         </div>
 

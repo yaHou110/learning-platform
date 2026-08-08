@@ -16,8 +16,8 @@ async function main() {
 
   // User
   await client.query(
-    `INSERT INTO users (id, tenant_id, email, national_id, password_hash, display_name, role, is_active) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) ON CONFLICT (id) DO NOTHING`,
-    [userId, tenantId, `student-${userId.slice(0,8)}@test.dev`, '9876543210', 'x', 'Test Student', 'student', true]
+    `INSERT INTO users (id, tenant_id, email, national_id, phone, password_hash, display_name, role, is_active) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) ON CONFLICT (id) DO NOTHING`,
+    [userId, tenantId, `student-${userId.slice(0,8)}@test.dev`, '9876543210', '09121112222', 'x', 'Test Student', 'student', true]
   );
 
   // Course

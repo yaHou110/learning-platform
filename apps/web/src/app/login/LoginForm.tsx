@@ -4,12 +4,8 @@ import { useState } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 
-/** Convert Persian (۰-۹) and Arabic (٠-٩) digits to Latin (0-9). */
-function toLatinDigits(s: string): string {
-  return s
-    .replace(/[۰-۹]/g, (d) => String("۰۱۲۳۴۵۶۷۸۹".indexOf(d)))
-    .replace(/[٠-٩]/g, (d) => String("٠١٢٣٤٥٦٧٨٩".indexOf(d)));
-}
+import Link from "next/link";
+import { toLatinDigits } from "@/lib/digits";
 
 export default function LoginForm(): JSX.Element {
   const [error, setError] = useState<string | null>(null);
@@ -27,7 +23,7 @@ export default function LoginForm(): JSX.Element {
     let result;
     try {
       result = await signIn("credentials", {
-        tenantSlug: String(formData.get("tenantSlug") ?? ""),
+        tenantSlug: toLatinDigits(String(formData.get("tenantSlug") ?? "").trim()),
         nationalId: toLatinDigits(String(formData.get("nationalId") ?? "").trim()),
         password: String(formData.get("password") ?? ""),
         redirect: false,
@@ -80,10 +76,14 @@ export default function LoginForm(): JSX.Element {
             name="tenantSlug"
             type="text"
             required
-            autoComplete="organization"
-            placeholder="مثلاً: demo"
+            inputMode="numeric"
+            autoComplete="off"
+            maxLength={12}
+            pattern="[0-9۰-۹٠-٩]{1,12}"
+            title="شناسه مرکز باید عدد باشد"
+            placeholder="مثلاً ۱۰۰۱"
             className="pl-4 pr-10"
-            dir="rtl"
+            dir="ltr"
           />
         </div>
       </div>
@@ -139,6 +139,12 @@ export default function LoginForm(): JSX.Element {
           >
             رمز عبور
           </label>
+          <Link
+            href="/forgot-password"
+            className="text-xs font-medium text-emerald-700 transition-colors hover:text-emerald-800 dark:text-emerald-400 dark:hover:text-emerald-300"
+          >
+            فراموشی رمز عبور؟
+          </Link>
         </div>
         <div className="relative">
           <span className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-gray-400 dark:text-gray-500">

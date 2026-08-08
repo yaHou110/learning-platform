@@ -30,8 +30,8 @@ async function main() {
 
   // 2. Create user
   const userRes = await client.query(
-    `INSERT INTO users (id, tenant_id, email, national_id, display_name, role, password_hash)
-     VALUES (gen_random_uuid(), $1, 'admin-cert-test@test.local', '1112223334', 'Admin Test', 'super_admin', 'placeholder')
+    `INSERT INTO users (id, tenant_id, email, national_id, phone, display_name, role, password_hash)
+     VALUES (gen_random_uuid(), $1, 'admin-cert-test@test.local', '1112223334', '09123334444', 'Admin Test', 'super_admin', 'placeholder')
      RETURNING id, tenant_id, role`,
     [tenant.id]
   );

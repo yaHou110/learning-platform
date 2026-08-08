@@ -44,6 +44,7 @@ export const users = pgTable(
       .references(() => tenants.id, { onDelete: "restrict" }),
     email: text("email").notNull(), // normalized to lower-case; citext extension added in migration
     nationalId: text("national_id").notNull(), // 10-digit Iranian national ID — the login identifier
+    phone: text("phone").notNull(), // 11-digit Iranian mobile (09…) — SMS channel for password reset
     passwordHash: text("password_hash").notNull(),
     displayName: text("display_name").notNull(),
     role: text("role").notNull(),
@@ -57,11 +58,37 @@ export const users = pgTable(
       t.tenantId,
       t.nationalId
     ),
+    tenantPhoneUnique: uniqueIndex("users_tenant_phone_unique").on(
+      t.tenantId,
+      t.phone
+    ),
     tenantIdx: index("users_tenant_idx").on(t.tenantId),
     roleCheck: check(
       "users_role_check",
       sql`${t.role} in ('super_admin','center_admin','teacher','student')`
     ),
+  })
+);
+
+/**
+ * One-time password reset tokens. `token` stores the SHA-256 hex of the
+ * 6-digit SMS code so a DB leak cannot be replayed directly. Expired or used
+ * tokens are deleted on verification (single-use).
+ */
+export const passwordResetTokens = pgTable(
+  "password_reset_tokens",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    userId: uuid("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    token: text("token").notNull(),
+    expiresAt: timestamp("expires_at", { withTimezone: true }).notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => ({
+    tokenUnique: uniqueIndex("password_reset_tokens_token_unique").on(t.token),
+    userIdx: index("password_reset_tokens_user_idx").on(t.userId),
   })
 );
 

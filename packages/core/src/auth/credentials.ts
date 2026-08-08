@@ -18,7 +18,8 @@ import * as schema from "../db/schema/index.js";
 const BCRYPT_COST = 12;
 
 export const CredentialsInputSchema = z.object({
-  tenantSlug: z.string().min(1),
+  // Center identifiers are numeric (e.g. 1001), per product decision.
+  tenantSlug: z.string().regex(/^\d{1,12}$/, "شناسه مرکز باید عدد باشد"),
   nationalId: z
     .string()
     .regex(/^\d{10}$/, "کد ملی باید ۱۰ رقم باشد")

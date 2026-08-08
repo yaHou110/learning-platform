@@ -15,6 +15,10 @@ import { and, eq } from "drizzle-orm";
 import { getDb } from "../db/client.js";
 import * as schema from "../db/schema/index.js";
 import { hashPassword, type AuthedUser } from "../auth/credentials.js";
+import {
+  requestPasswordReset as requestPasswordResetImpl,
+  completePasswordReset as completePasswordResetImpl,
+} from "../auth/password-reset.js";
 import type { Role } from "../db/schema/index.js";
 export { catalog, COURSE_STATUSES, CONTENT_TYPES } from "./catalog.js";
 export type { Course, Lesson } from "./catalog.js";
@@ -32,6 +36,7 @@ export type UserPublic = {
   tenantId: string;
   email: string;
   nationalId: string;
+  phone: string;
   displayName: string;
   role: Role;
   isActive: boolean;
@@ -55,6 +60,7 @@ export const identity = {
         tenantId: schema.users.tenantId,
         email: schema.users.email,
         nationalId: schema.users.nationalId,
+        phone: schema.users.phone,
         displayName: schema.users.displayName,
         role: schema.users.role,
         isActive: schema.users.isActive,
@@ -80,6 +86,7 @@ export const identity = {
         tenantId: schema.users.tenantId,
         email: schema.users.email,
         nationalId: schema.users.nationalId,
+        phone: schema.users.phone,
         displayName: schema.users.displayName,
         role: schema.users.role,
         isActive: schema.users.isActive,
@@ -116,6 +123,7 @@ export const identity = {
     tenantId: string;
     email: string;
     nationalId: string;
+    phone: string;
     displayName: string;
     role: AuthedUser["role"];
     password: string;
@@ -128,6 +136,7 @@ export const identity = {
         tenantId: input.tenantId,
         email: input.email.toLowerCase(),
         nationalId: input.nationalId,
+        phone: input.phone,
         displayName: input.displayName,
         role: input.role,
         passwordHash,
@@ -135,6 +144,28 @@ export const identity = {
       .returning();
     if (!row) throw new Error("createUser: no row returned");
     return row;
+  },
+
+  /**
+   * Password reset via SMS — steps 1 and 2. `request` resolves the account
+   * (tenant slug + national ID + phone), mints a 6-digit code and persists it
+   * (hashed); `complete` verifies the single-use code and sets the new hash.
+   */
+  async requestPasswordReset(input: {
+    tenantSlug: string;
+    nationalId: string;
+    phone: string;
+  }): Promise<{ userId: string; code: string } | null> {
+    return requestPasswordResetImpl(getDb(), input);
+  },
+
+  async completePasswordReset(input: {
+    tenantSlug: string;
+    nationalId: string;
+    code: string;
+    newPassword: string;
+  }): Promise<boolean> {
+    return completePasswordResetImpl(getDb(), input);
   },
 
   async deactivateUser(tenantId: string, userId: string): Promise<void> {

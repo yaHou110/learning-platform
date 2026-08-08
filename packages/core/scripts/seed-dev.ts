@@ -2,10 +2,12 @@
  * Idempotent dev seed.
  *
  * Creates:
- *   - one tenant (`slug=demo`, name="Learning Platform Demo")
- *   - one super_admin user (`email=admin@lp.local`, password=`changeme`)
+ *   - one tenant (numeric `slug=1001`, name="مرکز فرهنگی تربیتی رویش")
+ *   - one super_admin user (`email=admin@lp.local`, national ID `1234567891`,
+ *     phone `09123456789`, password=`changeme`)
  *
- * Re-running is safe: `ON CONFLICT DO NOTHING`.
+ * Re-running is safe: `ON CONFLICT DO NOTHING` / `DO UPDATE` for the demo
+ * user (so re-seeding keeps the demo national ID + phone in sync).
  *
  * Usage: `pnpm --filter @learning-platform/core db:seed:dev`
  *
@@ -22,10 +24,12 @@ import { hashPassword } from "../src/auth/credentials.js";
 
 loadEnvOnce();
 
-const SEED_TENANT_SLUG = "demo";
-const SEED_TENANT_NAME = "Learning Platform Demo";
+// Center identifiers are numeric (product decision).
+const SEED_TENANT_SLUG = "1001";
+const SEED_TENANT_NAME = "مرکز فرهنگی تربیتی رویش";
 const SEED_USER_EMAIL = "admin@lp.local";
 const SEED_USER_NATIONAL_ID = "1234567891"; // 10 digits, passes the national-ID check digit
+const SEED_USER_PHONE = "09123456789"; // 11-digit Iranian mobile — SMS channel for password reset
 const SEED_USER_PASSWORD = "changeme";
 const SEED_USER_NAME = "Super Admin";
 
@@ -55,13 +59,14 @@ async function main(): Promise<void> {
       tenantId: tenantRow.id,
       email: SEED_USER_EMAIL,
       nationalId: SEED_USER_NATIONAL_ID,
+      phone: SEED_USER_PHONE,
       displayName: SEED_USER_NAME,
       role: "super_admin",
       passwordHash,
     })
     .onConflictDoUpdate({
       target: [users.tenantId, users.email],
-      set: { nationalId: SEED_USER_NATIONAL_ID },
+      set: { nationalId: SEED_USER_NATIONAL_ID, phone: SEED_USER_PHONE },
     });
 
   // Demo catalog: one published course with 5 lessons (M3 DoD: "یک دوره
@@ -119,6 +124,7 @@ async function main(): Promise<void> {
   console.log(`  tenant slug: ${SEED_TENANT_SLUG}`);
   console.log(`  user email:  ${SEED_USER_EMAIL}`);
   console.log(`  user national ID: ${SEED_USER_NATIONAL_ID}`);
+  console.log(`  user phone:  ${SEED_USER_PHONE}`);
   console.log(`  password:    ${SEED_USER_PASSWORD}  ← change in production`);
   console.log(`  demo course: ${DEMO_COURSE_TITLE} (published, ${demoLessons.length} lessons)`);
 

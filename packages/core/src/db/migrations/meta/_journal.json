@@ -29,6 +29,13 @@
       "when": 1786147570255,
       "tag": "0003_national_id",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1786148867466,
+      "tag": "0004_forgot_password",
+      "breakpoints": true
     }
   ]
 }
