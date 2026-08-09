@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 
 import Link from "next/link";
 import { toLatinDigits } from "@/lib/digits";
+import { safeCallbackUrl } from "@/lib/redirect";
 
 export default function LoginForm(): JSX.Element {
   const [error, setError] = useState<string | null>(null);
@@ -41,7 +42,16 @@ export default function LoginForm(): JSX.Element {
       return;
     }
 
-    router.push("/dashboard");
+    // Middleware preserves the originally requested path in callbackUrl.
+    // Resolve it against the current origin to keep redirects same-origin.
+    const rawCallbackUrl = new URLSearchParams(window.location.search).get(
+      "callbackUrl",
+    );
+    router.push(
+      rawCallbackUrl
+        ? safeCallbackUrl(rawCallbackUrl, window.location.origin)
+        : "/dashboard",
+    );
   }
 
   return (
@@ -76,6 +86,7 @@ export default function LoginForm(): JSX.Element {
             name="tenantSlug"
             type="text"
             required
+            aria-describedby="tenant-help"
             inputMode="numeric"
             autoComplete="off"
             maxLength={12}
@@ -86,6 +97,9 @@ export default function LoginForm(): JSX.Element {
             dir="ltr"
           />
         </div>
+        <p id="tenant-help" className="mt-1.5 text-xs text-gray-500 dark:text-gray-400">
+          شناسهٔ عددی مرکز را وارد کنید.
+        </p>
       </div>
 
       {/* National ID */}
@@ -118,6 +132,7 @@ export default function LoginForm(): JSX.Element {
             name="nationalId"
             type="text"
             required
+            aria-describedby="national-id-help"
             inputMode="numeric"
             autoComplete="off"
             maxLength={10}
@@ -128,6 +143,9 @@ export default function LoginForm(): JSX.Element {
             dir="ltr"
           />
         </div>
+        <p id="national-id-help" className="mt-1.5 text-xs text-gray-500 dark:text-gray-400">
+          کد ملی ۱۰ رقمی، بدون خط تیره.
+        </p>
       </div>
 
       {/* Password */}
@@ -147,22 +165,6 @@ export default function LoginForm(): JSX.Element {
           </Link>
         </div>
         <div className="relative">
-          <span className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-gray-400 dark:text-gray-500">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              strokeWidth={1.8}
-              stroke="currentColor"
-              className="h-5 w-5"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z"
-              />
-            </svg>
-          </span>
           <input
             id="password"
             name="password"
@@ -171,14 +173,17 @@ export default function LoginForm(): JSX.Element {
             minLength={8}
             autoComplete="current-password"
             placeholder="••••••••"
-            className="pl-11 pr-10"
+            className="pl-12 pr-4"
             dir="ltr"
           />
           <button
             type="button"
             onClick={() => setShowPassword((v) => !v)}
             aria-label={showPassword ? "مخفی کردن رمز" : "نمایش رمز"}
-            className="absolute inset-y-0 left-2 flex items-center rounded-md p-1.5 text-gray-400 transition-colors hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300"
+            aria-pressed={showPassword}
+            aria-controls="password"
+            title={showPassword ? "مخفی کردن رمز" : "نمایش رمز"}
+            className="absolute inset-y-1 left-1 z-10 flex w-9 !p-0 items-center justify-center rounded-lg border border-gray-200/70 bg-gray-50/90 text-gray-500 shadow-sm transition-colors hover:bg-gray-100 hover:text-gray-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/70 dark:border-gray-600/70 dark:bg-gray-800/90 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-white"
           >
             {showPassword ? (
               <svg
@@ -222,7 +227,9 @@ export default function LoginForm(): JSX.Element {
 
       {error && (
         <p
+          id="login-error"
           role="alert"
+          aria-live="assertive"
           className="flex items-center gap-2 rounded-lg bg-red-50 px-3 py-2 text-sm text-red-600 dark:bg-red-900/30 dark:text-red-400"
         >
           <svg
@@ -246,7 +253,9 @@ export default function LoginForm(): JSX.Element {
       <button
         type="submit"
         disabled={loading}
-        className="mt-1 flex w-full items-center justify-center gap-2 rounded-xl bg-emerald-700 px-4 py-3 text-sm font-semibold text-white shadow-sm transition-all hover:bg-emerald-800 hover:shadow-md disabled:opacity-50"
+        aria-busy={loading}
+        aria-describedby={error ? "login-error" : undefined}
+        className="mt-1 flex min-h-12 w-full items-center justify-center gap-2 rounded-xl bg-emerald-700 px-4 py-3 text-sm font-semibold text-white shadow-sm transition-all hover:bg-emerald-800 hover:shadow-md disabled:opacity-50"
       >
         {loading ? (
           <>

@@ -73,7 +73,12 @@ export async function middleware(request: NextRequest): Promise<NextResponse> {
     }
   } else if (!hasSession) {
     const loginUrl = new URL("/login", request.url);
-    loginUrl.searchParams.set("callbackUrl", pathname);
+    // Preserve the complete in-app destination, including its query string,
+    // so a successful login can return to the exact protected view.
+    loginUrl.searchParams.set(
+      "callbackUrl",
+      `${pathname}${request.nextUrl.search}`,
+    );
     response = NextResponse.redirect(loginUrl);
   } else {
     // Cookie present — pass through; page/route validates with auth() (Node).

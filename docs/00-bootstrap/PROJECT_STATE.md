@@ -2,7 +2,7 @@
 
 > **Current snapshot of the project.** This is the *first* file to read after `DEVELOPMENT_GUIDE.md`.
 
-> Last updated: 2026-08-01 (v1.16 — SPRINT-002 S1+S2 shipped: Catalog & Learning API + full RTL UI + demo seed)
+> Last updated: 2026-08-07 (v1.17 — current implementation truth added; historical claims remain append-only)\n>\n> **Current-state audit:** read [`CURRENT_IMPLEMENTATION_TRUTH.md`](./CURRENT_IMPLEMENTATION_TRUTH.md) before using this historical state snapshot for product, security, or commercial claims.
 
 ---
 
@@ -58,7 +58,7 @@
 | **No new business features until M7 sign-off** | SPRINT-001 (founder directive 2026-07-11) | 🟢 **gate lifted (2026-07-23)** — M7 satisfied by Vercel + Railway cloud target (ADR-0018) |
 | **Containerized DB migrations — one-shot `migrate` service in docker-compose.prod.yml, reusing app builder stage (tsx + drizzle-orm + migrations), runs against prod DATABASE_URL before app boots (`depends_on: service_completed_successfully`)** | `ADR-0017` | ✅ binding (2026-07-22) |
 | **Hosting & deployment model (v1 redirect) — Vercel (serverless Next.js) + Railway Postgres; Docker Compose prod stack retained as local verification lane** | `ADR-0018` | ✅ binding (2026-07-23) |
-| **Multi-tenant data isolation — shared schema + tenant_id + 3-layer enforcement (app default + Postgres RLS + integration tests); operational tenancy deferred** | `ADR-0008` | ✅ binding (2026-07-19) |
+| **Multi-tenant data isolation — shared schema + tenant_id; application scoping is active, RLS is defense-in-depth, operational tenancy deferred** | `ADR-0008` | ✅ binding (2026-07-19) |
 
 ---
 
