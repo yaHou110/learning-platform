@@ -27,7 +27,7 @@
 
 ## ADR-0014 escalation triggers (if this ADR touches reusable-platform / capability-vs-operation / no-premature-abstraction)
 
-- [ ] **Agent escalation triggers section** added (per `ADR-0014` §58/§59 convention) listing patterns an agent must stop and propose an ADR for instead of silently generalizing.
+- [ ] **Escalation triggers section** added (per `ADR-0014` §58/§59 convention) listing patterns that must stop and propose an ADR instead of silently generalizing.
 - [ ] Explicitly lists **what is NOT a trigger** (to prevent the ADR from becoming a pretext for premature work).
 
 ---
@@ -144,9 +144,9 @@
 
 ---
 
-## Agent escalation triggers
+## Escalation triggers
 
-Decision §X states *<value>*; an agent matches *patterns* against it. Before changing <area>, stop and propose an ADR-style alternative if the change would:
+Decision §X states *<value>*; concrete patterns are matched against it. Before changing <area>, stop and propose an ADR-style alternative if the change would:
 
 1. <Pattern 1 — the anti-pattern this ADR prevents>
 2. <Pattern 2 — the anti-pattern this ADR prevents>

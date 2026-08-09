@@ -142,9 +142,9 @@ A new ADR is required to overturn this one.
 
 ---
 
-## Agent escalation triggers
+## Escalation triggers
 
-Decision §2 (three-layer enforcement), §6 (operational tenancy deferred), §7 (configuration not forks), and §8 (no premature abstraction) state *values*; an agent matches *patterns* against them (per the ADR-0014 trigger convention and §58/§59). Before writing into `packages/core/src/db/`, `packages/core/src/api/` (the data-access chokepoint, ADR-0006), tenant-resolution middleware, RLS/migration SQL, or `tenants.config` shape, stop and propose an ADR-style alternative if the change would:
+Decision §2 (three-layer enforcement), §6 (operational tenancy deferred), §7 (configuration not forks), and §8 (no premature abstraction) state *values*; concrete patterns are matched against them (per the ADR-0014 trigger convention and §58/§59). Before writing into `packages/core/src/db/`, `packages/core/src/api/` (the data-access chokepoint, ADR-0006), tenant-resolution middleware, RLS/migration SQL, or `tenants.config` shape, stop and propose an ADR-style alternative if the change would:
 
 1. **Ship a tenant-scoped table without `tenant_id`, or weaken its enforcement.** Any tenant-scoped table lacking `tenant_id` + a composite index, or an RLS policy gap, re-opens C2's "more than one layer" guarantee. (The intended path is Decision §1/§2; a regression is the anti-pattern.)
 2. **Omit or bypass the RLS session setting.** Setting `current_setting('app.tenant_id')` per request is what makes the database layer enforce; a path that reads/writes tenant-scoped rows without the session set collapses three layers to one.

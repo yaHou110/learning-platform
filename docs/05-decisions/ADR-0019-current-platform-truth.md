@@ -38,7 +38,7 @@ Historical ADRs, changelogs, sprint evidence, and handover records remain append
 - Commercial claims become more defensible and less likely to overstate the product.
 - Future implementation work can target the largest gap: converting the family/cultural UI direction into a persisted domain model and real workflows.
 - Historical documents remain useful as context but must not be treated as current status without cross-checking the truth document.
-- Product and engineering agents must update the truth document when a meaningful capability changes state.
+- Product and engineering contributors must update the truth document when a meaningful capability changes state.
 
 ## Non-goals
 

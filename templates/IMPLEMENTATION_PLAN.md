@@ -8,7 +8,7 @@
 # Implementation Plan — <short title>
 
 - **Date:** YYYY-MM-DD
-- **Author:** <name or agent>
+- **Author:** <name>
 - **Sprint / milestone:** SPRINT-NNN / M{n} (or "none")
 - **Risk level:** LOW | MEDIUM | HIGH | CRITICAL (see `docs/03-development/RISK_CLASSIFICATION.md`)
 - **Status:** Draft | Approved | Complete

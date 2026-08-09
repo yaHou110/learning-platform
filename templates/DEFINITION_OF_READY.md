@@ -9,7 +9,7 @@
 
 - **Task ID / session:** …
 - **Date:** YYYY-MM-DD
-- **Owner:** <name or agent>
+- **Owner:** <name>
 - **Risk level:** LOW | MEDIUM | HIGH | CRITICAL (see RISK_CLASSIFICATION.md)
 - **Status:** ☐ Not ready | ☑ Ready
 

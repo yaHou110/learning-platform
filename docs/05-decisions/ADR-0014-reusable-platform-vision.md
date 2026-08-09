@@ -175,12 +175,12 @@ A new ADR is required to overturn this one.
 
 ---
 
-## Agent escalation triggers
+## Escalation triggers
 
 Decision §2 ("Configuration over hardcoding") and §6 ("No premature abstraction") state
-*values*. An agent cannot reliably self-evaluate against abstract values; it can reliably match
-*patterns*. The triggers below are the concrete anti-patterns that warrant **stop-and-propose**
-behavior before implementation. They bind the agent's action, not its judgment of values —
+*values*. Abstract values cannot be reliably self-evaluated; concrete patterns can be matched
+reliably. The triggers below are the concrete anti-patterns that warrant **stop-and-propose**
+behavior before implementation. They bind the action, not the judgment of values —
 matching §58 ("verify, do not invent") and §59 ("governance before generation").
 
 Before writing into `shared/` or `core/` code (paths scoped by ADR-0006 and

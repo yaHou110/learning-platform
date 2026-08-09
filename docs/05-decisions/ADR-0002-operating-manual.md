@@ -12,7 +12,7 @@ This project's documentation must:
 
 1. Survive a change of tool (any sequence of development tools).
 2. Not depend on a specific chat history or single AI session.
-3. Be readable in < 5 minutes by a new agent with zero context.
+3. Be readable in < 5 minutes by a new contributor with zero context.
 4. Avoid the "context bloat" problem (oversized `DEVELOPMENT_GUIDE.md` files that hurt performance).
 5. Be maintainable by a single human over years.
 
@@ -49,7 +49,7 @@ By contrast, a small `DEVELOPMENT_GUIDE.md` + on-demand doc loading keeps each r
 
 A super-prompt is bound to the chat it was written in. If the user switches accounts, models, or tools, the project context is lost.
 
-A versioned repo with docs committed to git is **the** durable artifact. A new agent reads the same files; no human re-explanation needed.
+A versioned repo with docs committed to git is **the** durable artifact. A new contributor reads the same files; no human re-explanation needed.
 
 ### 3. Single human maintainer
 
@@ -67,7 +67,7 @@ Decisions should not silently change. The `PROJECT_HANDOVER.md`, `CHANGELOG.md`,
 A single short entry file at the repository root (here `DEVELOPMENT_GUIDE.md`) that points at the
 deeper on-demand documentation is a broadly supported practice across many development environments.
 
-By following the convention, we get multi-agent support for free.
+By following the convention, we get consistent support across tools and contributors for free.
 
 ---
 
@@ -100,7 +100,7 @@ By following the convention, we get multi-agent support for free.
 | --- | --- | --- |
 | **Super-prompt in one chat** | Rejected | Lost on session end; model-specific. |
 | **Single big `DEVELOPMENT_GUIDE.md`** | Rejected | Context bloat; violates "small router" best practice. |
-| **Wiki (Notion, Confluence)** | Rejected | Not in-repo, not git-versioned, paid, agent-unfriendly. |
+| **Wiki (Notion, Confluence)** | Rejected | Not in-repo, not git-versioned, paid, not automation-friendly. |
 | **Engineering Protocol (chosen)** | Accepted | All boxes ticked. |
 
 ---
@@ -129,7 +129,7 @@ Each file:
 
 ---
 
-## How agents are expected to behave
+## How contributors are expected to behave
 
 (From `DEVELOPMENT_GUIDE.md`.)
 

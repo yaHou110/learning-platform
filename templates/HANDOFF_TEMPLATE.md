@@ -5,7 +5,7 @@
 ---
 
 ```markdown
-## Session NNN — YYYY-MM-DD — <agent>
+## Session NNN — YYYY-MM-DD — <contributor>
 
 **Goal:**
 <one line, e.g. "Lock the technology stack (ADR-0003..0006).">
@@ -34,7 +34,7 @@
 **Next session:**
 <one line pointing to PROJECT_BACKLOG.md, or "see PROJECT_BACKLOG.md session NNN+1">
 
-**Notes for the next agent:**
+**Notes for the next session:**
 <any gotchas, links, things-to-remember — keep short>
 ```
 
@@ -49,7 +49,7 @@
 Did some stuff. Updated docs. Next: more stuff.
 ```
 
-(Not specific. No file paths. No decisions recorded. Useless to the next agent.)
+(Not specific. No file paths. No decisions recorded. Useless to the next session.)
 
 ### ✅ Good
 

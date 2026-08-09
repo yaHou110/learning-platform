@@ -23,11 +23,12 @@ packages/**/src/**/*.js.map
 packages/**/src/**/*.d.ts
 packages/**/src/**/*.d.ts.map
 
-# --- Claude Code: machine-local + runtime only. Contract is committed. ---
-.claude/settings.local.json
-.claude/state/task-output.json
-.claude/state/*.log
-# TaskOutput handoff scripts are committed (hooks reference them): scripts/handoff/ is tracked.
+# --- Machine-local tooling & verification harness (kept out of version control) ---
+.agents/
+.claude/
+.codex/
+scripts/handoff/
+skills-lock.json
 # M7 prep: local self-signed TLS + secrets for the localhost nginx verification harness —
 # never commit (throwaway dev certs; real secrets live in gitignored root .env).
 .tls-local/

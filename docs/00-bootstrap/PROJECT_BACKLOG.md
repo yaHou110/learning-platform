@@ -24,7 +24,7 @@
 
 Session 024 closed M7 (Vercel + Railway target). Sessions after M7 (024b) added the schema foundation (PR #11, 5 tables) and the security audit fixes (PR #9). **Session 025 delivered SPRINT-002 S1:**
 
-- **PR #12 merged** — `AGENTS.md` + `ENGINEERING_STANDARDS.md` governance docs (fix: PR body DoD checkbox needed backtick form `` `pnpm verify` ``).
+- **PR #12 merged** — `ENGINEERING_STANDARDS.md` governance docs (fix: PR body DoD checkbox needed backtick form `` `pnpm verify` ``).
 - **Vercel production deploy unblocked** — project Root Directory set to `apps/web` via project API (framework detection previously failed: "No Next.js version detected"); dead `crons` block (nonexistent `/api/cron/daily-maintenance`) removed from `vercel.json` on main. Production deployment now `Ready`. Note: the project sits behind Vercel org SSO (`all_except_custom_domains`), so external smoke curls hit the SSO redirect — the local Docker lane (ADR-0018) is the endpoint-verification path until a custom domain is added.
 - **SPRINT-002 S2 — Catalog & Learning UI** (`feat/sprint2-catalog-learning-ui`):
   - `AppShell.tsx` shared RTL header/nav + sign-out; 7 pages: `/`, `/courses`, `/courses/[id]`, `/courses/[id]/lessons/[lessonId]`, `/dashboard`, `/admin/courses`, `/admin/courses/[id]/lessons`.
@@ -91,7 +91,7 @@ Session 024 closed M7 (Vercel + Railway target). Sessions after M7 (024b) added 
 | C4 | ✅ `next.config.mjs` — `output:"standalone"` gated behind `NEXTJS_STANDALONE=1` (Dockerfile sets it) |
 | C5 | ✅ `apps/web/Dockerfile` — sets `NEXTJS_STANDALONE=1` so Docker still gets standalone output |
 
-**Agent/contributor work (now unblocked — SPRINT-002 / Feature Sprint):**
+**Contributor work (now unblocked — SPRINT-002 / Feature Sprint):**
 
 - ✅ **Catalog plugin API** — courses + lessons CRUD/publish routes shipped (S1)
 - ✅ **Learning plugin API** — enroll + progress routes shipped (S1)

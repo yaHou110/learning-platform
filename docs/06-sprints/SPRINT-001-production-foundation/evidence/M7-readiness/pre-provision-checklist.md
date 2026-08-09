@@ -2,16 +2,16 @@
 
 > **Status:** Prep-only plan. Created 2026-07-21 after the founder decided to buy a VPS.
 > **Purpose:** Make the moment the VPS is in hand a box-ticking exercise, not a
-> research project. Split by **Claude can do now (no VPS, no GitHub)** vs
+> research project. Split by **prep steps that can run now (no VPS, no GitHub)** vs
 > **founder does (needs the VPS / GitHub / DNS)**, sequenced so every founder step
-> has its Claude-prep counterpart already done.
+> has its prep counterpart already done.
 > **Companion to:** `checklist.md` (the post-VPS live readiness review → sign-off → gate lift).
 > **GitHub status:** currently parked. Several "founder" steps below (repo secrets,
 > `deploy.yml` CI run) are blocked until GitHub is un-parked — those are flagged 🚫GH.
 
 ---
 
-## Defects in M6 deploy artifacts found during this prep (Claude to fix now)
+## Defects in M6 deploy artifacts found during this prep (to fix now)
 
 Both are real and only surface at real-deploy time. Fixing them now means the day
 you get a VPS you deploy from *correctly committed* artifacts, not a branch full of
@@ -30,8 +30,7 @@ late fixes.
    command text as the `AUTH_SECRET`. Subscriber would ship with a guessable "secret"
    that is a known command string.
    → Replace the heredoc's `AUTH_SECRET=` line with an instruction to run the
-   openssl command first, or generate the secrets *before* writing the file (Claude
-   can pre-generate all secrets locally and hand you real values + a ready env file).
+   openssl command first, or generate the secrets *before* writing the file (pre-generate all secrets locally and hand you real values + a ready env file).
 
 3. **Nothing in the deploy path runs database migrations.** The prod Docker image
    (`apps/web/Dockerfile`, Next.js `standalone`) excludes `packages/core/src/db/migrations/`,
@@ -51,7 +50,7 @@ late fixes.
 
 ---
 
-## Phase 0 — Claude prep (do now, no VPS / no GitHub needed)
+## Phase 0 — Prep (do now, no VPS / no GitHub needed)
 
 Everything here is pure-local code + artifact work. Vault these so the VPS day is
 just "run the guide."
@@ -82,8 +81,8 @@ just "run the guide."
 - [ ] **CP0.6** Add a `deploy.yml` dry-run path that works *without* committing to
       prod: print the exact SSH commands it would run, so you can eyeball them at VPS
       time. (Optional; nice-to-have.)
-- [ ] **CP0.7** Extend this repo's handoff + the M7 `checklist.md` so the live
-      sign-off checklist (§§1–5) already references the Claude-prep done above and
+- [ ] **CP0.7** Extend the M7 `checklist.md` so the live
+      sign-off checklist (§§1–5) already references the prep done above and
       the GitHub-unblock decision (see F-GH below).
 - [ ] **CP0.8** Run `pnpm verify && pnpm governance:validate:local` after CP0.1–0.6
       so the prep changes themselves are green before they sit.
@@ -92,7 +91,7 @@ just "run the guide."
 
 ## Phase F — Founder steps (in order, up to "VPS in hand")
 
-These need the VPS, GitHub, or DNS — you do them. Each has the Claude-prep it
+These need the VPS, GitHub, or DNS — you do them. Each has the prep it
 depends on noted. Sequenced so you never hit a step whose prep isn't done.
 
 ### F0 — Decisions you make *before* buying (no VPS yet)
@@ -107,7 +106,7 @@ depends on noted. Sequenced so you never hit a step whose prep isn't done.
      it) + `docker compose up -d`. No GitHub, no repo secrets, but you lose the
      auto-rollback + on-push delivery. The guide §3 step "or: scp -r" already lists
      the manual fallback.
-   Decide one. If (b), tell Claude to add a manual-deploy runbook section and skip F2.1.
+   Decide one. If (b), add a manual-deploy runbook section and skip F2.1.
 
 ### F1 — Buy + provision the host (the VPS-in-hand phase)
 - [ ] **F1.1 Purchase** a VPS ≤ 4 GB RAM, 50 GB SSD, Ubuntu 22.04 or 24.04 LTS
@@ -128,7 +127,7 @@ depends on noted. Sequenced so you never hit a step whose prep isn't done.
       variables → Actions: `GHCR_TOKEN`, `PROD_HOST`, `PROD_USER`, `PROD_SSH_KEY`
       (base64 of the private key), `PROD_ENV` (`/etc/learning-platform/env`).
 - [ ] **F2.2 Host env file** — write `/etc/learning-platform/env` from the
-      Claude-prepped template (CP0.4) with your domain (F0.1) filled in and the real
+      prepped template (CP0.4) with your domain (F0.1) filled in and the real
       secrets (CP0.3). `chmod 600`, owner `root:deploy`.
 
 ### F3 — TLS + proxy live
@@ -161,7 +160,7 @@ depends on noted. Sequenced so you never hit a step whose prep isn't done.
 ## Dependency order (what can't start until what)
 
 ```
-CP0.1/0.2/0.3/0.4/0.5 (Claude, parallel, now)
+CP0.1/0.2/0.3/0.4/0.5 (prep, parallel, now)
         │
         ▼
 F0.1 domain + F0.2 GitHub decision  (founder, no VPS)
@@ -193,5 +192,5 @@ that is fast and free for me to complete first.
 - New business features (PWA, Catalog, Learning, etc.) — gated behind F5.2.
 - Re architecting the topology (laptop-as-host / Cloudflare Tunnel) — ADR-0007 says
   VPS; a topology change needs a new ADR, out of scope here.
-- The parked TaskOutput handoff PR #7 — unrelated tooling side-track; its `deploy.yml`
+- The parked tooling side-track PR #7 — unrelated to the deploy pipeline; its `deploy.yml`
   interactions are orthogonal to prod deploy.

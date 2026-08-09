@@ -17,7 +17,7 @@ ADR-0012 established a 38-rule Engineering Protocol with quality gates, definiti
 - **Risk classification** with tiered validation requirements
 - **ADR enforcement** as a hard stop (not just documentation)
 - **Rule priority** when constraints conflict
-- **Governance before generation** for AI-assisted engineering
+- **Governance before generation** for engineering workflows
 - **Verification before completion** as a unified completion gate
 
 The founder requested extension to 60 rules, reorganized into thematic chapters, without removing or replacing existing rules §1–§38.
@@ -46,7 +46,7 @@ ADR-0012 remains valid and is not edited (append-only history). This ADR extends
 
 ### 1. Spec-Driven Development alignment
 
-Modern AI-assisted engineering fails when agents generate code directly from prompts. §40 mandates a specification-first workflow; §59 requires governance checks before any code generation.
+Generating code directly from ad-hoc instructions fails without specification. §40 mandates a specification-first workflow; §59 requires governance checks before any code generation.
 
 ### 2. Enterprise-grade gates
 

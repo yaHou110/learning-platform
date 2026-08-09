@@ -67,7 +67,7 @@ Rules §38 and §18 prevent hallucinated APIs, configs, and silent architectural
 
 ### Positive
 
-- ✅ One checklist for humans and agents
+- ✅ One checklist for all contributors
 - ✅ Reproducible local verification via `pnpm verify`
 - ✅ Clear escalation rule (confidence < 90% → stop)
 - ✅ Templates reduce ad-hoc planning quality variance
@@ -75,7 +75,7 @@ Rules §38 and §18 prevent hallucinated APIs, configs, and silent architectural
 ### Negative
 
 - ❌ Slightly more documentation overhead per session
-- ❌ Agents must read an additional doc for code tasks
+- ❌ Contributors must read an additional doc for code tasks
 
 ### Neutral
 

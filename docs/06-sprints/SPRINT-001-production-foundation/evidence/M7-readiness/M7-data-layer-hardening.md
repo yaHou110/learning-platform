@@ -77,7 +77,7 @@ break the running app:
   M5 implementation ("detailed resolution mechanics … are implementation detail owned by the
   schema-freeze / M5 work, not by this ADR").
 
-Per ADR-0008's **Agent escalation triggers** (trigger #2: "Omit or bypass the RLS session
+Per ADR-0008's **escalation triggers** (trigger #2: "Omit or bypass the RLS session
 setting … a path that reads/writes tenant-scoped rows without the session set collapses three
 layers to one"), fully activating RLS is **a founder decision**, not a safe inline fix. It is
 recorded below as the one escalated item.

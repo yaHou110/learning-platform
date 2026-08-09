@@ -19,7 +19,7 @@ This is the same class of gap the M7 prep surfaced for the compose `image:` fiel
 ### Forces at play
 
 - **C1 / C6 (ARCHITECTURE_CONSTRAINTS):** low operational complexity, one-person-operable. The deploy mechanism must not require the operator to "remember to run migrations" — it must be structural.
-- **ADR-0007 §"Agent escalation triggers":** changing deployment manifests or `.env` handling is an explicit trigger to record the decision (this ADR), because it touches the deploy topology the hosting ADR governs.
+- **ADR-0007 §"Escalation triggers":** changing deployment manifests or `.env` handling is an explicit trigger to record the decision (this ADR), because it touches the deploy topology the hosting ADR governs.
 - **ADR-0007 Decision §5 ("no premature abstraction"):** the migration mechanism is one-shot, idempotent, and standard Drizzle — not a control plane, not multi-instance. It adds a single short-lived container, not speculative infrastructure.
 - **Founder constraint (2026-07-22):** the work must proceed from **Docker Desktop on Windows** (WSL/Docker subsystem), with no VPS and no host `pnpm`/`node`/`psql` assumed on PATH. This rules out any mechanism that depends on host tooling.
 - **Drizzle's migrate is idempotent** and tracks applied migrations in `__drizzle_migrations`; re-running is safe. Migrations are committed to the repo (single source of truth), not generated at runtime.
@@ -102,15 +102,15 @@ A new ADR is required to overturn this one.
 
 ---
 
-## Agent escalation triggers
+## Escalation triggers
 
-This ADR touches deployment manifests (`docker-compose.prod.yml`) and the app image (`apps/web/Dockerfile`) — the surface ADR-0007 §"Agent escalation triggers" flags. The change here is non-triggering under that ADR's four tests (it bakes no customer identity, locks no deployment model, introduces no multi-instance control plane, forks no artifact — it *reuses* the one artifact). It is recorded here precisely because the surface is flagged. Future changes to migration handling that would re-introduce any of those four patterns must stop and propose under ADR-0007's convention.
+This ADR touches deployment manifests (`docker-compose.prod.yml`) and the app image (`apps/web/Dockerfile`) — the surface ADR-0007 §"Escalation triggers" flags. The change here is non-triggering under that ADR's four tests (it bakes no customer identity, locks no deployment model, introduces no multi-instance control plane, forks no artifact — it *reuses* the one artifact). It is recorded here precisely because the surface is flagged. Future changes to migration handling that would re-introduce any of those four patterns must stop and propose under ADR-0007's convention.
 
 ---
 
 ## References
 
-- [`ADR-0007-hosting-deployment-model.md`](./ADR-0007-hosting-deployment-model.md) — §"Agent escalation triggers" (deployment-manifest changes warrant recording the decision); C1/C6 (low-ops, no host toolchain assumed); Decision §5 (no premature abstraction — the chosen mechanism is the minimal one, not speculative).
+- [`ADR-0007-hosting-deployment-model.md`](./ADR-0007-hosting-deployment-model.md) — §"Escalation triggers" (deployment-manifest changes warrant recording the decision); C1/C6 (low-ops, no host toolchain assumed); Decision §5 (no premature abstraction — the chosen mechanism is the minimal one, not speculative).
 - [`ADR-0006-plugin-architecture.md`](./ADR-0006-plugin-architecture.md) — "one deployable" produced by `pnpm --filter web build`; the chosen mechanism reuses that one image rather than adding a second.
 - [`ADB-0004`/ADR-0004-database.md](./ADR-0004-database.md) — Postgres 16 + Drizzle ORM; the migrate mechanism is Drizzle's standard `migrate()` helper, tracked in `__drizzle_migrations`.
 - `packages/core/scripts/migrate.ts` — the idempotent migrate entrypoint reused by the container.

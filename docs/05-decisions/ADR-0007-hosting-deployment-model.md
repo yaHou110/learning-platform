@@ -117,9 +117,9 @@ A new ADR is required to overturn this one.
 
 ---
 
-## Agent escalation triggers
+## Escalation triggers
 
-Decision §4 ("shape kept abstract — configuration boundary, not a build") and §5 ("no premature abstraction") state *values*; an agent cannot reliably self-evaluate against values, but it can match *patterns* (per the standing ADR-0014 trigger convention and §58/§59). Before changing deployment, build, or environment/configuration code (`apps/web/next.config.mjs`, `docker-compose.yml`, deployment manifests, `.env` handling, `apps/web/src/lib/env.ts`, or any new `docs/07-deployment/` artifact), stop and propose an ADR-style alternative if the change would:
+Decision §4 ("shape kept abstract — configuration boundary, not a build") and §5 ("no premature abstraction") state *values*; concrete patterns are matched against them (per the standing ADR-0014 trigger convention and §58/§59). Before changing deployment, build, or environment/configuration code (`apps/web/next.config.mjs`, `docker-compose.yml`, deployment manifests, `.env` handling, `apps/web/src/lib/env.ts`, or any new `docs/07-deployment/` artifact), stop and propose an ADR-style alternative if the change would:
 
 1. **Bake a customer identity into the deployment** — a hard-coded customer name, domain, logo path, or organization-specific value embedded in build config, Docker image labels, environment defaults, or the artifact itself, rather than read from tenant configuration / environment at runtime. (The intended path is Decision §4; embedding is the anti-pattern.)
 2. **Lock the deployment to a single model at the code layer** — build / runtime code that cannot later be operated as dedicated, managed, or shared-SaaS without a rewrite, foreclosing the targets ADR-0014 §4 and this ADR leave open.

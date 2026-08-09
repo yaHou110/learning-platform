@@ -17,7 +17,7 @@
 - [x] `pnpm verify` — EXIT 0 (lint / typecheck / test / build all green)
 - [x] `pnpm audit --prod` re-run; severity summary captured (`audit-after.json`)
 - [x] Residual issues (2 advisories) documented with follow-up plan
-- [x] CHANGELOG + handoff + spec updated
+- [x] CHANGELOG + handover + spec updated
 - [ ] **Commit on the branch** (this session)
 - [ ] **Push branch + open PR** (this session — or instruct founder)
 - [ ] **Founder review + merge** (post-session)

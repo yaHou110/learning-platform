@@ -8,7 +8,7 @@
 # Human Approval Request — <short title>
 
 - **Date:** YYYY-MM-DD
-- **Requester:** <name or agent>
+- **Requester:** <name>
 - **Risk level:** LOW | MEDIUM | HIGH | CRITICAL
 
 ---

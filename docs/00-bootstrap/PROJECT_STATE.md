@@ -96,7 +96,7 @@ Q5 is consumed by SPRINT-001 M6/M7. Closed by ADR-0007 (superseded by ADR-0018).
 
 1. **Context rot** — mitigated by small, modular docs and append-only history.
 2. **Single-founder bus factor** — mitigated by docs being the source of truth, not chat history.
-3. **Tool lock-in** — mitigated by Agent-portable `DEVELOPMENT_GUIDE.md` and standard Markdown.
+3. **Tool lock-in** — mitigated by a portable `DEVELOPMENT_GUIDE.md` and standard Markdown.
 4. **Premature standardization** — many docs are skeletons. Resist the urge to over-spec before the first code commit.
 5. **Sprint drift** — mitigated by hard gate (M7 lifted 2026-07-23; feature work unblocked).
 6. **🟢 M4.1 dependency exposure — closed** — 28 → 2 advisories after merging `next@15.0.3 → 15.5.20` and `next-auth@5.0.0-beta.25 → 5.0.0-beta.31`. Closed in M4.3 (0 advisories).
@@ -114,4 +114,4 @@ The very next concrete action is in `PROJECT_BACKLOG.md`. Read that file **secon
 
 **Immediate (founder action):** Set 4 env vars on Vercel dashboard (`DATABASE_URL`, `AUTH_SECRET`, `AUTH_TRUST_HOST`, `NEXTAUTH_URL`) → redeploy → `curl /api/health` → expect `{"status":"ok","checks":{"db":true,"auth":true,"storage":"skipped"}}`.
 
-**Next (agent/contributor work, now unblocked):** Catalog / Learning / Dashboard / Credentials / PWA (Q7 → ADR-0016 YES). HSTS behind TLS, CSP nonces, `security.txt` real contact, `osv-scanner` substitute.
+**Next (contributor work, now unblocked):** Catalog / Learning / Dashboard / Credentials / PWA (Q7 → ADR-0016 YES). HSTS behind TLS, CSP nonces, `security.txt` real contact, `osv-scanner` substitute.

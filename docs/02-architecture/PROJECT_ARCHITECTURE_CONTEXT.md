@@ -16,7 +16,7 @@
 
 ## 1. How to read this document
 
-This file exists because `ARCHITECTURE_PRINCIPLES.md` is generic and transferable — it cannot name the ADRs or the precedence rules of *this* repo. That binding lives here. If you are an agent applying the architecture principles to *this* project, read this file first; if you are applying them to *another* project, ignore this file and write an equivalent one for that project.
+This file exists because `ARCHITECTURE_PRINCIPLES.md` is generic and transferable — it cannot name the ADRs or the precedence rules of *this* repo. That binding lives here. If you are applying the architecture principles to *this* project, read this file first; if you are applying them to *another* project, ignore this file and write an equivalent one for that project.
 
 If anything below appears to contradict an accepted ADR, the Engineering Protocol, or the Development Guide, that is drift — **the existing governance wins**. Report the conflict (per the precedence rules), preserve history, update references only after approval, and never auto-revert.
 
@@ -55,7 +55,7 @@ When `ARCHITECTURE_PRINCIPLES.md` principle 10 says "detect existing decision-re
 
 ## 4. Existing architectural assumptions (pointers, not restatements)
 
-These are *where to find* the project's actual architectural decisions. They are listed here so an agent does not have to discover them; they are not re-argued here.
+These are *where to find* the project's actual architectural decisions. They are listed here so a contributor does not have to discover them; they are not re-argued here.
 
 | Assumption | Location | Note |
 | --- | --- | --- |
@@ -76,7 +76,7 @@ These are *where to find* the project's actual architectural decisions. They are
 
 ## 5. Where the generic principles map onto this project
 
-This section exists only to prevent an agent from re-litigating work that is already done. It is a pointer table, not a substitute for reading the linked documents.
+This section exists only to prevent re-litigating work that is already done. It is a pointer table, not a substitute for reading the linked documents.
 
 | `ARCHITECTURE_PRINCIPLES.md` section | Status in this project | Pointer |
 | --- | --- | --- |

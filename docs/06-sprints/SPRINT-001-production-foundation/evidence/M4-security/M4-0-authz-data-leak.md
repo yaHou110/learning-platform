@@ -37,7 +37,7 @@ The bcrypt cost factor is 12, the password policy is 8+ characters. For a corpus
 | Explicit constraints | ✅ No schema change, no breaking change for legitimate `center_admin` / `super_admin` users, no new dependency. |
 | Dependencies | ✅ None — uses existing Drizzle, Auth.js, and the typed `core` API. |
 | Known risks | ✅ LOW for the projection change; MEDIUM for the per-request `isActive` check (one extra DB roundtrip per authenticated request; mitigated by the v1 SLO budget of `p95<500ms` on a 4 GB VPS). |
-| Expected deliverables | ✅ Code change + ADR-0005 revision + new tests + this spec + `CHANGELOG` entry + handoff entry + commit + PR. |
+| Expected deliverables | ✅ Code change + ADR-0005 revision + new tests + this spec + `CHANGELOG` entry + handover entry + commit + PR. |
 | Owner | ✅ Founder. |
 | Priority | ✅ **P0** (security). |
 | Success metrics | ✅ Automated tests assert (a) no `passwordHash` in the response payload, (b) students get 403, (c) deactivated users get 401. `pnpm verify` green. |

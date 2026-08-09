@@ -95,33 +95,34 @@ The documentation is the source of truth.
 ### After every meaningful milestone
 
 Keep the **In-flight task** section at the top of `docs/00-bootstrap/PROJECT_STATE.md`
-current — three labels only: *Current task*, *Blocked by*, *Next*. This is the agent's live
+current — three labels only: *Current task*, *Blocked by*, *Next*. This is the developer's live
 pointer to where the work is right now; it survives a closed terminal without re-reading chat
 history or scrolling log output. In-flight task holds the *current* state only; the durable
 record of what was done lives in the append-only `PROJECT_HANDOVER.md`.
 
-> **Single source of truth.** Do **not** create a separate AI session-log file (e.g.
-> `.ai/SESSION_LOG.md`, `TODO.md`, `HANDOFF.md`). `PROJECT_STATE.md` holds the current
+> **Single source of truth.** Do **not** create a separate session-log file (e.g.
+> `SESSION_LOG.md`, `TODO.md`, `HANDOFF.md`). `PROJECT_STATE.md` holds the current
 > snapshot, `PROJECT_BACKLOG.md` holds the next concrete task, and `PROJECT_HANDOVER.md`
-> holds the session history — one artifact per kind of information, per
+> holds the project history — one artifact per kind of information, per
 > `ENGINEERING_PROTOCOL.md` §47.
 
 ---
 
-## Tooling notes (agent-portable governance)
+## Tooling notes
 
 - This guide follows a standard project structure supported across major editors and
   automation tooling (VS Code, JetBrains, CLI workflows).
 - The repository is versioned and self-documenting on purpose so any contributor or
   automation working against it reads the same files without re-explaining context.
 
-### No per-tool AI instruction files
+### Tool-neutral conventions
 
-This repository is **tool-neutral**. The governance surface for AI agents is this file
-plus `docs/03-development/ENGINEERING_PROTOCOL.md` and `docs/03-development/GOVERNANCE_CHECKLIST.md`.
+This repository is **tool-neutral**. The conventions surface for any contributor or
+automation is this file plus `docs/03-development/ENGINEERING_PROTOCOL.md` and
+`docs/03-development/GOVERNANCE_CHECKLIST.md`.
 
-**Do not create** per-tool instruction files such as `CLAUDE.md`, `AGENTS.md`,
-`.cursorrules`, `copilot-instructions.md`, Windsurf rules, or Codex instructions.
+**Do not create** per-tool instruction files or editor-specific rule files; keep
+conventions in this guide.
 
 Rationale:
 

@@ -111,7 +111,7 @@ deploy — but are no longer the production path:
 - `apps/web/Dockerfile` — **shared between local + Vercel.** The `NEXTJS_STANDALONE=1`
   flag gates `output: "standalone"` (Docker only); Vercel builds get default `.next` layout.
 - `docs/07-deployment/nginx.conf` — **local verification lane** (TLS + HSTS security posture,
-  exercised via `scripts/handoff/run-local-nginx-harness.sh` + `assert-local-nginx.sh`;
+  exercised via the local nginx verification harness;
   Vercel handles TLS/HSTS at the platform edge).
 - `docs/07-deployment/learning-platform.service` — **local reference** (systemd unit for
   the VPS path; Vercel has no systemd).

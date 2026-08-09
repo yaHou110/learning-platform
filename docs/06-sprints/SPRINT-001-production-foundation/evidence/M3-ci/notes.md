@@ -37,7 +37,7 @@ Node script that enforces:
 ### 5. `docs/03-development/GOVERNANCE_CHECKLIST.md`
 Session-level Phase A / B / C checklist that every contributor must walk through. Mirrors `templates/IMPLEMENTATION_PLAN.md` and `templates/DEFINITION_OF_DONE.md`.
 
-### 6. Agent sync
+### 6. Entry-point sync
 - `DEVELOPMENT_GUIDE.md` — single entry point.
 - `DEVELOPMENT_GUIDE.md` is the single entry point.
 - `DEVELOPMENT_GUIDE.md` is the single source of truth and entry point.

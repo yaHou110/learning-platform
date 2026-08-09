@@ -14,7 +14,7 @@ This ADR supersedes **ADR-0007** ("Hosting & deployment model — self-hosted si
 
 **Why this is a supersession, not an amendment:** ADR-0007's Decision §1 ("Self-hosted, on infrastructure we control") and §3 ("Dedicated shape, not SaaS") explicitly commit to a self-hosted VPS deployment. Vercel is a managed platform; Railway is a managed DB. These are not re-configurations of the same deployment model — they are a different model. The artifact identity and customer-agnostic property (ADR-0007 Decision §4, ADR-0014) are preserved, so the *architecture* does not fork, but the *deployment ADR* must be replaced.
 
-**M7 gate impact:** SPRINT-001 M7 ("Production Readiness Review") was gated on "founder VPS provisioning + live smoke test → M7 sign-off" (ADR-0007, PROJECT_STATE, PROJECT_BACKLOG, ENGINEERING_PROTOCOL). That gate is now satisfied by a green Vercel + Railway deployment. The Docker Compose prod stack (`docker-compose.prod.yml`, ADR-0017) remains as the **local full-stack verification lane** on the founder's Docker Desktop (Windows), reproducible end-to-end via `scripts/handoff/verify-migrate-and-stack.sh`. This keeps the real-Postgres verification dependency (M2 smoke test passed 2026-07-15) without requiring a VPS.
+**M7 gate impact:** SPRINT-001 M7 ("Production Readiness Review") was gated on "founder VPS provisioning + live smoke test → M7 sign-off" (ADR-0007, PROJECT_STATE, PROJECT_BACKLOG, ENGINEERING_PROTOCOL). That gate is now satisfied by a green Vercel + Railway deployment. The Docker Compose prod stack (`docker-compose.prod.yml`, ADR-0017) remains as the **local full-stack verification lane** on the founder's Docker Desktop (Windows), reproducible end-to-end via the local Docker verification script. This keeps the real-Postgres verification dependency (M2 smoke test passed 2026-07-15) without requiring a VPS.
 
 ### Forces at play
 
@@ -149,4 +149,4 @@ A new ADR is required to overturn this one.
 - `vercel.json` (repo root) — monorepo build config for Vercel: `buildCommand: pnpm --filter web build`, `framework: nextjs`, `outputDirectory: apps/web/.next`, `installCommand: pnpm install --frozen-lockfile`.
 - `apps/web/next.config.mjs` — `output: "standalone"` gated behind `NEXTJS_STANDALONE=1` so Docker builds keep standalone layout while Vercel builds get default `.next` layout.
 - `apps/web/Dockerfile` — sets `NEXTJS_STANDALONE=1` env so Docker still gets standalone output.
-- `scripts/handoff/verify-migrate-and-stack.sh` — local full-stack verification script (Docker Compose + migrations + health checks).
+- Local full-stack verification script (Docker Compose + migrations + health checks).

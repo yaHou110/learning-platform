@@ -9,7 +9,7 @@
 
 - **Task:** …
 - **Date completed:** YYYY-MM-DD
-- **Verifier:** <name or agent>
+- **Verifier:** <name>
 - **Risk level:** LOW | MEDIUM | HIGH | CRITICAL
 
 ---

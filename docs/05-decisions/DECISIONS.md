@@ -15,7 +15,7 @@
 | [ADR-0004](./ADR-0004-database.md) | Database — PostgreSQL 16 + Drizzle ORM (no vector DB in v1) | Accepted | 2026-07-11 |
 | [ADR-0005](./ADR-0005-auth.md) | Auth — Auth.js v5 Credentials + bcrypt + JWT sessions + per-request `isActive` re-check (Revision 1, 2026-07-13: DB-session mechanism amended to JWT-only) | Accepted | 2026-07-11 |
 | [ADR-0006](./ADR-0006-plugin-architecture.md) | Plugin architecture — pnpm monorepo + compile-time typed manifest | Accepted | 2026-07-11 |
-| [ADR-0012](./ADR-0012-engineering-protocol.md) | Mandatory engineering protocol — quality gates, DoD, agent constraints | Accepted | 2026-07-12 |
+| [ADR-0012](./ADR-0012-engineering-protocol.md) | Mandatory engineering protocol — quality gates, DoD, contributor constraints | Accepted | 2026-07-12 |
 | [ADR-0013](./ADR-0013-engineering-protocol-v2.md) | Engineering Protocol v2 (§39–§60), chapters, DoR, spec-first, risk matrix | Accepted | 2026-07-12 |
 | [ADR-0014](./ADR-0014-reusable-platform-vision.md) | Reusable platform vision — first customer, not the only customer; capability vs. operation split reconciles C2 with deferred multi-tenancy (ADR-0008) | Accepted | 2026-07-18 |
 | [ADR-0015](./ADR-0015-osv-scanner.md) | OSV Scanner for dependency vulnerability scanning — replaces deprecated npm audit endpoint | Accepted | 2026-07-19 |
