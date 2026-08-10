@@ -32,9 +32,9 @@ jobs:
       - name: Setup pnpm
         # No `version` here: package.json `packageManager: pnpm@9.15.9` is the
         # source of truth. Setting `version: 9` here collided with it and failed
-        # pnpm/action-setup@v4 ("Multiple versions of pnpm specified"). Match the
+        # pnpm/action-setup@v6 ("Multiple versions of pnpm specified"). Match the
         # pattern used in governance.yml (action-setup with no `with:` block).
-        uses: pnpm/action-setup@v4
+        uses: pnpm/action-setup@v6
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
