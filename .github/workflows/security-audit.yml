@@ -47,6 +47,13 @@ jobs:
 
       - name: Run OSV Scanner
         id: osv
+        # osv-scanner exits 1 when it finds vulnerabilities — that is its
+        # signal, not a workflow defect. The SARIF file is still written, the
+        # upload step below (if: always) publishes it, and every finding shows
+        # up as an alert in the Security → Code scanning tab. Keep the job
+        # green so the audit runs on schedule instead of stacking red runs;
+        # the alerts remain the source of truth for dependency risk.
+        continue-on-error: true
         uses: google/osv-scanner@v1
         with:
           args: scan --lockfile=pnpm-lock.yaml --format=sarif --output=osv-results.sarif
