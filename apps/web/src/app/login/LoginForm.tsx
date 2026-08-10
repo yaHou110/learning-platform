@@ -89,6 +89,9 @@ export default function LoginForm(): JSX.Element {
             aria-describedby="tenant-help"
             inputMode="numeric"
             autoComplete="off"
+            data-lpignore="true"
+            data-1p-ignore=""
+            data-form-type="other"
             maxLength={12}
             pattern="[0-9۰-۹٠-٩]{1,12}"
             title="شناسه مرکز باید عدد باشد"
@@ -135,6 +138,9 @@ export default function LoginForm(): JSX.Element {
             aria-describedby="national-id-help"
             inputMode="numeric"
             autoComplete="off"
+            data-lpignore="true"
+            data-1p-ignore=""
+            data-form-type="other"
             maxLength={10}
             pattern="[0-9۰-۹٠-٩]{10}"
             title="کد ملی باید ۱۰ رقم باشد"
@@ -171,9 +177,12 @@ export default function LoginForm(): JSX.Element {
             type={showPassword ? "text" : "password"}
             required
             minLength={8}
-            autoComplete="current-password"
+            autoComplete="new-password"
+            data-lpignore="true"
+            data-1p-ignore=""
+            data-form-type="other"
             placeholder="••••••••"
-            className="pl-12 pr-4"
+            className="pr-12 pl-4"
             dir="ltr"
           />
           <button
@@ -183,7 +192,7 @@ export default function LoginForm(): JSX.Element {
             aria-pressed={showPassword}
             aria-controls="password"
             title={showPassword ? "مخفی کردن رمز" : "نمایش رمز"}
-            className="absolute inset-y-1 left-1 z-10 flex w-9 !p-0 items-center justify-center rounded-lg border border-gray-200/70 bg-gray-50/90 text-gray-500 shadow-sm transition-colors hover:bg-gray-100 hover:text-gray-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/70 dark:border-gray-600/70 dark:bg-gray-800/90 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-white"
+            className="absolute inset-y-1 right-1 z-10 flex w-9 !p-0 items-center justify-center rounded-lg border border-gray-200/70 bg-gray-50/90 text-gray-500 shadow-sm transition-colors hover:bg-gray-100 hover:text-gray-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/70 dark:border-gray-600/70 dark:bg-gray-800/90 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-white"
           >
             {showPassword ? (
               <svg

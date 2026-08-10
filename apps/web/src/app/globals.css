@@ -30,11 +30,35 @@ textarea {
 }
 
 /* Edge/Chromium can inject a second native reveal button into password
-   inputs. The login has its own accessible toggle, so hide the browser
-   control to prevent the two-eye collision visible in the form. */
+   inputs. The login has its own accessible toggle, so hide every known
+   browser control to prevent the two-eye collision in the form. */
 input[type="password"]::-ms-reveal,
-input[type="password"]::-ms-clear {
+input[type="password"]::-ms-clear,
+input[type="password"]::-webkit-credentials-auto-fill-button {
   display: none;
+}
+
+/* Neutralize browser autofill: saved credentials must not paint the fields
+   with the default olive/yellow box in either theme. The inset box-shadow
+   covers the UA background; text color follows the active theme. */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+textarea:-webkit-autofill,
+textarea:-webkit-autofill:hover,
+textarea:-webkit-autofill:focus {
+  -webkit-text-fill-color: #111827 !important;
+  -webkit-box-shadow: 0 0 0 1000px #ffffff inset !important;
+  caret-color: #111827;
+  transition: background-color 9999s ease-in-out 0s;
+}
+
+.dark input:-webkit-autofill,
+.dark input:-webkit-autofill:hover,
+.dark input:-webkit-autofill:focus {
+  -webkit-text-fill-color: #f3f4f6 !important;
+  -webkit-box-shadow: 0 0 0 1000px #1f2937 inset !important;
+  caret-color: #f3f4f6;
 }
 
 /* Dark-mode focus border: the `.dark input` selector (0,2,1) outranks
