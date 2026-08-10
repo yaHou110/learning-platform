@@ -105,7 +105,7 @@ If you are a contributor, **start here**: [`DEVELOPMENT_GUIDE.md`](./DEVELOPMENT
 - **Problem**: seminary families need a structured learning platform. WordPress is a poor fit long-term.
 - **Solution**: A modular, plugin-based, portable learning platform with a Persian-first UX.
 - **Stack** (locked in [TECH_STACK.md](./docs/03-development/TECH_STACK.md), backed by ADR-0003..0006): Next.js 15 + TypeScript strict + PostgreSQL 16 + Drizzle ORM + Auth.js v5 + pnpm monorepo + internal compile-time plugins.
-- **Status**: v1.1 — documentation system + first ADR batch + monorepo scaffold (no production deployment yet).
+- **Status**: v1.17 — shipped: Auth (national-ID + center-ID login), role-aware dashboard, catalog & course/lesson learning with progress, admin course management; production live on Vercel + Railway Postgres at **https://rooyesh-yahou.vercel.app**.
 - **Owner**: single founder, multiple contributors.
 
 For the full story, read [`docs/01-product/PRODUCT_BIBLE.md`](./docs/01-product/PRODUCT_BIBLE.md).
@@ -136,9 +136,9 @@ When you finish a session, **update `PROJECT_BACKLOG.md` and append to `PROJECT_
 | Foundation documents (MVP_SCOPE, BOUNDED_CONTEXTS, PROJECT_PRINCIPLES, ARCHITECTURE_CONSTRAINTS) | ✅ v1.1 |
 | Core stack ADRs (framework, DB, auth, plugins) | ✅ v1.1 (ADR-0003..0006 Accepted) |
 | Monorepo scaffold (pnpm + apps/web + packages/core + 5 plugins) | ✅ v1.1 |
-| First bounded context wired (Identity & Access) | ⏳ next session |
-| Code (UI, course/lesson content) | ❌ not started |
-| Deployment | ❌ not started (hosting ADR pending) |
+| Identity & Access wired (Auth.js credentials + RBAC + multi-tenant scoping) | ✅ v1.17 |
+| Code & UI (login, dashboard, catalog, course/lesson learning, admin) | ✅ v1.17 |
+| Deployment (Vercel + Railway Postgres; live at `rooyesh-yahou.vercel.app`, ADR-0018) | ✅ v1.17 |
 
 See [`docs/00-bootstrap/PROJECT_STATE.md`](./docs/00-bootstrap/PROJECT_STATE.md) for details.
 
