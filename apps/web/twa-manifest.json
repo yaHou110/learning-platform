@@ -1,0 +1,17 @@
+{
+  "packageId": "ir.rooyesh.mobile",
+  "host": "app.example.com",
+  "name": "رویش | سامانه فرهنگی، تربیتی حوزه و خانواده",
+  "launcherName": "رویش",
+  "display": "standalone",
+  "themeColor": "#047857",
+  "backgroundColor": "#f9fafb",
+  "startUrl": "/",
+  "appVersionName": "1.0.0",
+  "appVersionCode": 1,
+  "iconUrl": "https://app.example.com/icons/icon-512.png",
+  "maskableIconUrl": "https://app.example.com/icons/icon-maskable.png",
+  "fallbackType": "customtabs",
+  "enableNotifications": true,
+  "shortcuts": []
+}

@@ -1,1 +1,8 @@
 .vercel
+
+# Generated Android TWA project (regenerated via scripts/build-android-twa.sh)
+/android/
+
+# Signing material — NEVER commit
+*.keystore
+*.jks
