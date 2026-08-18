@@ -125,7 +125,9 @@ button {
 
   .login-auth-content {
     justify-content: flex-start;
-    padding-top: 2.5rem;
+    /* Clear the absolutely-positioned language/theme row (top-8 + 2.25rem
+       control height ≈ 68px) so the first content line never overlaps it. */
+    padding-top: 5rem;
     padding-bottom: 2.5rem;
   }
 }

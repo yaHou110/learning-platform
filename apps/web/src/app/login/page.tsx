@@ -112,7 +112,7 @@ export default async function LoginPage(): Promise<JSX.Element> {
             </div>
           </div>
 
-          <div className="login-auth-content relative flex w-full flex-1 flex-col items-center justify-center px-5 py-10 sm:px-8 lg:py-14">
+          <div className="login-auth-content relative flex w-full flex-1 flex-col items-center justify-center px-5 pt-20 pb-10 sm:px-8 lg:pt-14 lg:pb-14">
             <div className="absolute start-5 top-5 flex items-center gap-2 sm:start-8 lg:start-10 lg:top-8">
               <LanguageSwitcher
                 current={locale}
