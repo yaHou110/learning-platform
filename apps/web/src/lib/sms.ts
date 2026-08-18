@@ -7,7 +7,9 @@
  *   tested end-to-end without a real gateway. In production the code is only
  *   in the server log — never in the API response.
  * - "kavenegar": sends a real SMS via https://api.kavenegar.com (requires
- *   KAVENEGAR_API_KEY + KAVENEGAR_SENDER). Falls back to mock if unset.
+ *   KAVENEGAR_API_KEY; KAVENEGAR_SENDER is optional — when omitted, Kaveh
+ *   Negar sends with the account's default line). Falls back to mock if the
+ *   key is unset.
  */
 import { env } from "@/lib/env";
 
@@ -29,25 +31,28 @@ function sendMock(phone: string, code: string): SmsResult {
 
 async function sendKavenegar(phone: string, code: string): Promise<SmsResult> {
   const apiKey = env.KAVENEGAR_API_KEY;
-  const sender = env.KAVENEGAR_SENDER;
-  if (!apiKey || !sender) {
+  if (!apiKey) {
     // eslint-disable-next-line no-console
     console.warn(
-      "[sms] KAVENEGAR_API_KEY / KAVENEGAR_SENDER not configured — falling back to mock"
+      "[sms] KAVENEGAR_API_KEY not configured — falling back to mock"
     );
     return sendMock(phone, code);
   }
+  // Sender is optional: Kaveh Negar falls back to the account's default
+  // line (خدمات پیام کوتاه) when the parameter is omitted, so a brand-new
+  // account works with just the API key.
+  const params = new URLSearchParams({
+    receptor: phone,
+    message: resetMessage(code),
+  });
+  if (env.KAVENEGAR_SENDER) params.set("sender", env.KAVENEGAR_SENDER);
   try {
     const res = await fetch(
       `https://api.kavenegar.com/v1/${apiKey}/sms/send.json`,
       {
         method: "POST",
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        body: new URLSearchParams({
-          receptor: phone,
-          sender,
-          message: resetMessage(code),
-        }),
+        body: params,
       }
     );
     if (!res.ok) {

@@ -10,7 +10,8 @@
     "lint": "next lint",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
-    "icons": "node scripts/generate-pwa-icons.mjs"
+    "icons": "node scripts/generate-pwa-icons.mjs",
+    "sms:test": "node scripts/test-sms.mjs"
   },
   "dependencies": {
     "@auth/drizzle-adapter": "^1.7.2",

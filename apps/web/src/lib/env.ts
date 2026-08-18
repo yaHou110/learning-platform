@@ -131,7 +131,8 @@ export const env = {
   NEXTAUTH_URL: process.env.NEXTAUTH_URL ?? "http://localhost:3000",
   // SMS provider for the password-reset flow. "mock" logs the code to the
   // server console (and echoes it in non-production API responses);
-  // "kavenegar" sends a real SMS (requires KAVENEGAR_API_KEY + SENDER).
+  // "kavenegar" sends a real SMS (requires KAVENEGAR_API_KEY; SENDER is
+  // optional — Kaveh Negar uses the account's default line when omitted).
   SMS_PROVIDER: process.env.SMS_PROVIDER ?? "mock",
   KAVENEGAR_API_KEY: process.env.KAVENEGAR_API_KEY ?? "",
   KAVENEGAR_SENDER: process.env.KAVENEGAR_SENDER ?? "",
