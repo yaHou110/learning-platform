@@ -1,5 +1,6 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Vazirmatn } from "next/font/google";
+import PwaRegister from "@/components/PwaRegister";
 import "@/app/globals.css";
 
 const vazirmatn = Vazirmatn({
@@ -13,6 +14,22 @@ export const metadata: Metadata = {
   title: "رویش | سامانه فرهنگی، تربیتی حوزه و خانواده",
   description:
     "سامانه فرهنگی، تربیتی حوزه و خانواده — با هم برای رشد، با هم برای آینده",
+  // iOS home-screen metadata (web app manifest covers Android/Chrome).
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "رویش",
+  },
+  icons: {
+    icon: "/icons/icon-192.png",
+    apple: "/icons/apple-touch-icon.png",
+  },
+};
+
+export const viewport: Viewport = {
+  themeColor: "#047857",
+  width: "device-width",
+  initialScale: 1,
 };
 
 /**
@@ -49,6 +66,7 @@ export default function RootLayout({
         className={`${vazirmatn.className} antialiased bg-gray-50 text-gray-900 dark:bg-gray-950 dark:text-gray-100`}
       >
         {children}
+        <PwaRegister />
       </body>
     </html>
   );

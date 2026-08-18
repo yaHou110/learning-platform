@@ -93,8 +93,11 @@ export async function middleware(request: NextRequest): Promise<NextResponse> {
 }
 
 export const config = {
-  // Static image assets must stay public (no auth redirect) or they break.
+  // Static assets and PWA plumbing must stay public (no auth redirect) or
+  // they break: _next/static, _next/image, favicon.ico, image files,
+  // the web-app manifest (fetched by the browser on every visit) and the
+  // service worker (fetched during registration, before any session exists).
   matcher: [
-    "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:png|jpe?g|webp|avif|svg|ico|gif)$).*)",
+    "/((?!_next/static|_next/image|favicon.ico|manifest\\.webmanifest|sw\\.js|.*\\.(?:png|jpe?g|webp|avif|svg|ico|gif)$).*)",
   ],
 };
