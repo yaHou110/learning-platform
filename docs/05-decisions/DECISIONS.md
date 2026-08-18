@@ -24,6 +24,7 @@
 | [ADR-0016](./ADR-0016-pwa-offline.md) | PWA / offline — founder decided **YES** (2026-07-21); parked until M7 sign-off. Unlocks Learning bounded context + service-worker infra | Accepted | 2026-07-21 |
 | [ADR-0018](./ADR-0018-hosting-deployment-model-vercel-supersedes-0007.md) | Hosting & deployment model (v1 redirect) — Vercel (serverless Next.js) + Railway Postgres; supersedes ADR-0007 | Accepted | 2026-07-23 |
 | [ADR-0017](./ADR-0017-containerized-db-migrations.md) | DB migrations run as a one-shot containerized compose service at deploy time (reusing the app image; prod `DATABASE_URL`); no host `pnpm`/`node`/`psql` required — works on Docker-only hosts | Accepted | 2026-07-22 |
+| [ADR-0019](./ADR-0019-current-platform-truth.md) | Current platform truth and evidence discipline — `docs/00-bootstrap/CURRENT_IMPLEMENTATION_TRUTH.md` is the canonical current-state snapshot; every capability claim classified Implemented/Partial/Planned/Unverified with cited evidence | Accepted | 2026-08-07 |
 
 ---
 
