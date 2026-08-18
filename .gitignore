@@ -15,7 +15,11 @@ coverage
 *.tsbuildinfo
 .pnpm-store
 .tmp/
+tmp/
 PR_BODY.md
+pr15_body*.md
+cookies.txt
+headers.txt
 .freebuff/
 # Compiled TypeScript output (packages/**/src/)
 packages/**/src/**/*.js
