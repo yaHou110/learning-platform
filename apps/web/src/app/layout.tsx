@@ -1,8 +1,10 @@
 import type { Metadata, Viewport } from "next";
 import { Inter, Vazirmatn } from "next/font/google";
 import PwaRegister from "@/components/PwaRegister";
+import PwaInstallBanner from "@/components/PwaInstallBanner";
 import { getDictionary, getLocale } from "@/lib/i18n";
 import { getMeta } from "@/lib/i18n/config";
+import { env } from "@/lib/env";
 import "@/app/globals.css";
 
 const vazirmatn = Vazirmatn({
@@ -67,6 +69,7 @@ export default async function RootLayout({
   // lang/dir/font are applied server-side before first paint.
   const locale = await getLocale();
   const meta = getMeta(locale);
+  const dict = getDictionary(locale);
 
   return (
     <html
@@ -85,6 +88,12 @@ export default async function RootLayout({
       >
         {children}
         <PwaRegister />
+        {/* Mobile install banner — Bazaar / direct APK / in-browser install. */}
+        <PwaInstallBanner
+          dict={dict.pwaInstall}
+          bazaarUrl={env.CAFE_BAZAAR_URL || undefined}
+          apkUrl={env.APK_DIRECT_URL || undefined}
+        />
       </body>
     </html>
   );

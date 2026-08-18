@@ -52,6 +52,15 @@ export const fa = {
     themeDark: "حالت شب",
     changeLanguage: "تغییر زبان",
   },
+  pwaInstall: {
+    title: "نصب اپلیکیشن رویش",
+    subtitle: "برای دسترسی سریع‌تر، اپ را از مرورگر گوشی نصب کنید:",
+    bazaar: "دانلود از کافه‌بازار",
+    directApk: "دانلود مستقیم اپ",
+    browser: "نصب از مرورگر",
+    iosHint: "در آیفون از منوی مرورگر، گزینهٔ «افزودن به صفحهٔ اصلی» را بزنید.",
+    dismiss: "بستن",
+  },
   home: {
     welcome: "خوش آمدید،",
     adminSubtitle: "پنل مدیریت مرکز شما — آمار کلی و دسترسی سریع.",
@@ -346,6 +355,15 @@ export const en: Dictionary = {
     themeDark: "Dark mode",
     changeLanguage: "Change language",
   },
+  pwaInstall: {
+    title: "Install the Rooyesh app",
+    subtitle: "For faster access, install the app from your phone browser:",
+    bazaar: "Get it on Cafe Bazaar",
+    directApk: "Download the app directly",
+    browser: "Install from browser",
+    iosHint: "On iPhone, use «Add to Home Screen» from the browser menu.",
+    dismiss: "Dismiss",
+  },
   home: {
     welcome: "Welcome,",
     adminSubtitle: "Your center's admin panel — overview stats and quick access.",
@@ -621,6 +639,15 @@ export const ar: Dictionary = {
     themeLight: "الوضع الفاتح",
     themeDark: "الوضع الداكن",
     changeLanguage: "تغيير اللغة",
+  },
+  pwaInstall: {
+    title: "تثبيت تطبيق رویش",
+    subtitle: "للوصول السريع، ثبّت التطبيق من متصفح الجوال:",
+    bazaar: "تحميل من كافيه بازار",
+    directApk: "تحميل التطبيق مباشرة",
+    browser: "تثبيت من المتصفح",
+    iosHint: "على آيفون استخدم «إضافة إلى الشاشة الرئيسية» من قائمة المتصفح.",
+    dismiss: "إغلاق",
   },
   home: {
     welcome: "مرحباً،",

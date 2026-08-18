@@ -136,6 +136,11 @@ export const env = {
   SMS_PROVIDER: process.env.SMS_PROVIDER ?? "mock",
   KAVENEGAR_API_KEY: process.env.KAVENEGAR_API_KEY ?? "",
   KAVENEGAR_SENDER: process.env.KAVENEGAR_SENDER ?? "",
+  // Install-banner links (mobile browser): Cafe Bazaar listing + direct APK.
+  // Empty strings hide the corresponding button; the in-browser install
+  // (beforeinstallprompt) button always works when the PWA is installable.
+  CAFE_BAZAAR_URL: process.env.CAFE_BAZAAR_URL ?? "",
+  APK_DIRECT_URL: process.env.APK_DIRECT_URL ?? "",
 } as const;
 
 /**

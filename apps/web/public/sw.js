@@ -49,6 +49,13 @@ self.addEventListener("activate", (event) => {
   );
 });
 
+// Dev servers don't version chunk filenames (layout.js, page.js stay fixed),
+// so cache-first on _next/static would serve stale client bundles forever.
+// Keep the network in control during development; the SW still exercises the
+// page-cache paths. In production (hashed filenames) cache-first is safe.
+const IS_DEV =
+  self.location.hostname === "localhost" || self.location.hostname === "127.0.0.1";
+
 self.addEventListener("fetch", (event) => {
   const { request } = event;
   const url = new URL(request.url);
@@ -58,6 +65,10 @@ self.addEventListener("fetch", (event) => {
 
   // Never touch API / data / auth traffic — always go to the network.
   if (NEVER_CACHE_URL_PATTERNS.some((re) => re.test(url.pathname))) return;
+
+  // In dev, never serve or store _next/static from the cache — the chunk
+  // registry must always match the latest compile.
+  if (IS_DEV && /^\/_next\/static\//.test(url.pathname)) return;
 
   // Navigation requests: network-first with offline fallback.
   if (request.mode === "navigate") {
