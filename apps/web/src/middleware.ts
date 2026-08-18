@@ -38,13 +38,38 @@ export async function middleware(request: NextRequest): Promise<NextResponse> {
   const scriptSrc = isDev
     ? "'self' 'unsafe-inline' 'unsafe-eval'"
     : "'self' 'unsafe-inline'";
+
+  // Object-storage origins (ADR-0010): signed media URLs are served straight
+  // from the S3 endpoint (MinIO), so the browser must be allowed to load
+  // media (<video>/<audio>/<iframe>) and to PUT uploads straight to storage.
+  // Next.js inlines process.env.* referenced in middleware at build time; in
+  // dev the dev server's env is visible, so setting S3_ENDPOINT in .env works.
+  const mediaOrigins: string[] = [];
+  const storageEndpoint = process.env.S3_ENDPOINT ?? "";
+  if (storageEndpoint) {
+    try {
+      mediaOrigins.push(new URL(storageEndpoint).origin);
+    } catch {
+      // Malformed S3_ENDPOINT — CSP stays conservative; media may not load.
+    }
+  }
+  if (isDev) {
+    // Dev default (docker-compose.yml MinIO on :9000) even when .env is not
+    // set yet, so the dev lane never silently blocks media.
+    mediaOrigins.push("http://127.0.0.1:9000", "http://localhost:9000");
+  }
+  const uniqueOrigins = [...new Set(mediaOrigins)];
+  const mediaSrc = ["'self'", ...uniqueOrigins].join(" ");
+
   const csp = [
     "default-src 'self'",
     `script-src ${scriptSrc}`,
     "style-src 'self' 'unsafe-inline'",
     "img-src 'self' data:",
+    `media-src ${mediaSrc}`,
+    `frame-src ${mediaSrc}`,
+    `connect-src 'self' ${uniqueOrigins.join(" ")}`,
     "font-src 'self' fonts.gstatic.com",
-    "connect-src 'self'",
     "frame-ancestors 'none'",
     "base-uri 'self'",
     "object-src 'none'",

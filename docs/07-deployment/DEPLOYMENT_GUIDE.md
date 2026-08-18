@@ -28,7 +28,7 @@
 
 - **Vercel** runs the Next.js app as serverless functions and terminates TLS, applies HSTS, and rate-limits at the edge. There is no host nginx, certbot, or systemd in the production path — the platform owns that.
 - **Railway** runs managed PostgreSQL 16 with point-in-time recovery (replaces the local `backup.sh`/`restore.sh` for prod data).
-- **MinIO / object storage** is **not** wired in production v1 (ADR-0010 still proposed). The `/api/health` endpoint reports `storage: "skipped"` — this is correct, not a failure.
+- **MinIO / object storage** carries course media (ADR-0010 — signed, short-lived URLs). `/api/health` reports `storage: true` when the S3 env vars are set and the bucket is reachable, and `storage: "skipped"` when storage is unconfigured (e.g. the Vercel serverless lane) — skipped is correct there, not a failure.
 
 ### Already provisioned (founder, 2026-07-23)
 
@@ -83,7 +83,7 @@ curl -fsS https://<your-vercel-domain>/api/ready
 { "status":"ok", "checks":{ "db":true, "auth":true, "storage":"skipped" }, "timestamp":"…" }
 ```
 
-`storage: "skipped"` (not `true`) is the **correct healthy response** in v1 — object storage is intentionally not wired in production yet (ADR-0010 proposed). If `/api/health` returns `"status":"degraded"` or HTTP 503, the DB is unreachable — check that `DATABASE_URL` on Vercel is the Railway public URL with `?sslmode=require`, and that the Railway service is running.
+On the **Vercel lane** (no S3 env vars), `storage: "skipped"` is the correct healthy response — course media is only delivered from the Docker lane where MinIO runs. On the **Docker lane**, `storage` should be `true`; a `false` there means MinIO is down or the `MINIO_ROOT_PASSWORD` in `/etc/learning-platform/env` drifted from `S3_SECRET_KEY`. If `/api/health` returns `"status":"degraded"` or HTTP 503, check the failing check — most commonly `DATABASE_URL` (Railway public URL with `?sslmode=require`) or MinIO reachability.
 
 CI's smoke step (`.github/workflows/deploy.yml`) greps only for `'"status":"ok"'`, so a green Vercel deploy + this response passes the gate.
 

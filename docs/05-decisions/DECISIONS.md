@@ -32,7 +32,7 @@
 | # | Title | Status | Target |
 | --- | --- | --- | --- |
 | ADR-0009 | i18n & Shamsi date library | Proposed | when first locale work begins (parked until M7 sign-off) |
-| ADR-0010 | Media storage provider (S3-compatible) | Proposed | when first media feature is needed (parked until M7 sign-off) |
+| ADR-0010 | Media storage provider (S3-compatible) | **Accepted** — see `ADR-0010-media-storage-signed-urls.md` | implemented 2026-08-17 |
 | ADR-0011 | Background job runner (tentative: pg-boss) | Proposed | when first async job is needed |
 
 > **Target refresh (2026-07-16):** Earlier targets read "before M3" for ADR-0007/0010. M3/M4 are

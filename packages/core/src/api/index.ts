@@ -25,6 +25,8 @@ export type { Course, Lesson } from "./catalog.js";
 export { learning, ENROLLMENT_STATUSES, PROGRESS_STATUSES } from "./learning.js";
 export { credentials } from "./credentials.js";
 export type { Certificate } from "./credentials.js";
+export { media, MediaStorageUnavailableError } from "./media.js";
+export type { MediaAsset } from "./media.js";
 
 /**
  * Public projection of a user. NEVER includes `passwordHash`. The DB-level
@@ -211,12 +213,31 @@ export const health = {
     // down, which the `db` check already surfaces — so auth mirrors db.
     checks.auth = checks.db ? true : false;
 
-    // Object storage — not wired in v1 (ADR-0010 proposed). Report skipped
-    // so the endpoint does not lie about a missing dependency.
-    checks.storage = "skipped";
+    // Object storage (ADR-0010) — probe only when configured (S3 env vars
+    // present); otherwise report skipped so the endpoint does not lie about
+    // a missing dependency.
+    const { isStorageConfigured, readStorageConfig } = await import(
+      "../storage/config.js"
+    );
+    if (isStorageConfigured()) {
+      const { pingStorage } = await import("../storage/client.js");
+      try {
+        checks.storage = await pingStorage(readStorageConfig());
+      } catch {
+        checks.storage = false;
+      }
+    } else {
+      checks.storage = "skipped";
+    }
 
-    const allConfigured = [checks.db, checks.auth];
-    const anyFailed = allConfigured.some((c) => c === false);
+    // Only configured dependencies count toward the status: a skipped (e.g.
+    // unconfigured) dependency is not a failure.
+    const configured: (boolean | "skipped")[] = [
+      checks.db,
+      checks.auth,
+      ...(typeof checks.storage === "boolean" ? [checks.storage] : []),
+    ];
+    const anyFailed = configured.some((c) => c === false);
     const status = anyFailed ? "degraded" : "ok";
     return { status, checks };
   },

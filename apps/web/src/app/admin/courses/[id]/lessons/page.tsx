@@ -4,6 +4,8 @@ import { auth } from "@/auth";
 import { redirect, notFound } from "next/navigation";
 import { catalog, CONTENT_TYPES } from "@learning-platform/core/api";
 import AppShell from "@/components/AppShell";
+import MediaUploader from "@/components/MediaUploader";
+import { env } from "@/lib/env";
 import type { Role } from "@learning-platform/core/db/schema";
 import type { JSX } from "react";
 import { fmt, getDictionary, getLocale } from "@/lib/i18n";
@@ -130,6 +132,18 @@ export default async function AdminCourseLessonsPage({
             {dict.adminLessons.addLesson}
           </button>
         </form>
+
+        {/* Media attachment (ADR-0010) — upload straight to object storage and
+            copy the resulting key into the lesson's contentRef. */}
+        <div className="mt-4">
+          {env.S3_ENDPOINT && env.S3_ACCESS_KEY && env.S3_SECRET_KEY ? (
+            <MediaUploader dict={dict} />
+          ) : (
+            <p className="text-xs text-gray-400 dark:text-gray-500">
+              {dict.adminLessons.storageUnavailable}
+            </p>
+          )}
+        </div>
       </div>
 
       <h2 className="mb-3 mt-8 text-lg font-bold">{dict.adminLessons.lessonsHeader}</h2>

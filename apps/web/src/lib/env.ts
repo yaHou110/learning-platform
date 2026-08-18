@@ -141,6 +141,14 @@ export const env = {
   // (beforeinstallprompt) button always works when the PWA is installable.
   CAFE_BAZAAR_URL: process.env.CAFE_BAZAAR_URL ?? "",
   APK_DIRECT_URL: process.env.APK_DIRECT_URL ?? "",
+  // Object storage (ADR-0010): MinIO in dev/prod. `@learning-platform/core`
+  // reads the same names directly from process.env; these mirror values are
+  // for UI affordances (e.g. hiding the media uploader when unconfigured).
+  S3_ENDPOINT: process.env.S3_ENDPOINT ?? "",
+  S3_ACCESS_KEY: process.env.S3_ACCESS_KEY ?? "",
+  S3_SECRET_KEY: process.env.S3_SECRET_KEY ?? "",
+  S3_BUCKET: process.env.S3_BUCKET ?? "learning-platform",
+  S3_REGION: process.env.S3_REGION ?? "auto",
 } as const;
 
 /**

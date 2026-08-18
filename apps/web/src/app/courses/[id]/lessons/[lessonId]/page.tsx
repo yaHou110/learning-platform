@@ -2,7 +2,12 @@ import Link from "next/link";
 import { revalidatePath } from "next/cache";
 import { auth } from "@/auth";
 import { redirect, notFound } from "next/navigation";
-import { catalog, learning, type CONTENT_TYPES } from "@learning-platform/core/api";
+import {
+  catalog,
+  learning,
+  media,
+  type CONTENT_TYPES,
+} from "@learning-platform/core/api";
 import AppShell from "@/components/AppShell";
 import type { Role } from "@learning-platform/core/db/schema";
 import { fmt, getDictionary, getLocale } from "@/lib/i18n";
@@ -49,6 +54,20 @@ export default async function LessonPage({
       (p) => p.lessonId === lessonId && p.status === "completed"
     );
 
+  // Short-lived signed URL for the lesson's media — only for enrolled students
+  // and admins (the content-protection choke point; the URL expires in
+  // minutes). Silently degrade to the placeholder when storage is down or the
+  // key is malformed, so one bad lesson never takes down the page.
+  let mediaUrl: string | null = null;
+  if (lesson.contentRef && (isAdmin || enrollment)) {
+    try {
+      const signed = await media.signedReadUrl(tenantId, lesson.contentRef);
+      mediaUrl = signed?.url ?? null;
+    } catch {
+      mediaUrl = null;
+    }
+  }
+
   async function markViewedAction(): Promise<void> {
     "use server";
     const s = await auth();
@@ -92,28 +111,64 @@ export default async function LessonPage({
           ) : null}
         </div>
 
-        <div className="mt-6 rounded-lg border border-dashed border-gray-300 dark:border-gray-600 bg-gray-50 p-10 text-center text-sm text-gray-500 dark:text-gray-400 dark:text-gray-500">
-          {lesson.contentType === "video" ? (
-            <>
-              <div className="mb-2 text-3xl">🎬</div>
-              {dict.lesson.videoPlaceholder}
-              {lesson.contentRef ? (
-                <div className="mt-2 text-xs">
-                  {fmt(dict.lesson.contentRef, { ref: lesson.contentRef })}
-                </div>
-              ) : null}
-            </>
+        <div className="mt-6">
+          {mediaUrl && lesson.contentType === "video" ? (
+            <div className="overflow-hidden rounded-lg border border-gray-200 bg-black dark:border-gray-800">
+              {/* eslint-disable-next-line jsx-a11y/media-has-caption -- captions are not available for arbitrary user-uploaded media in v1 */}
+              <video
+                controls
+                preload="metadata"
+                className="mx-auto max-h-[70vh] w-full"
+                src={mediaUrl}
+              />
+            </div>
+          ) : mediaUrl && lesson.contentType === "audio" ? (
+            <div className="rounded-lg border border-gray-200 bg-gray-50 p-6 dark:border-gray-800 dark:bg-gray-900">
+              {/* eslint-disable-next-line jsx-a11y/media-has-caption -- captions are not available for arbitrary user-uploaded media in v1 */}
+              <audio controls preload="metadata" className="w-full" src={mediaUrl} />
+            </div>
+          ) : mediaUrl && (lesson.contentType === "pdf" || lesson.contentType === "text") ? (
+            <iframe
+              src={mediaUrl}
+              title={lesson.title}
+              className="h-[70vh] w-full rounded-lg border border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-900"
+            />
           ) : (
-            <>
-              <div className="mb-2 text-3xl">{lesson.contentType === "pdf" ? "📄" : "📖"}</div>
-              {dict.lesson.contentPlaceholder}
-              {lesson.contentRef ? (
-                <div className="mt-2 text-xs">
-                  {fmt(dict.lesson.contentRef, { ref: lesson.contentRef })}
-                </div>
-              ) : null}
-            </>
+            <div className="rounded-lg border border-dashed border-gray-300 dark:border-gray-600 bg-gray-50 p-10 text-center text-sm text-gray-500 dark:bg-gray-900 dark:text-gray-400">
+              {lesson.contentType === "video" ? (
+                <>
+                  <div className="mb-2 text-3xl">🎬</div>
+                  {dict.lesson.videoPlaceholder}
+                  {lesson.contentRef ? (
+                    <div className="mt-2 text-xs">
+                      {fmt(dict.lesson.contentRef, { ref: lesson.contentRef })}
+                    </div>
+                  ) : null}
+                </>
+              ) : (
+                <>
+                  <div className="mb-2 text-3xl">{lesson.contentType === "pdf" ? "📄" : "📖"}</div>
+                  {dict.lesson.contentPlaceholder}
+                  {lesson.contentRef ? (
+                    <div className="mt-2 text-xs">
+                      {fmt(dict.lesson.contentRef, { ref: lesson.contentRef })}
+                    </div>
+                  ) : null}
+                </>
+              )}
+            </div>
           )}
+          {mediaUrl ? (
+            <div className="mt-3 text-right">
+              <a
+                href={mediaUrl}
+                download
+                className="inline-block text-sm text-emerald-700 hover:underline"
+              >
+                ⬇ {dict.lesson.download}
+              </a>
+            </div>
+          ) : null}
         </div>
 
         <div className="mt-6 flex items-center justify-between">

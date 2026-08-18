@@ -1,10 +1,14 @@
 # Local dev infrastructure.
 #
-# Brings up Postgres 16 and Adminer on a private network.
+# Brings up Postgres 16, Adminer, and MinIO (object storage for course media,
+# ADR-0010) on a private network.
 # Run: `docker compose up -d`
 #
 # Connection string (matches apps/web/.env.example):
 #   postgres://learning_platform:learning_platform@localhost:5432/learning_platform
+#
+# MinIO (matches apps/web/.env.example S3_* defaults):
+#   S3_ENDPOINT=http://127.0.0.1:9000  S3_ACCESS_KEY=minioadmin  S3_SECRET_KEY=minioadmin
 services:
   postgres:
     image: postgres:16-alpine
@@ -36,6 +40,24 @@ services:
     environment:
       ADMINER_DEFAULT_SERVER: postgres
 
+  # Object storage (ADR-0010) — S3-compatible. Matches the S3_* defaults in
+  # apps/web/.env.example; the app creates the bucket on first upload.
+  minio:
+    image: minio/minio:RELEASE.2025-07-23T15-54-02Z
+    container_name: lp-minio-dev
+    restart: unless-stopped
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin
+    ports:
+      - "127.0.0.1:9000:9000"
+      - "127.0.0.1:9001:9001"
+    volumes:
+      - lp_minio_data:/data
+
 volumes:
   lp_pg_data:
     name: lp_pg_data
+  lp_minio_data:
+    name: lp_minio_data

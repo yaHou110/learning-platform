@@ -32,6 +32,8 @@ export const manifest: PluginManifest = {
     { method: "GET", path: "/api/courses/:id/lessons" },
     { method: "GET", path: "/api/lessons/:id" },
     { method: "POST", path: "/api/lessons" },
+    { method: "POST", path: "/api/media/upload" },
+    { method: "GET", path: "/api/media/url" },
   ],
   metadataSchemas: [],
   migrations: [],
