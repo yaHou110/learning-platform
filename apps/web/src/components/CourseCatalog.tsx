@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useMemo, useState } from "react";
 import { useFormStatus } from "react-dom";
 import { Icon } from "./icons";
-import { fmt, type Dictionary } from "@/lib/i18n";
+import { fmt, type Dictionary } from "@/lib/i18n/dictionaries";
 
 /** One course as the catalog page prepares it for the client. */
 export interface CatalogCourse {

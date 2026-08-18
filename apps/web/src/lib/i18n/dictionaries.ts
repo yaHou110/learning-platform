@@ -7,7 +7,15 @@
  *
  * Interpolation: values may contain `{placeholders}` — substitute them
  * with `fmt()` from `@/lib/i18n`.
+ *
+ * IMPORTANT: this module must stay free of `next/headers` (client-safe).
+ * `getLocale()` lives in `./index.ts` (server-only) — keep the split so
+ * client components can import `fmt`/`Dictionary` here without pulling the
+ * server-only cookies API into their bundle.
  */
+
+import { getMeta } from "./config";
+import type { Locale } from "./config";
 
 export const fa = {
   brand: {
@@ -899,3 +907,33 @@ export const ar: Dictionary = {
     doneLogin: "دخول إلى النظام",
   },
 };
+
+const DICTIONARIES: Record<Locale, Dictionary> = { fa, en, ar };
+
+/** Resolve a dictionary for a locale. */
+export function getDictionary(locale: Locale): Dictionary {
+  return DICTIONARIES[locale];
+}
+
+/** Replace `{placeholders}` in a dictionary template with values. */
+export function fmt(
+  template: string,
+  vars: Record<string, string | number>
+): string {
+  return template.replace(/\{(\w+)\}/g, (match, key: string) =>
+    key in vars ? String(vars[key]) : match
+  );
+}
+
+/** Locale-aware date formatting (Jalali for fa, Gregorian for en/ar). */
+export function formatDate(
+  locale: Locale,
+  date: Date,
+  opts: Intl.DateTimeFormatOptions = {
+    year: "numeric",
+    month: "numeric",
+    day: "numeric",
+  }
+): string {
+  return new Intl.DateTimeFormat(getMeta(locale).intl, opts).format(date);
+}
