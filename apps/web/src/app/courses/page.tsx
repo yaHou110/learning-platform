@@ -8,6 +8,7 @@ import CourseCatalog, {
   type CatalogCourse,
   type EnrollAction,
 } from "@/components/CourseCatalog";
+import { getDictionary, getLocale } from "@/lib/i18n";
 
 export const dynamic = "force-dynamic";
 
@@ -22,6 +23,9 @@ const ADMIN_ROLES: readonly Role[] = ["super_admin", "center_admin"];
 export default async function CoursesPage(): Promise<JSX.Element> {
   const session = await auth();
   if (!session?.user) redirect("/login");
+
+  const locale = await getLocale();
+  const dict = getDictionary(locale);
 
   const { tenantId, id: userId, role } = session.user;
   const isAdmin = ADMIN_ROLES.includes(role);
@@ -93,6 +97,7 @@ export default async function CoursesPage(): Promise<JSX.Element> {
         courses={enriched}
         isAdmin={isAdmin}
         enrollAction={enrollAction as EnrollAction}
+        dict={dict}
       />
     </AppShell>
   );

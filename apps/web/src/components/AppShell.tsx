@@ -3,6 +3,8 @@ import { signOut } from "@/auth";
 import type { Role } from "@learning-platform/core/db/schema";
 import { Icon } from "./icons";
 import ThemeToggle from "./ThemeToggle";
+import LanguageSwitcher from "./LanguageSwitcher";
+import { getDictionary, getLocale } from "@/lib/i18n";
 
 const ADMIN_ROLES: readonly Role[] = ["super_admin", "center_admin"];
 
@@ -11,40 +13,47 @@ async function logoutAction(): Promise<void> {
   await signOut({ redirectTo: "/login" });
 }
 
-const ROLE_LABEL: Record<string, string> = {
-  super_admin: "مدیر کل",
-  center_admin: "مدیر مرکز",
-  teacher: "استاد",
-  student: "دانش‌آموز",
-};
-
 /**
- * Shared app shell: RTL sidebar navigation + content area.
- * Server component — receives the signed-in user's role to decide which
- * nav items are visible (admin management surfaces).
+ * Shared app shell: direction-aware sidebar navigation + content area.
+ * Server component — resolves the active locale and receives the signed-in
+ * user's role to decide which nav items are visible.
  */
-export default function AppShell({
+export default async function AppShell({
   user,
   children,
 }: {
   user: { name: string; role: Role };
   children: React.ReactNode;
-}): JSX.Element {
+}): Promise<JSX.Element> {
+  const locale = await getLocale();
+  const dict = getDictionary(locale);
   const isAdmin = ADMIN_ROLES.includes(user.role);
 
   const navItems = [
-    { href: "/dashboard", label: "داشبورد", icon: <Icon.Home className="h-5 w-5" /> },
-    { href: "/courses", label: "محتوای تربیتی", icon: <Icon.BookOpen className="h-5 w-5" /> },
+    {
+      href: "/dashboard",
+      label: dict.common.dashboard,
+      icon: <Icon.Home className="h-5 w-5" />,
+    },
+    {
+      href: "/courses",
+      label: dict.common.courses,
+      icon: <Icon.BookOpen className="h-5 w-5" />,
+    },
   ];
 
   const adminItems = [
-    { href: "/admin/courses", label: "مدیریت دوره‌ها", icon: <Icon.Cog className="h-5 w-5" /> },
+    {
+      href: "/admin/courses",
+      label: dict.common.manageCourses,
+      icon: <Icon.Cog className="h-5 w-5" />,
+    },
   ];
 
   return (
-    <div dir="rtl" lang="fa" className="min-h-screen bg-gray-100 dark:bg-gray-950">
+    <div className="min-h-screen bg-gray-100 dark:bg-gray-950">
       {/* ── Sidebar (desktop) ─────────────────────────────────────── */}
-      <aside className="fixed inset-y-0 right-0 z-30 hidden w-64 flex-col border-l border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-900 lg:flex">
+      <aside className="fixed inset-y-0 start-0 z-30 hidden w-64 flex-col border-s border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-900 lg:flex">
         {/* Logo */}
         <div className="flex items-center gap-3 border-b border-gray-100 px-5 py-5 dark:border-gray-800">
           <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-600 to-emerald-800 text-white shadow-sm">
@@ -52,16 +61,18 @@ export default function AppShell({
           </div>
           <div>
             <div className="text-sm font-bold leading-tight text-gray-900 dark:text-gray-100">
-              رویش
+              {dict.brand.name}
             </div>
-            <div className="text-xs text-gray-500 dark:text-gray-400">سامانه فرهنگی، تربیتی حوزه و خانواده</div>
+            <div className="text-xs text-gray-500 dark:text-gray-400">
+              {dict.brand.tagline}
+            </div>
           </div>
         </div>
 
         {/* Nav */}
         <nav className="flex-1 space-y-1 overflow-y-auto px-3 py-4">
           <div className="px-3 pb-2 text-[11px] font-semibold uppercase tracking-wide text-gray-400 dark:text-gray-500">
-            منوی اصلی
+            {dict.nav.mainMenu}
           </div>
           {navItems.map((item) => (
             <Link
@@ -79,7 +90,7 @@ export default function AppShell({
           {isAdmin ? (
             <>
               <div className="px-3 pb-2 pt-5 text-[11px] font-semibold uppercase tracking-wide text-gray-400 dark:text-gray-500">
-                مدیریت
+                {dict.nav.management}
               </div>
               {adminItems.map((item) => (
                 <Link
@@ -99,6 +110,12 @@ export default function AppShell({
 
         {/* User + logout */}
         <div className="border-t border-gray-100 p-4 dark:border-gray-800">
+          <div className="mb-3">
+            <LanguageSwitcher
+              current={locale}
+              label={dict.nav.changeLanguage}
+            />
+          </div>
           <div className="flex items-center gap-3">
             <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-emerald-100 text-sm font-bold text-emerald-800 dark:bg-emerald-900/50 dark:text-emerald-400">
               {user.name.slice(0, 1) || "؟"}
@@ -108,14 +125,17 @@ export default function AppShell({
                 {user.name}
               </div>
               <div className="text-xs text-gray-500 dark:text-gray-400">
-                {ROLE_LABEL[user.role] ?? user.role}
+                {dict.common.roles[user.role] ?? user.role}
               </div>
             </div>
-            <ThemeToggle />
+            <ThemeToggle
+              lightLabel={dict.nav.themeLight}
+              darkLabel={dict.nav.themeDark}
+            />
             <form action={logoutAction}>
               <button
                 type="submit"
-                title="خروج"
+                title={dict.nav.logout}
                 className="flex h-9 w-9 items-center justify-center rounded-lg p-0 text-gray-400 transition-colors hover:bg-red-50 hover:text-red-600 dark:text-gray-500 dark:hover:bg-red-900/30 dark:hover:text-red-400"
               >
                 <Icon.Logout className="h-5 w-5" />
@@ -131,15 +151,26 @@ export default function AppShell({
           <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-emerald-600 to-emerald-800 text-white">
             <Icon.Mosque className="h-5 w-5" />
           </div>
-          <span className="text-sm font-bold text-gray-900 dark:text-gray-100">رویش</span>
+          <span className="text-sm font-bold text-gray-900 dark:text-gray-100">
+            {dict.brand.name}
+          </span>
         </div>
         <div className="flex items-center gap-1">
-          <ThemeToggle />
-          <span className="text-xs text-gray-500 dark:text-gray-400">{user.name}</span>
+          <LanguageSwitcher
+            current={locale}
+            label={dict.nav.changeLanguage}
+          />
+          <ThemeToggle
+            lightLabel={dict.nav.themeLight}
+            darkLabel={dict.nav.themeDark}
+          />
+          <span className="text-xs text-gray-500 dark:text-gray-400">
+            {user.name}
+          </span>
           <form action={logoutAction}>
             <button
               type="submit"
-              title="خروج"
+              title={dict.nav.logout}
               className="flex h-8 w-8 items-center justify-center rounded-lg p-0 text-gray-400 hover:bg-red-50 hover:text-red-600 dark:text-gray-500 dark:hover:bg-red-900/30 dark:hover:text-red-400"
             >
               <Icon.Logout className="h-4 w-4" />
@@ -163,8 +194,10 @@ export default function AppShell({
       </nav>
 
       {/* ── Content ───────────────────────────────────────────────── */}
-      <div className="lg:pr-64">
-        <main className="mx-auto max-w-6xl px-4 py-8 sm:px-6 lg:px-8">{children}</main>
+      <div className="lg:ps-64">
+        <main className="mx-auto max-w-6xl px-4 py-8 sm:px-6 lg:px-8">
+          {children}
+        </main>
       </div>
     </div>
   );

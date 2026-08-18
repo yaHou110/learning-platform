@@ -1,19 +1,25 @@
 import type { MetadataRoute } from "next";
+import { getDictionary, getLocale } from "@/lib/i18n";
+import { getMeta } from "@/lib/i18n/config";
 
 /**
  * Web App Manifest for the PWA.
  *
- * Served at /manifest.webmanifest by the App Router. RTL-aware (`dir`),
- * Persian-first (`lang`), brand colors from the design tokens.
+ * Served at /manifest.webmanifest by the App Router. Follows the active
+ * locale (cookie): localized name/description plus correct `dir`/`lang`,
+ * brand colors from the design tokens.
  */
-export default function manifest(): MetadataRoute.Manifest {
+export default async function manifest(): Promise<MetadataRoute.Manifest> {
+  const locale = await getLocale();
+  const dict = getDictionary(locale);
+  const meta = getMeta(locale);
+
   return {
-    name: "رویش | سامانه فرهنگی، تربیتی حوزه و خانواده",
-    short_name: "رویش",
-    description:
-      "سامانه فرهنگی، تربیتی حوزه و خانواده — با هم برای رشد، با هم برای آینده",
-    dir: "rtl",
-    lang: "fa",
+    name: dict.brand.title,
+    short_name: dict.brand.name,
+    description: dict.brand.description,
+    dir: meta.dir,
+    lang: meta.htmlLang,
     start_url: "/",
     display: "standalone",
     orientation: "portrait",

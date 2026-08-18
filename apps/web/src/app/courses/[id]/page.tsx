@@ -2,19 +2,15 @@ import Link from "next/link";
 import { revalidatePath } from "next/cache";
 import { auth } from "@/auth";
 import { redirect, notFound } from "next/navigation";
-import { catalog, learning } from "@learning-platform/core/api";
+import { catalog, learning, type COURSE_STATUSES } from "@learning-platform/core/api";
 import AppShell from "@/components/AppShell";
 import type { Role } from "@learning-platform/core/db/schema";
+import { fmt, getDictionary, getLocale } from "@/lib/i18n";
 
 export const dynamic = "force-dynamic";
 
 const ADMIN_ROLES: readonly Role[] = ["super_admin", "center_admin"];
-
-const STATUS_LABEL: Record<string, string> = {
-  draft: "پیش‌نویس",
-  published: "منتشرشده",
-  archived: "بایگانی",
-};
+type CourseStatus = (typeof COURSE_STATUSES)[number];
 
 /**
  * /courses/[id] — course detail: description, enroll action, and the lesson
@@ -27,6 +23,9 @@ export default async function CourseDetailPage({
 }): Promise<JSX.Element> {
   const session = await auth();
   if (!session?.user) redirect("/login");
+
+  const locale = await getLocale();
+  const dict = getDictionary(locale);
 
   const { id } = await params;
   const { tenantId, id: userId, role } = session.user;
@@ -58,7 +57,8 @@ export default async function CourseDetailPage({
   return (
     <AppShell user={{ name: session.user.name, role }}>
       <Link href="/courses" className="text-sm text-emerald-700 hover:underline">
-        ← بازگشت به دوره‌ها
+        <span className="inline-block rtl:rotate-180">←</span>{" "}
+        {dict.courseDetail.backToCourses}
       </Link>
 
       <div className="mt-4 rounded-lg border border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-900 p-6 shadow-sm">
@@ -67,16 +67,16 @@ export default async function CourseDetailPage({
             <h1 className="text-2xl font-bold">{course.title}</h1>
             {isAdmin ? (
               <span className="mt-1 inline-block rounded bg-amber-100 px-2 py-0.5 text-xs text-amber-800">
-                {STATUS_LABEL[course.status] ?? course.status}
+                {dict.common.status[course.status as CourseStatus] ?? course.status}
               </span>
             ) : null}
           </div>
           {enrollment ? (
-            <div className="text-left">
+            <div className="text-end">
               <span className="inline-block rounded bg-emerald-100 px-2 py-1 text-xs text-emerald-800">
                 {enrollment.status === "completed"
-                  ? "این دوره را تکمیل کرده‌اید 🎉"
-                  : "ثبت‌نام شده"}
+                  ? dict.courseDetail.completedBadge
+                  : dict.courseDetail.enrolledBadge}
               </span>
             </div>
           ) : course.status === "published" ? (
@@ -85,7 +85,7 @@ export default async function CourseDetailPage({
                 type="submit"
                 className="rounded bg-emerald-700 px-4 py-2 text-sm text-white hover:bg-emerald-800"
               >
-                ثبت‌نام در دوره
+                {dict.courseDetail.enroll}
               </button>
             </form>
           ) : null}
@@ -98,9 +98,13 @@ export default async function CourseDetailPage({
         {enrollment && lessons.length > 0 ? (
           <div className="mt-6">
             <div className="mb-1 flex items-center justify-between text-xs text-gray-500 dark:text-gray-400 dark:text-gray-500">
-              <span>پیشرفت دوره</span>
+              <span>{dict.courseDetail.progress}</span>
               <span>
-                {completedCount} از {lessons.length} درس ({pct}٪)
+                {fmt(dict.courseDetail.progressCount, {
+                  completed: completedCount,
+                  total: lessons.length,
+                  pct,
+                })}
               </span>
             </div>
             <div className="h-2 w-full overflow-hidden rounded-full bg-gray-200">
@@ -113,12 +117,14 @@ export default async function CourseDetailPage({
         ) : null}
       </div>
 
-      <h2 className="mb-3 mt-8 text-lg font-bold">درس‌ها ({lessons.length})</h2>
+      <h2 className="mb-3 mt-8 text-lg font-bold">
+        {fmt(dict.courseDetail.lessonsHeader, { n: lessons.length })}
+      </h2>
       {lessons.length === 0 ? (
         <div className="rounded-lg border border-dashed border-gray-300 dark:border-gray-600 p-8 text-center text-sm text-gray-500 dark:text-gray-400 dark:text-gray-500">
           {isAdmin
-            ? "هنوز درسی به این دوره اضافه نشده — از «مدیریت دوره‌ها» درس اضافه کنید."
-            : "درس‌های این دوره به‌زودی اضافه می‌شوند."}
+            ? dict.courseDetail.emptyAdmin
+            : dict.courseDetail.emptyStudent}
         </div>
       ) : (
         <ol className="space-y-2">
@@ -145,7 +151,7 @@ export default async function CourseDetailPage({
                     </span>
                   </span>
                   <span className="text-xs text-gray-400 dark:text-gray-500">
-                    {done ? "مشاهده شده" : "مشاهده درس"}
+                    {done ? dict.courseDetail.viewed : dict.courseDetail.viewLesson}
                   </span>
                 </Link>
               </li>

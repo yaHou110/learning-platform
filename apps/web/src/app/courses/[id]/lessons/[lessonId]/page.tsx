@@ -2,29 +2,24 @@ import Link from "next/link";
 import { revalidatePath } from "next/cache";
 import { auth } from "@/auth";
 import { redirect, notFound } from "next/navigation";
-import { catalog, learning } from "@learning-platform/core/api";
+import { catalog, learning, type CONTENT_TYPES } from "@learning-platform/core/api";
 import AppShell from "@/components/AppShell";
 import type { Role } from "@learning-platform/core/db/schema";
+import { fmt, getDictionary, getLocale } from "@/lib/i18n";
 
 export const dynamic = "force-dynamic";
 
 const ADMIN_ROLES: readonly Role[] = ["super_admin", "center_admin"];
-
-const CONTENT_TYPE_LABEL: Record<string, string> = {
-  video: "ویدئو",
-  audio: "صوت",
-  pdf: "متن (PDF)",
-  text: "متن",
-};
+type ContentType = (typeof CONTENT_TYPES)[number];
 
 /**
  * /courses/[id]/lessons/[lessonId] — lesson view.
  *
  * v1 has no object-storage playback (ADR-0010 proposed), so the content
  * area renders a placeholder keyed on contentType + contentRef. Enrolled
- * students can mark the lesson as viewed ("دیدم"), which records progress
- * through the Learning bounded context; completing the last lesson flips
- * the enrollment to completed.
+ * students can mark the lesson as viewed, which records progress through
+ * the Learning bounded context; completing the last lesson flips the
+ * enrollment to completed.
  */
 export default async function LessonPage({
   params,
@@ -33,6 +28,9 @@ export default async function LessonPage({
 }): Promise<JSX.Element> {
   const session = await auth();
   if (!session?.user) redirect("/login");
+
+  const locale = await getLocale();
+  const dict = getDictionary(locale);
 
   const { id: courseId, lessonId } = await params;
   const { tenantId, id: userId, role } = session.user;
@@ -62,27 +60,34 @@ export default async function LessonPage({
     revalidatePath(`/courses/${courseId}`);
   }
 
+  const contentTypeLabel =
+    dict.common.contentType[lesson.contentType as ContentType] ?? lesson.contentType;
+
   return (
     <AppShell user={{ name: session.user.name, role }}>
       <Link
         href={`/courses/${courseId}`}
         className="text-sm text-emerald-700 hover:underline"
       >
-        ← بازگشت به دوره
+        <span className="inline-block rtl:rotate-180">←</span>{" "}
+        {dict.lesson.backToCourse}
       </Link>
 
       <div className="mt-4 rounded-lg border border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-900 p-6 shadow-sm">
         <div className="flex items-start justify-between gap-4">
           <div>
             <div className="text-xs text-gray-400 dark:text-gray-500">
-              {CONTENT_TYPE_LABEL[lesson.contentType] ?? lesson.contentType} · درس{" "}
-              {lesson.orderIndex + 1}
+              {fmt(dict.lesson.titleLine, {
+                type: contentTypeLabel,
+                lesson: dict.common.lesson,
+                n: lesson.orderIndex + 1,
+              })}
             </div>
             <h1 className="mt-1 text-xl font-bold">{lesson.title}</h1>
           </div>
           {done ? (
             <span className="rounded bg-emerald-100 px-2 py-1 text-xs text-emerald-800">
-              ✓ مشاهده شده
+              ✓ {dict.lesson.viewed}
             </span>
           ) : null}
         </div>
@@ -91,17 +96,21 @@ export default async function LessonPage({
           {lesson.contentType === "video" ? (
             <>
               <div className="mb-2 text-3xl">🎬</div>
-              پخش ویدئو در v1 متصل نیست (ذخیره‌سازی اشیاء — ADR-0010 پیشنهادی).
+              {dict.lesson.videoPlaceholder}
               {lesson.contentRef ? (
-                <div className="mt-2 text-xs">مرجع محتوا: {lesson.contentRef}</div>
+                <div className="mt-2 text-xs">
+                  {fmt(dict.lesson.contentRef, { ref: lesson.contentRef })}
+                </div>
               ) : null}
             </>
           ) : (
             <>
               <div className="mb-2 text-3xl">{lesson.contentType === "pdf" ? "📄" : "📖"}</div>
-              محتوای درس در این نسخه به‌زودی قرار می‌گیرد.
+              {dict.lesson.contentPlaceholder}
               {lesson.contentRef ? (
-                <div className="mt-2 text-xs">مرجع محتوا: {lesson.contentRef}</div>
+                <div className="mt-2 text-xs">
+                  {fmt(dict.lesson.contentRef, { ref: lesson.contentRef })}
+                </div>
               ) : null}
             </>
           )}
@@ -110,29 +119,31 @@ export default async function LessonPage({
         <div className="mt-6 flex items-center justify-between">
           {enrollment ? (
             done ? (
-              <p className="text-sm text-emerald-700">این درس را مشاهده کرده‌اید.</p>
+              <p className="text-sm text-emerald-700">{dict.lesson.viewedNote}</p>
             ) : (
               <form action={markViewedAction}>
                 <button
                   type="submit"
                   className="rounded bg-emerald-700 px-4 py-2 text-sm text-white hover:bg-emerald-800"
                 >
-                  علامت «دیدم» ✍️
+                  {dict.lesson.markViewed}
                 </button>
               </form>
             )
           ) : (
             <p className="text-sm text-gray-500 dark:text-gray-400 dark:text-gray-500">
-              برای ثبت پیشرفت، ابتدا در دوره{" "}
+              {dict.lesson.enrollPromptBefore}{" "}
               <Link href={`/courses/${courseId}`} className="text-emerald-700 underline">
-                ثبت‌نام
+                {dict.lesson.enrollPromptLink}
               </Link>{" "}
-              کنید.
+              {dict.lesson.enrollPromptAfter}
             </p>
           )}
           {lesson.durationSeconds ? (
             <span className="text-xs text-gray-400 dark:text-gray-500">
-              مدت: {Math.round(lesson.durationSeconds / 60)} دقیقه
+              {fmt(dict.lesson.duration, {
+                n: Math.round(lesson.durationSeconds / 60),
+              })}
             </span>
           ) : null}
         </div>

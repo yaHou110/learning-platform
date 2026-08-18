@@ -7,8 +7,13 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { toLatinDigits } from "@/lib/digits";
 import { safeCallbackUrl } from "@/lib/redirect";
+import type { Dictionary } from "@/lib/i18n";
 
-export default function LoginForm(): JSX.Element {
+export default function LoginForm({
+  dict,
+}: {
+  dict: Dictionary;
+}): JSX.Element {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
@@ -31,13 +36,13 @@ export default function LoginForm(): JSX.Element {
       });
     } catch {
       // Network/server failure — never leave the button stuck loading.
-      setError("خطای برقراری ارتباط با سرور؛ دوباره تلاش کنید.");
+      setError(dict.login.form.serverError);
       setLoading(false);
       return;
     }
 
     if (result?.error) {
-      setError("نام کاربری یا رمز عبور اشتباه است.");
+      setError(dict.login.form.wrongCredentials);
       setLoading(false);
       return;
     }
@@ -62,10 +67,10 @@ export default function LoginForm(): JSX.Element {
           htmlFor="tenantSlug"
           className="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-300"
         >
-          شناسه مرکز
+          {dict.login.form.tenantLabel}
         </label>
         <div className="relative">
-          <span className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-gray-400 dark:text-gray-500">
+          <span className="pointer-events-none absolute inset-y-0 start-3 flex items-center text-gray-400 dark:text-gray-500">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
@@ -94,14 +99,14 @@ export default function LoginForm(): JSX.Element {
             data-form-type="other"
             maxLength={12}
             pattern="[0-9۰-۹٠-٩]{1,12}"
-            title="شناسه مرکز باید عدد باشد"
-            placeholder="مثلاً ۱۰۰۱"
-            className="pl-4 pr-10"
+            title={dict.login.form.tenantTitle}
+            placeholder={dict.login.form.tenantPlaceholder}
+            className="ps-4 pe-10"
             dir="ltr"
           />
         </div>
         <p id="tenant-help" className="mt-1.5 text-xs text-gray-500 dark:text-gray-400">
-          شناسهٔ عددی مرکز را وارد کنید.
+          {dict.login.form.tenantHelp}
         </p>
       </div>
 
@@ -111,10 +116,10 @@ export default function LoginForm(): JSX.Element {
           htmlFor="nationalId"
           className="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-300"
         >
-          کد ملی
+          {dict.login.form.nationalIdLabel}
         </label>
         <div className="relative">
-          <span className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-gray-400 dark:text-gray-500">
+          <span className="pointer-events-none absolute inset-y-0 start-3 flex items-center text-gray-400 dark:text-gray-500">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
@@ -143,14 +148,14 @@ export default function LoginForm(): JSX.Element {
             data-form-type="other"
             maxLength={10}
             pattern="[0-9۰-۹٠-٩]{10}"
-            title="کد ملی باید ۱۰ رقم باشد"
-            placeholder="مثلاً ۱۲۳۴۵۶۷۸۹۱"
-            className="pl-4 pr-10"
+            title={dict.login.form.nationalIdTitle}
+            placeholder={dict.login.form.nationalIdPlaceholder}
+            className="ps-4 pe-10"
             dir="ltr"
           />
         </div>
         <p id="national-id-help" className="mt-1.5 text-xs text-gray-500 dark:text-gray-400">
-          کد ملی ۱۰ رقمی، بدون خط تیره.
+          {dict.login.form.nationalIdHelp}
         </p>
       </div>
 
@@ -161,13 +166,13 @@ export default function LoginForm(): JSX.Element {
             htmlFor="password"
             className="block text-sm font-medium text-gray-700 dark:text-gray-300"
           >
-            رمز عبور
+            {dict.login.form.passwordLabel}
           </label>
           <Link
             href="/forgot-password"
             className="text-xs font-medium text-emerald-700 transition-colors hover:text-emerald-800 dark:text-emerald-400 dark:hover:text-emerald-300"
           >
-            فراموشی رمز عبور؟
+            {dict.login.form.forgotPassword}
           </Link>
         </div>
         <div className="relative">
@@ -182,17 +187,17 @@ export default function LoginForm(): JSX.Element {
             data-1p-ignore=""
             data-form-type="other"
             placeholder="••••••••"
-            className="pr-12 pl-4"
+            className="pe-12 ps-4"
             dir="ltr"
           />
           <button
             type="button"
             onClick={() => setShowPassword((v) => !v)}
-            aria-label={showPassword ? "مخفی کردن رمز" : "نمایش رمز"}
+            aria-label={showPassword ? dict.login.form.hidePassword : dict.login.form.showPassword}
             aria-pressed={showPassword}
             aria-controls="password"
-            title={showPassword ? "مخفی کردن رمز" : "نمایش رمز"}
-            className="absolute inset-y-1 right-1 z-10 flex w-9 !p-0 items-center justify-center rounded-lg border border-gray-200/70 bg-gray-50/90 text-gray-500 shadow-sm transition-colors hover:bg-gray-100 hover:text-gray-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/70 dark:border-gray-600/70 dark:bg-gray-800/90 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-white"
+            title={showPassword ? dict.login.form.hidePassword : dict.login.form.showPassword}
+            className="absolute inset-y-1 start-1 z-10 flex w-9 !p-0 items-center justify-center rounded-lg border border-gray-200/70 bg-gray-50/90 text-gray-500 shadow-sm transition-colors hover:bg-gray-100 hover:text-gray-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/70 dark:border-gray-600/70 dark:bg-gray-800/90 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-white"
           >
             {showPassword ? (
               <svg
@@ -288,10 +293,10 @@ export default function LoginForm(): JSX.Element {
                 d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
               />
             </svg>
-            در حال ورود...
+            {dict.login.form.loading}
           </>
         ) : (
-          "ورود به سامانه"
+          dict.login.form.submit
         )}
       </button>
     </form>

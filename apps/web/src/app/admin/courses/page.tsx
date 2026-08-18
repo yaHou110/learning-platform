@@ -2,19 +2,15 @@ import Link from "next/link";
 import { revalidatePath } from "next/cache";
 import { auth } from "@/auth";
 import { redirect } from "next/navigation";
-import { catalog } from "@learning-platform/core/api";
+import { catalog, type COURSE_STATUSES } from "@learning-platform/core/api";
 import AppShell from "@/components/AppShell";
 import type { Role } from "@learning-platform/core/db/schema";
+import { fmt, formatDate, getDictionary, getLocale } from "@/lib/i18n";
 
 export const dynamic = "force-dynamic";
 
 const ADMIN_ROLES: readonly Role[] = ["super_admin", "center_admin"];
-
-const STATUS_LABEL: Record<string, string> = {
-  draft: "پیش‌نویس",
-  published: "منتشرشده",
-  archived: "بایگانی",
-};
+type CourseStatus = (typeof COURSE_STATUSES)[number];
 
 /**
  * /admin/courses — course management (admin only): create a course, list
@@ -24,6 +20,9 @@ export default async function AdminCoursesPage(): Promise<JSX.Element> {
   const session = await auth();
   if (!session?.user) redirect("/login");
   if (!ADMIN_ROLES.includes(session.user.role)) redirect("/courses");
+
+  const locale = await getLocale();
+  const dict = getDictionary(locale);
 
   const { tenantId, role } = session.user;
   const courses = await catalog.listCourses(tenantId, { includeNonPublished: true });
@@ -55,36 +54,38 @@ export default async function AdminCoursesPage(): Promise<JSX.Element> {
 
   return (
     <AppShell user={{ name: session.user.name, role }}>
-      <h1 className="mb-1 text-2xl font-bold">مدیریت دوره‌ها</h1>
+      <h1 className="mb-1 text-2xl font-bold">{dict.adminCourses.title}</h1>
       <p className="mb-6 text-sm text-gray-600 dark:text-gray-400 dark:text-gray-500">
-        ساخت دوره، انتشار پیش‌نویس‌ها و مدیریت درس‌ها.
+        {dict.adminCourses.subtitle}
       </p>
 
       <div className="rounded-lg border border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-900 p-5 shadow-sm">
-        <h2 className="mb-3 text-base font-bold">دوره جدید</h2>
+        <h2 className="mb-3 text-base font-bold">{dict.adminCourses.newCourse}</h2>
         <form action={createCourseAction} className="flex flex-col gap-3">
           <input
             name="title"
             required
-            placeholder="عنوان دوره (مثلاً: دوره مقدماتی فقه)"
+            placeholder={dict.adminCourses.titlePlaceholder}
             className="rounded border border-gray-300 dark:border-gray-600 p-2 text-sm"
           />
           <textarea
             name="description"
             rows={2}
-            placeholder="توضیح کوتاه (اختیاری)"
+            placeholder={dict.adminCourses.descPlaceholder}
             className="rounded border border-gray-300 dark:border-gray-600 p-2 text-sm"
           />
           <button
             type="submit"
             className="self-start rounded bg-emerald-700 px-4 py-2 text-sm text-white hover:bg-emerald-800"
           >
-            ایجاد دوره (پیش‌نویس)
+            {dict.adminCourses.createDraft}
           </button>
         </form>
       </div>
 
-      <h2 className="mb-3 mt-8 text-lg font-bold">دوره‌ها ({courses.length})</h2>
+      <h2 className="mb-3 mt-8 text-lg font-bold">
+        {fmt(dict.adminCourses.coursesHeader, { n: courses.length })}
+      </h2>
       <div className="space-y-2">
         {courses.map((course) => (
           <div
@@ -94,8 +95,8 @@ export default async function AdminCoursesPage(): Promise<JSX.Element> {
             <div className="min-w-0">
               <div className="font-medium">{course.title}</div>
               <div className="text-xs text-gray-400 dark:text-gray-500">
-                {STATUS_LABEL[course.status] ?? course.status} ·{" "}
-                {course.createdAt.toLocaleDateString("fa-IR")}
+                {dict.common.status[course.status as CourseStatus] ?? course.status} ·{" "}
+                {formatDate(locale, course.createdAt)}
               </div>
             </div>
             <div className="flex shrink-0 items-center gap-2">
@@ -105,7 +106,7 @@ export default async function AdminCoursesPage(): Promise<JSX.Element> {
                     type="submit"
                     className="rounded bg-emerald-700 px-3 py-1.5 text-xs text-white hover:bg-emerald-800"
                   >
-                    انتشار
+                    {dict.adminCourses.publish}
                   </button>
                 </form>
               ) : null}
@@ -113,13 +114,13 @@ export default async function AdminCoursesPage(): Promise<JSX.Element> {
                 href={`/admin/courses/${course.id}/lessons`}
                 className="rounded border border-gray-300 dark:border-gray-600 px-3 py-1.5 text-xs text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
               >
-                درس‌ها
+                {dict.adminCourses.lessons}
               </Link>
               <Link
                 href={`/courses/${course.id}`}
                 className="rounded border border-gray-300 dark:border-gray-600 px-3 py-1.5 text-xs text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
               >
-                مشاهده
+                {dict.adminCourses.view}
               </Link>
             </div>
           </div>

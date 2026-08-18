@@ -3,13 +3,18 @@
 import Link from "next/link";
 import { useState } from "react";
 import { toLatinDigits } from "@/lib/digits";
+import type { Dictionary } from "@/lib/i18n";
 
 const inputCls =
   "w-full rounded-xl border border-gray-300 bg-white px-4 py-2.5 text-sm text-gray-900 shadow-sm transition-colors focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/40 focus:outline-none dark:border-gray-700 dark:bg-gray-950 dark:text-gray-100";
 const labelCls =
   "mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-300";
 
-export default function ForgotPasswordForm(): JSX.Element {
+export default function ForgotPasswordForm({
+  dict,
+}: {
+  dict: Dictionary;
+}): JSX.Element {
   const [step, setStep] = useState<1 | 2>(1);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -35,7 +40,7 @@ export default function ForgotPasswordForm(): JSX.Element {
         body: JSON.stringify({ tenantSlug, nationalId, phone }),
       });
       if (!res.ok) {
-        setError("درخواست ناموفق بود؛ کمی بعد دوباره تلاش کنید.");
+        setError(dict.forgotPassword.requestFailed);
         setLoading(false);
         return;
       }
@@ -44,7 +49,7 @@ export default function ForgotPasswordForm(): JSX.Element {
       setAccount({ tenantSlug, nationalId });
       setStep(2);
     } catch {
-      setError("خطای برقراری ارتباط با سرور؛ دوباره تلاش کنید.");
+      setError(dict.forgotPassword.serverError);
     }
     setLoading(false);
   }
@@ -60,7 +65,7 @@ export default function ForgotPasswordForm(): JSX.Element {
     const confirmPassword = String(fd.get("confirmPassword") ?? "");
 
     if (newPassword !== confirmPassword) {
-      setError("تکرار رمز عبور مطابقت ندارد.");
+      setError(dict.forgotPassword.mismatch);
       setLoading(false);
       return;
     }
@@ -85,11 +90,11 @@ export default function ForgotPasswordForm(): JSX.Element {
       } | null;
       setError(
         data?.error
-          ? "کد نامعتبر یا منقضی شده است؛ دوباره درخواست دهید."
-          : "خطا در بازنشانی رمز؛ دوباره تلاش کنید."
+          ? dict.forgotPassword.invalidCode
+          : dict.forgotPassword.resetFailed,
       );
     } catch {
-      setError("خطای برقراری ارتباط با سرور؛ دوباره تلاش کنید.");
+      setError(dict.forgotPassword.serverError);
     }
     setLoading(false);
   }
@@ -114,16 +119,16 @@ export default function ForgotPasswordForm(): JSX.Element {
           </svg>
         </div>
         <h2 className="text-lg font-bold text-gray-900 dark:text-gray-100">
-          رمز عبور شما بازنشانی شد
+          {dict.forgotPassword.doneTitle}
         </h2>
         <p className="text-sm text-gray-500 dark:text-gray-400">
-          حالا می‌توانید با رمز جدید وارد شوید.
+          {dict.forgotPassword.doneDesc}
         </p>
         <Link
           href="/login"
           className="mt-2 rounded-xl bg-emerald-700 px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-emerald-800"
         >
-          ورود به سامانه
+          {dict.forgotPassword.doneLogin}
         </Link>
       </div>
     );
@@ -136,7 +141,7 @@ export default function ForgotPasswordForm(): JSX.Element {
       <form key="request-code" onSubmit={requestCode} className="flex flex-col gap-5">
         <div>
           <label htmlFor="fp-tenant" className={labelCls}>
-            شناسه مرکز
+            {dict.forgotPassword.tenantLabel}
           </label>
           <input
             id="fp-tenant"
@@ -147,14 +152,14 @@ export default function ForgotPasswordForm(): JSX.Element {
             autoComplete="off"
             maxLength={12}
             pattern="[0-9۰-۹٠-٩]{1,12}"
-            placeholder="مثلاً ۱۰۰۱"
-            className={`${inputCls} text-left`}
+            placeholder={dict.forgotPassword.tenantPlaceholder}
+            className={`${inputCls} text-start`}
             dir="ltr"
           />
         </div>
         <div>
           <label htmlFor="fp-national" className={labelCls}>
-            کد ملی
+            {dict.forgotPassword.nationalIdLabel}
           </label>
           <input
             id="fp-national"
@@ -165,14 +170,14 @@ export default function ForgotPasswordForm(): JSX.Element {
             autoComplete="off"
             maxLength={10}
             pattern="[0-9۰-۹٠-٩]{10}"
-            placeholder="مثلاً ۱۲۳۴۵۶۷۸۹۱"
-            className={`${inputCls} text-left`}
+            placeholder={dict.forgotPassword.nationalIdPlaceholder}
+            className={`${inputCls} text-start`}
             dir="ltr"
           />
         </div>
         <div>
           <label htmlFor="fp-phone" className={labelCls}>
-            شماره موبایل
+            {dict.forgotPassword.phoneLabel}
           </label>
           <input
             id="fp-phone"
@@ -183,8 +188,8 @@ export default function ForgotPasswordForm(): JSX.Element {
             autoComplete="tel"
             maxLength={15}
             pattern="[0-9۰-۹٠-٩\s-]{10,15}"
-            placeholder="مثلاً ۰۹۱۲۳۴۵۶۷۸۹"
-            className={`${inputCls} text-left`}
+            placeholder={dict.forgotPassword.phonePlaceholder}
+            className={`${inputCls} text-start`}
             dir="ltr"
           />
         </div>
@@ -203,7 +208,7 @@ export default function ForgotPasswordForm(): JSX.Element {
           disabled={loading}
           className="mt-1 flex w-full items-center justify-center gap-2 rounded-xl bg-emerald-700 px-4 py-3 text-sm font-semibold text-white shadow-sm transition-all hover:bg-emerald-800 hover:shadow-md disabled:opacity-50"
         >
-          {loading ? "در حال ارسال..." : "ارسال کد تأیید"}
+          {loading ? dict.forgotPassword.sending : dict.forgotPassword.sendCode}
         </button>
       </form>
     );
@@ -214,7 +219,7 @@ export default function ForgotPasswordForm(): JSX.Element {
       {devCode && (
         <div className="rounded-xl border border-dashed border-emerald-300 bg-emerald-50/60 p-3 text-xs text-gray-600 dark:border-emerald-700/50 dark:bg-emerald-900/20 dark:text-gray-300">
           <span className="font-semibold text-emerald-800 dark:text-emerald-400">
-            کد آزمایشی (حالت توسعه):
+            {dict.forgotPassword.devCode}
           </span>{" "}
           <code className="rounded bg-emerald-100 px-1.5 py-0.5 text-emerald-900 dark:bg-emerald-800 dark:text-emerald-200">
             {devCode}
@@ -223,7 +228,7 @@ export default function ForgotPasswordForm(): JSX.Element {
       )}
       <div>
         <label htmlFor="fp-code" className={labelCls}>
-          کد تأیید
+          {dict.forgotPassword.codeLabel}
         </label>
         <input
           id="fp-code"
@@ -234,14 +239,14 @@ export default function ForgotPasswordForm(): JSX.Element {
           autoComplete="one-time-code"
           maxLength={6}
           pattern="[0-9۰-۹٠-٩]{6}"
-          placeholder="کد ۶ رقمی"
+          placeholder={dict.forgotPassword.codePlaceholder}
           className={`${inputCls} text-center tracking-[0.4em]`}
           dir="ltr"
         />
       </div>
       <div>
         <label htmlFor="fp-newpass" className={labelCls}>
-          رمز عبور جدید
+          {dict.forgotPassword.newPasswordLabel}
         </label>
         <input
           id="fp-newpass"
@@ -250,14 +255,14 @@ export default function ForgotPasswordForm(): JSX.Element {
           required
           minLength={8}
           autoComplete="new-password"
-          placeholder="حداقل ۸ کاراکتر"
+          placeholder={dict.forgotPassword.newPasswordPlaceholder}
           className={inputCls}
           dir="ltr"
         />
       </div>
       <div>
         <label htmlFor="fp-confirm" className={labelCls}>
-          تکرار رمز عبور جدید
+          {dict.forgotPassword.confirmLabel}
         </label>
         <input
           id="fp-confirm"
@@ -266,7 +271,7 @@ export default function ForgotPasswordForm(): JSX.Element {
           required
           minLength={8}
           autoComplete="new-password"
-          placeholder="تکرار رمز عبور"
+          placeholder={dict.forgotPassword.confirmPlaceholder}
           className={inputCls}
           dir="ltr"
         />
@@ -286,7 +291,9 @@ export default function ForgotPasswordForm(): JSX.Element {
         disabled={loading}
         className="mt-1 flex w-full items-center justify-center gap-2 rounded-xl bg-emerald-700 px-4 py-3 text-sm font-semibold text-white shadow-sm transition-all hover:bg-emerald-800 hover:shadow-md disabled:opacity-50"
       >
-        {loading ? "در حال بازنشانی..." : "بازنشانی رمز عبور"}
+        {loading
+          ? dict.forgotPassword.resetting
+          : dict.forgotPassword.resetSubmit}
       </button>
 
       <button
@@ -298,7 +305,7 @@ export default function ForgotPasswordForm(): JSX.Element {
         }}
         className="text-center text-xs text-gray-500 transition-colors hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
       >
-        بازگشت و تغییر اطلاعات
+        {dict.forgotPassword.backAndChange}
       </button>
     </form>
   );

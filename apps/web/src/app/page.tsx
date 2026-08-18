@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { catalog, learning } from "@learning-platform/core/api";
 import AppShell from "@/components/AppShell";
 import type { Role } from "@learning-platform/core/db/schema";
+import { fmt, getDictionary, getLocale } from "@/lib/i18n";
 
 export const dynamic = "force-dynamic";
 
@@ -16,6 +17,9 @@ const ADMIN_ROLES: readonly Role[] = ["super_admin", "center_admin"];
 export default async function HomePage(): Promise<JSX.Element> {
   const session = await auth();
   if (!session?.user) redirect("/login");
+
+  const locale = await getLocale();
+  const dict = getDictionary(locale);
 
   const { tenantId, id: userId, role } = session.user;
   const isAdmin = ADMIN_ROLES.includes(role);
@@ -40,11 +44,11 @@ export default async function HomePage(): Promise<JSX.Element> {
 
   return (
     <AppShell user={{ name: session.user.name, role }}>
-      <h1 className="mb-1 text-2xl font-bold">خوش آمدید، {session.user.name}</h1>
+      <h1 className="mb-1 text-2xl font-bold">
+        {dict.home.welcome} {session.user.name}
+      </h1>
       <p className="mb-6 text-sm text-gray-600 dark:text-gray-400 dark:text-gray-500">
-        {isAdmin
-          ? "پنل مدیریت مرکز شما — آمار کلی و دسترسی سریع."
-          : "به فضای یادگیری خود خوش آمدید."}
+        {isAdmin ? dict.home.adminSubtitle : dict.home.studentSubtitle}
       </p>
 
       <div className="grid gap-4 sm:grid-cols-3">
@@ -52,20 +56,26 @@ export default async function HomePage(): Promise<JSX.Element> {
           href="/courses"
           className="rounded-lg border border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-900 p-5 shadow-sm transition hover:border-emerald-300"
         >
-          <div className="text-sm text-gray-500 dark:text-gray-400 dark:text-gray-500">دوره‌های در دسترس</div>
+          <div className="text-sm text-gray-500 dark:text-gray-400 dark:text-gray-500">
+            {dict.home.availableCourses}
+          </div>
           <div className="mt-1 text-3xl font-bold text-emerald-800">
             {courseCount || "—"}
           </div>
-          <div className="mt-2 text-xs text-gray-400 dark:text-gray-500">مشاهده کاتالوگ دوره‌ها</div>
+          <div className="mt-2 text-xs text-gray-400 dark:text-gray-500">
+            {dict.home.viewCatalog}
+          </div>
         </Link>
         <Link
           href="/dashboard"
           className="rounded-lg border border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-900 p-5 shadow-sm transition hover:border-emerald-300"
         >
-          <div className="text-sm text-gray-500 dark:text-gray-400 dark:text-gray-500">ثبت‌نام‌های من</div>
+          <div className="text-sm text-gray-500 dark:text-gray-400 dark:text-gray-500">
+            {dict.home.myEnrollments}
+          </div>
           <div className="mt-1 text-3xl font-bold text-emerald-800">{enrollmentCount}</div>
           <div className="mt-2 text-xs text-gray-400 dark:text-gray-500">
-            {completedCount} دوره تکمیل‌شده
+            {fmt(dict.home.completedCourses, { n: completedCount })}
           </div>
         </Link>
         <Link
@@ -73,13 +83,13 @@ export default async function HomePage(): Promise<JSX.Element> {
           className="rounded-lg border border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-900 p-5 shadow-sm transition hover:border-emerald-300"
         >
           <div className="text-sm text-gray-500 dark:text-gray-400 dark:text-gray-500">
-            {isAdmin ? "مدیریت محتوا" : "پیشرفت من"}
+            {isAdmin ? dict.home.manageContent : dict.home.myProgress}
           </div>
           <div className="mt-1 text-3xl font-bold text-emerald-800">
-            {isAdmin ? "ورود" : "ورود"}
+            {dict.home.enter}
           </div>
           <div className="mt-2 text-xs text-gray-400 dark:text-gray-500">
-            {isAdmin ? "ایجاد و انتشار دوره‌ها" : "جزئیات پیشرفت یادگیری"}
+            {isAdmin ? dict.home.createAndPublish : dict.home.progressDetails}
           </div>
         </Link>
       </div>

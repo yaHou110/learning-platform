@@ -6,17 +6,12 @@ import { catalog, CONTENT_TYPES } from "@learning-platform/core/api";
 import AppShell from "@/components/AppShell";
 import type { Role } from "@learning-platform/core/db/schema";
 import type { JSX } from "react";
+import { fmt, getDictionary, getLocale } from "@/lib/i18n";
 
 export const dynamic = "force-dynamic";
 
 const ADMIN_ROLES: readonly Role[] = ["super_admin", "center_admin"];
-
-const CONTENT_TYPE_LABEL: Record<string, string> = {
-  video: "ویدئو",
-  audio: "صوت",
-  pdf: "PDF",
-  text: "متن",
-};
+type ContentType = (typeof CONTENT_TYPES)[number];
 
 /**
  * /admin/courses/[id]/lessons — lesson management for one course (admin):
@@ -31,6 +26,9 @@ export default async function AdminCourseLessonsPage({
   const session = await auth();
   if (!session?.user) redirect("/login");
   if (!ADMIN_ROLES.includes(session.user.role)) redirect("/courses");
+
+  const locale = await getLocale();
+  const dict = getDictionary(locale);
 
   const { id: courseId } = await params;
   const { tenantId, role } = session.user;
@@ -72,15 +70,18 @@ export default async function AdminCourseLessonsPage({
         href="/admin/courses"
         className="text-sm text-emerald-700 hover:underline"
       >
-        ← بازگشت به مدیریت دوره‌ها
+        <span className="inline-block rtl:rotate-180">←</span>{" "}
+        {dict.adminLessons.backToManage}
       </Link>
 
       <div className="mt-4 flex items-start justify-between gap-4">
         <div>
           <h1 className="text-xl font-bold">{course.title}</h1>
           <p className="mt-1 text-xs text-gray-500 dark:text-gray-400 dark:text-gray-500">
-            {lessons.length} درس · وضعیت:{" "}
-            <span className="font-medium">{course.status}</span>
+            {fmt(dict.adminLessons.statusLine, {
+              n: lessons.length,
+              status: course.status,
+            })}
           </p>
         </div>
         {course.status === "draft" ? (
@@ -89,19 +90,19 @@ export default async function AdminCourseLessonsPage({
               type="submit"
               className="rounded bg-emerald-700 px-4 py-2 text-sm text-white hover:bg-emerald-800"
             >
-              انتشار دوره
+              {dict.adminLessons.publishCourse}
             </button>
           </form>
         ) : null}
       </div>
 
       <div className="mt-6 rounded-lg border border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-900 p-5 shadow-sm">
-        <h2 className="mb-3 text-base font-bold">درس جدید</h2>
+        <h2 className="mb-3 text-base font-bold">{dict.adminLessons.newLesson}</h2>
         <form action={createLessonAction} className="flex flex-col gap-3">
           <input
             name="title"
             required
-            placeholder="عنوان درس"
+            placeholder={dict.adminLessons.titlePlaceholder}
             className="rounded border border-gray-300 dark:border-gray-600 p-2 text-sm"
           />
           <div className="flex gap-3">
@@ -112,13 +113,13 @@ export default async function AdminCourseLessonsPage({
             >
               {CONTENT_TYPES.map((t) => (
                 <option key={t} value={t}>
-                  {CONTENT_TYPE_LABEL[t] ?? t}
+                  {dict.common.contentType[t] ?? t}
                 </option>
               ))}
             </select>
             <input
               name="contentRef"
-              placeholder="مرجع محتوا (اختیاری)"
+              placeholder={dict.adminLessons.contentRefPlaceholder}
               className="flex-1 rounded border border-gray-300 dark:border-gray-600 p-2 text-sm"
             />
           </div>
@@ -126,12 +127,12 @@ export default async function AdminCourseLessonsPage({
             type="submit"
             className="self-start rounded bg-emerald-700 px-4 py-2 text-sm text-white hover:bg-emerald-800"
           >
-            افزودن درس
+            {dict.adminLessons.addLesson}
           </button>
         </form>
       </div>
 
-      <h2 className="mb-3 mt-8 text-lg font-bold">درس‌ها</h2>
+      <h2 className="mb-3 mt-8 text-lg font-bold">{dict.adminLessons.lessonsHeader}</h2>
       <ol className="space-y-2">
         {lessons.map((lesson) => (
           <li
@@ -145,16 +146,18 @@ export default async function AdminCourseLessonsPage({
               <span>{lesson.title}</span>
             </span>
             <span className="text-xs text-gray-400 dark:text-gray-500">
-              {CONTENT_TYPE_LABEL[lesson.contentType] ?? lesson.contentType}
+              {dict.common.contentType[lesson.contentType as ContentType] ?? lesson.contentType}
               {lesson.durationSeconds
-                ? ` · ${Math.round(lesson.durationSeconds / 60)} دقیقه`
+                ? fmt(dict.adminLessons.duration, {
+                    n: Math.round(lesson.durationSeconds / 60),
+                  })
                 : ""}
             </span>
           </li>
         ))}
         {lessons.length === 0 ? (
           <li className="rounded-lg border border-dashed border-gray-300 dark:border-gray-600 p-6 text-center text-sm text-gray-500 dark:text-gray-400 dark:text-gray-500">
-            هنوز درسی اضافه نشده است.
+            {dict.adminLessons.noLessons}
           </li>
         ) : null}
       </ol>

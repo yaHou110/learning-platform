@@ -6,8 +6,15 @@ import { useEffect, useState } from "react";
  * ThemeToggle — client component that toggles the `dark` class on <html>.
  * Persists the choice in localStorage and respects the OS preference on
  * first visit (via the inline script in layout.tsx, so there's no flash).
+ * Labels come from the active locale's dictionary (server passes them in).
  */
-export default function ThemeToggle(): JSX.Element {
+export default function ThemeToggle({
+  lightLabel = "Light mode",
+  darkLabel = "Dark mode",
+}: {
+  lightLabel?: string;
+  darkLabel?: string;
+}): JSX.Element {
   const [dark, setDark] = useState<boolean>(false);
 
   useEffect(() => {
@@ -30,8 +37,8 @@ export default function ThemeToggle(): JSX.Element {
     <button
       type="button"
       onClick={toggle}
-      title={dark ? "حالت روشن" : "حالت شب"}
-      aria-label={dark ? "حالت روشن" : "حالت شب"}
+      title={dark ? lightLabel : darkLabel}
+      aria-label={dark ? lightLabel : darkLabel}
       className="flex h-9 w-9 items-center justify-center rounded-lg p-0 text-gray-500 transition-colors hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-gray-100"
     >
       {dark ? (
