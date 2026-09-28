@@ -26,7 +26,7 @@
   },
   "devDependencies": {
     "@types/node": "^20.12.0",
-    "prettier": "^3.2.5",
+    "prettier": "^3.9.9",
     "typescript": "^5.4.5"
   },
   "pnpm": {
@@ -39,6 +39,6 @@
   },
   "dependencies": {
     "crypto-hash": "^4.0.1",
-    "uuid": "^14.0.1"
+    "uuid": "^14.0.2"
   }
 }
