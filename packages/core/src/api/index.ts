@@ -12,7 +12,7 @@
  * and the JSON serializer all agree on what is safe to return.
  */
 import { and, eq } from "drizzle-orm";
-import { getDb } from "../db/client.js";
+import { getDb, isDbConnected } from "../db/client.js";
 import * as schema from "../db/schema/index.js";
 import { memoryStore } from "../db/inMemoryStore.js";
 import { hashPassword, type AuthedUser } from "../auth/credentials.js";
@@ -121,20 +121,24 @@ export const identity = {
    * key lookup.
    */
   async checkUserActive(userId: string): Promise<{ exists: boolean; active: boolean }> {
-    try {
-      const db = getDb();
-      const [row] = await db
-        .select({ id: schema.users.id, isActive: schema.users.isActive })
-        .from(schema.users)
-        .where(eq(schema.users.id, userId))
-        .limit(1);
-      if (!row) return { exists: false, active: false };
-      return { exists: true, active: row.isActive };
-    } catch {
-      const u = memoryStore.findUserById(userId);
-      if (!u) return { exists: false, active: false };
-      return { exists: true, active: u.isActive };
+    const dbUp = await isDbConnected();
+    if (dbUp) {
+      try {
+        const db = getDb();
+        const [row] = await db
+          .select({ id: schema.users.id, isActive: schema.users.isActive })
+          .from(schema.users)
+          .where(eq(schema.users.id, userId))
+          .limit(1);
+        if (!row) return { exists: false, active: false };
+        return { exists: true, active: row.isActive };
+      } catch {
+        // Fallback to memory store below
+      }
     }
+    const u = memoryStore.findUserById(userId);
+    if (!u) return { exists: false, active: false };
+    return { exists: true, active: u.isActive };
   },
 
   async createUser(input: {

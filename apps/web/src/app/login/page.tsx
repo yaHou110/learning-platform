@@ -184,6 +184,40 @@ export default async function LoginPage(): Promise<JSX.Element> {
                 </div>
               ) : null}
 
+              {/* Developer Team Contact Information */}
+              <div className="mt-4 rounded-xl border border-gray-200 dark:border-gray-800 bg-white/80 dark:bg-gray-900/80 p-3.5 shadow-sm text-xs">
+                <div className="flex items-center gap-2 font-bold text-gray-900 dark:text-gray-100 mb-2">
+                  <span>📞</span>
+                  <span>ارتباط با تیم توسعه‌دهنده</span>
+                </div>
+                <div className="space-y-1.5 text-gray-600 dark:text-gray-300">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[11px] text-gray-500 dark:text-gray-400">شماره تماس / پشتیبانی:</span>
+                    <a
+                      href="tel:09354467269"
+                      dir="ltr"
+                      className="font-mono font-bold text-emerald-700 dark:text-emerald-400 hover:underline"
+                    >
+                      ۰۹۳۵۴۴۶۷۲۶۹
+                    </a>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-[11px] text-gray-500 dark:text-gray-400">تلگرام و بله:</span>
+                    <div className="flex items-center gap-2">
+                      <a
+                        href="https://t.me/yahou110"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        dir="ltr"
+                        className="font-mono font-bold text-sky-600 dark:text-sky-400 hover:underline"
+                      >
+                        @yahou110
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
               <p className="mt-7 text-center text-xs text-gray-400 dark:text-gray-500">
                 {fmt(dict.login.copyright, { year, brand: dict.brand.name })}
               </p>

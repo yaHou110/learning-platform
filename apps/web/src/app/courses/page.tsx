@@ -1,4 +1,4 @@
-import { revalidatePath } from "next/cache";
+import { enrollCourseAction } from "@/app/actions";
 import { auth } from "@/auth";
 import { redirect } from "next/navigation";
 import { catalog, learning } from "@learning-platform/core/api";
@@ -83,20 +83,12 @@ export default async function CoursesPage(): Promise<JSX.Element> {
     })
   );
 
-  async function enrollAction(courseId: string): Promise<void> {
-    "use server";
-    const s = await auth();
-    if (!s?.user) redirect("/login");
-    await learning.enroll(s.user.tenantId, s.user.id, courseId);
-    revalidatePath("/courses");
-  }
-
   return (
     <AppShell user={{ name: session.user.name, role }}>
       <CourseCatalog
         courses={enriched}
         isAdmin={isAdmin}
-        enrollAction={enrollAction as EnrollAction}
+        enrollAction={enrollCourseAction as EnrollAction}
         dict={dict}
       />
     </AppShell>
