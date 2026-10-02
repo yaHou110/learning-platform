@@ -15,7 +15,7 @@
     "build": "tsc -p tsconfig.build.json"
   },
   "dependencies": {
-    "@learning-platform/contracts": "workspace:*"
+    "@learning-platform/contracts": "*"
   },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^7.18.0",

@@ -115,6 +115,30 @@ export default async function CourseDetailPage({
             </div>
           </div>
         ) : null}
+
+        {enrollment && (enrollment.status === "completed" || pct === 100) ? (
+          <div className="mt-6 flex flex-col sm:flex-row items-center justify-between gap-4 rounded-xl border border-amber-300 bg-gradient-to-r from-amber-50 via-white to-emerald-50 dark:from-amber-950/20 dark:via-gray-900 dark:to-emerald-950/20 dark:border-amber-700/50 p-4 shadow-sm">
+            <div className="flex items-center gap-3">
+              <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-amber-500 text-white text-2xl shadow-sm">
+                🎓
+              </span>
+              <div>
+                <h3 className="text-sm font-bold text-gray-900 dark:text-gray-100">
+                  {locale === "fa" ? "تبریک! شما این دوره را با موفقیت به پایان رسانده‌اید" : locale === "ar" ? "تهانينا! لقد أكملت هذه الدورة بنجاح" : "Congratulations! You have completed this course"}
+                </h3>
+                <p className="text-xs text-gray-600 dark:text-gray-400 mt-0.5">
+                  {locale === "fa" ? "گواهی‌نامه رسمی با امضای دیجیتال و کد اعتبارسنجی یکتا صادر شده است." : locale === "ar" ? "تم إصدار الشهادة الرسمية بتوقيع رقمي ورمز تحقق فريد." : "Your official certificate with cryptographic verification is ready."}
+                </p>
+              </div>
+            </div>
+            <Link
+              href={`/certificates/${enrollment.id}`}
+              className="shrink-0 rounded-lg bg-emerald-700 px-4 py-2.5 text-xs font-semibold text-white shadow-sm hover:bg-emerald-800 transition"
+            >
+              📜 {locale === "fa" ? "مشاهده و دریافت گواهی‌نامه" : locale === "ar" ? "عرض وتحميل الشهادة" : "View & Download Certificate"}
+            </Link>
+          </div>
+        ) : null}
       </div>
 
       <h2 className="mb-3 mt-8 text-lg font-bold">

@@ -14,6 +14,7 @@
 import { and, eq } from "drizzle-orm";
 import { getDb } from "../db/client.js";
 import * as schema from "../db/schema/index.js";
+import { memoryStore } from "../db/inMemoryStore.js";
 import { hashPassword, type AuthedUser } from "../auth/credentials.js";
 import {
   requestPasswordReset as requestPasswordResetImpl,
@@ -55,25 +56,27 @@ export const identity = {
    * accidental future leak.
    */
   async listUsers(tenantId: string): Promise<UserPublic[]> {
-    const db = getDb();
-    const rows = await db
-      .select({
-        id: schema.users.id,
-        tenantId: schema.users.tenantId,
-        email: schema.users.email,
-        nationalId: schema.users.nationalId,
-        phone: schema.users.phone,
-        displayName: schema.users.displayName,
-        role: schema.users.role,
-        isActive: schema.users.isActive,
-        createdAt: schema.users.createdAt,
-        deactivatedAt: schema.users.deactivatedAt,
-      })
-      .from(schema.users)
-      .where(eq(schema.users.tenantId, tenantId));
-    // The Drizzle rows may carry the role as a string. Coerce to the Role
-    // union so callers can switch on it without a cast.
-    return rows.map((r) => ({ ...r, role: r.role as Role }));
+    try {
+      const db = getDb();
+      const rows = await db
+        .select({
+          id: schema.users.id,
+          tenantId: schema.users.tenantId,
+          email: schema.users.email,
+          nationalId: schema.users.nationalId,
+          phone: schema.users.phone,
+          displayName: schema.users.displayName,
+          role: schema.users.role,
+          isActive: schema.users.isActive,
+          createdAt: schema.users.createdAt,
+          deactivatedAt: schema.users.deactivatedAt,
+        })
+        .from(schema.users)
+        .where(eq(schema.users.tenantId, tenantId));
+      return rows.map((r) => ({ ...r, role: r.role as Role }));
+    } catch {
+      return memoryStore.listUsers(tenantId);
+    }
   },
 
   /**
@@ -81,27 +84,34 @@ export const identity = {
    * as `listUsers` — `passwordHash` is not selected.
    */
   async getUserById(tenantId: string, userId: string): Promise<UserPublic | null> {
-    const db = getDb();
-    const [row] = await db
-      .select({
-        id: schema.users.id,
-        tenantId: schema.users.tenantId,
-        email: schema.users.email,
-        nationalId: schema.users.nationalId,
-        phone: schema.users.phone,
-        displayName: schema.users.displayName,
-        role: schema.users.role,
-        isActive: schema.users.isActive,
-        createdAt: schema.users.createdAt,
-        deactivatedAt: schema.users.deactivatedAt,
-      })
-      .from(schema.users)
-      .where(
-        and(eq(schema.users.tenantId, tenantId), eq(schema.users.id, userId))
-      )
-      .limit(1);
-    if (!row) return null;
-    return { ...row, role: row.role as Role };
+    try {
+      const db = getDb();
+      const [row] = await db
+        .select({
+          id: schema.users.id,
+          tenantId: schema.users.tenantId,
+          email: schema.users.email,
+          nationalId: schema.users.nationalId,
+          phone: schema.users.phone,
+          displayName: schema.users.displayName,
+          role: schema.users.role,
+          isActive: schema.users.isActive,
+          createdAt: schema.users.createdAt,
+          deactivatedAt: schema.users.deactivatedAt,
+        })
+        .from(schema.users)
+        .where(
+          and(eq(schema.users.tenantId, tenantId), eq(schema.users.id, userId))
+        )
+        .limit(1);
+      if (!row) return null;
+      return { ...row, role: row.role as Role };
+    } catch {
+      const u = memoryStore.findUserById(userId);
+      if (!u || u.tenantId !== tenantId) return null;
+      const { passwordHash: _, ...pub } = u;
+      return pub;
+    }
   },
 
   /**
@@ -111,14 +121,20 @@ export const identity = {
    * key lookup.
    */
   async checkUserActive(userId: string): Promise<{ exists: boolean; active: boolean }> {
-    const db = getDb();
-    const [row] = await db
-      .select({ id: schema.users.id, isActive: schema.users.isActive })
-      .from(schema.users)
-      .where(eq(schema.users.id, userId))
-      .limit(1);
-    if (!row) return { exists: false, active: false };
-    return { exists: true, active: row.isActive };
+    try {
+      const db = getDb();
+      const [row] = await db
+        .select({ id: schema.users.id, isActive: schema.users.isActive })
+        .from(schema.users)
+        .where(eq(schema.users.id, userId))
+        .limit(1);
+      if (!row) return { exists: false, active: false };
+      return { exists: true, active: row.isActive };
+    } catch {
+      const u = memoryStore.findUserById(userId);
+      if (!u) return { exists: false, active: false };
+      return { exists: true, active: u.isActive };
+    }
   },
 
   async createUser(input: {

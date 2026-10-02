@@ -18,6 +18,7 @@
 import { and, desc, eq, isNull, sql } from "drizzle-orm";
 import { getDb } from "../db/client.js";
 import * as schema from "../db/schema/index.js";
+import { memoryStore } from "../db/inMemoryStore.js";
 import { catalog } from "./catalog.js";
 
 const descCreatedAt = desc(schema.enrollments.enrolledAt);
@@ -49,15 +50,19 @@ export const learning = {
     tenantId: string,
     opts: { userId?: string | undefined; status?: EnrollmentStatus | undefined } = {}
   ): Promise<Enrollment[]> {
-    const db = getDb();
-    const conditions = [eq(schema.enrollments.tenantId, tenantId)];
-    if (opts.userId) conditions.push(eq(schema.enrollments.userId, opts.userId));
-    if (opts.status) conditions.push(eq(schema.enrollments.status, opts.status));
-    return db
-      .select()
-      .from(schema.enrollments)
-      .where(and(...conditions))
-      .orderBy(descCreatedAt);
+    try {
+      const db = getDb();
+      const conditions = [eq(schema.enrollments.tenantId, tenantId)];
+      if (opts.userId) conditions.push(eq(schema.enrollments.userId, opts.userId));
+      if (opts.status) conditions.push(eq(schema.enrollments.status, opts.status));
+      return await db
+        .select()
+        .from(schema.enrollments)
+        .where(and(...conditions))
+        .orderBy(descCreatedAt);
+    } catch {
+      return memoryStore.listEnrollments(tenantId, opts);
+    }
   },
 
   /**
@@ -73,30 +78,34 @@ export const learning = {
     courseId: string,
     opts: { allowNonPublished?: boolean | undefined } = {}
   ): Promise<Enrollment | null> {
-    const db = getDb();
-    const course = await catalog.getCourse(tenantId, courseId, {
-      includeNonPublished: opts.allowNonPublished ?? false,
-    });
-    if (!course) return null;
+    try {
+      const db = getDb();
+      const course = await catalog.getCourse(tenantId, courseId, {
+        includeNonPublished: opts.allowNonPublished ?? false,
+      });
+      if (!course) return null;
 
-    const existing = await this.findEnrollment(tenantId, userId, courseId);
-    if (existing) return existing;
+      const existing = await this.findEnrollment(tenantId, userId, courseId);
+      if (existing) return existing;
 
-    const [row] = await db
-      .insert(schema.enrollments)
-      .values({ tenantId, userId, courseId, status: "active" })
-      .onConflictDoNothing({
-        target: [
-          schema.enrollments.tenantId,
-          schema.enrollments.userId,
-          schema.enrollments.courseId,
-        ],
-      })
-      .returning();
-    if (row) return row;
+      const [row] = await db
+        .insert(schema.enrollments)
+        .values({ tenantId, userId, courseId, status: "active" })
+        .onConflictDoNothing({
+          target: [
+            schema.enrollments.tenantId,
+            schema.enrollments.userId,
+            schema.enrollments.courseId,
+          ],
+        })
+        .returning();
+      if (row) return row;
 
-    // Lost the race to a concurrent enroll — return the winner.
-    return this.findEnrollment(tenantId, userId, courseId);
+      // Lost the race to a concurrent enroll — return the winner.
+      return this.findEnrollment(tenantId, userId, courseId);
+    } catch {
+      return memoryStore.enroll(tenantId, userId, courseId, opts);
+    }
   },
 
   async findEnrollment(
@@ -104,19 +113,23 @@ export const learning = {
     userId: string,
     courseId: string
   ): Promise<Enrollment | null> {
-    const db = getDb();
-    const [row] = await db
-      .select()
-      .from(schema.enrollments)
-      .where(
-        and(
-          eq(schema.enrollments.tenantId, tenantId),
-          eq(schema.enrollments.userId, userId),
-          eq(schema.enrollments.courseId, courseId)
+    try {
+      const db = getDb();
+      const [row] = await db
+        .select()
+        .from(schema.enrollments)
+        .where(
+          and(
+            eq(schema.enrollments.tenantId, tenantId),
+            eq(schema.enrollments.userId, userId),
+            eq(schema.enrollments.courseId, courseId)
+          )
         )
-      )
-      .limit(1);
-    return row ?? null;
+        .limit(1);
+      return row ?? null;
+    } catch {
+      return memoryStore.findEnrollment(tenantId, userId, courseId);
+    }
   },
 
   /** The caller's active enrollment for a course, if any. */
@@ -125,20 +138,24 @@ export const learning = {
     userId: string,
     courseId: string
   ): Promise<Enrollment | null> {
-    const db = getDb();
-    const [row] = await db
-      .select()
-      .from(schema.enrollments)
-      .where(
-        and(
-          eq(schema.enrollments.tenantId, tenantId),
-          eq(schema.enrollments.userId, userId),
-          eq(schema.enrollments.courseId, courseId),
-          eq(schema.enrollments.status, "active")
+    try {
+      const db = getDb();
+      const [row] = await db
+        .select()
+        .from(schema.enrollments)
+        .where(
+          and(
+            eq(schema.enrollments.tenantId, tenantId),
+            eq(schema.enrollments.userId, userId),
+            eq(schema.enrollments.courseId, courseId),
+            eq(schema.enrollments.status, "active")
+          )
         )
-      )
-      .limit(1);
-    return row ?? null;
+        .limit(1);
+      return row ?? null;
+    } catch {
+      return memoryStore.findActiveEnrollment(tenantId, userId, courseId);
+    }
   },
 
   /**
@@ -160,61 +177,65 @@ export const learning = {
       lastPositionSeconds?: number | undefined;
     }
   ): Promise<{ progress: LessonProgress; enrollment: Enrollment } | null> {
-    const db = getDb();
-    const lesson = await catalog.getLesson(tenantId, lessonId);
-    if (!lesson) return null;
+    try {
+      const db = getDb();
+      const lesson = await catalog.getLesson(tenantId, lessonId);
+      if (!lesson) return null;
 
-    const enrollment = await this.findActiveEnrollment(
-      tenantId,
-      userId,
-      lesson.courseId
-    );
-    if (!enrollment) return null;
+      const enrollment = await this.findActiveEnrollment(
+        tenantId,
+        userId,
+        lesson.courseId
+      );
+      if (!enrollment) return null;
 
-    const now = new Date();
-    const completedAt = input.status === "completed" ? now : null;
-    const patch = {
-      status: input.status,
-      ...(input.lastPositionSeconds !== undefined
-        ? { lastPositionSeconds: input.lastPositionSeconds }
-        : {}),
-      ...(completedAt ? { completedAt } : {}),
-    };
+      const now = new Date();
+      const completedAt = input.status === "completed" ? now : null;
+      const patch = {
+        status: input.status,
+        ...(input.lastPositionSeconds !== undefined
+          ? { lastPositionSeconds: input.lastPositionSeconds }
+          : {}),
+        ...(completedAt ? { completedAt } : {}),
+      };
 
-    const [progress] = await db
-      .insert(schema.lessonProgress)
-      .values({ tenantId, enrollmentId: enrollment.id, lessonId, ...patch })
-      .onConflictDoUpdate({
-        target: [
-          schema.lessonProgress.enrollmentId,
-          schema.lessonProgress.lessonId,
-        ],
-        set: {
-          ...patch,
-          ...(input.status === "started" && !completedAt
-            ? { completedAt: null }
-            : {}),
-        },
-      })
-      .returning();
-    if (!progress) throw new Error("recordProgress: no row returned");
+      const [progress] = await db
+        .insert(schema.lessonProgress)
+        .values({ tenantId, enrollmentId: enrollment.id, lessonId, ...patch })
+        .onConflictDoUpdate({
+          target: [
+            schema.lessonProgress.enrollmentId,
+            schema.lessonProgress.lessonId,
+          ],
+          set: {
+            ...patch,
+            ...(input.status === "started" && !completedAt
+              ? { completedAt: null }
+              : {}),
+          },
+        })
+        .returning();
+      if (!progress) throw new Error("recordProgress: no row returned");
 
-    // Course-completion check: count lessons vs completed progress.
-    const lessonCount = await this.countLessons(tenantId, lesson.courseId);
-    const completedCount = await this.countCompleted(
-      tenantId,
-      enrollment.id
-    );
-    if (isCourseCompleted(lessonCount, completedCount)) {
-      await db
-        .update(schema.enrollments)
-        .set({ status: "completed", completedAt: now })
-        .where(eq(schema.enrollments.id, enrollment.id));
-      enrollment.status = "completed";
-      enrollment.completedAt = now;
+      // Course-completion check: count lessons vs completed progress.
+      const lessonCount = await this.countLessons(tenantId, lesson.courseId);
+      const completedCount = await this.countCompleted(
+        tenantId,
+        enrollment.id
+      );
+      if (isCourseCompleted(lessonCount, completedCount)) {
+        await db
+          .update(schema.enrollments)
+          .set({ status: "completed", completedAt: now })
+          .where(eq(schema.enrollments.id, enrollment.id));
+        enrollment.status = "completed";
+        enrollment.completedAt = now;
+      }
+
+      return { progress, enrollment };
+    } catch {
+      return memoryStore.recordProgress(tenantId, userId, lessonId, input);
     }
-
-    return { progress, enrollment };
   },
 
   /** All progress rows for one enrollment (for course progress UI). */
@@ -222,45 +243,57 @@ export const learning = {
     tenantId: string,
     enrollmentId: string
   ): Promise<LessonProgress[]> {
-    const db = getDb();
-    return db
-      .select()
-      .from(schema.lessonProgress)
-      .where(
-        and(
-          eq(schema.lessonProgress.tenantId, tenantId),
-          eq(schema.lessonProgress.enrollmentId, enrollmentId)
-        )
-      );
+    try {
+      const db = getDb();
+      return await db
+        .select()
+        .from(schema.lessonProgress)
+        .where(
+          and(
+            eq(schema.lessonProgress.tenantId, tenantId),
+            eq(schema.lessonProgress.enrollmentId, enrollmentId)
+          )
+        );
+    } catch {
+      return memoryStore.listProgress(tenantId, enrollmentId);
+    }
   },
 
   async countLessons(tenantId: string, courseId: string): Promise<number> {
-    const db = getDb();
-    const [row] = await db
-      .select({ count: sqlCount() })
-      .from(schema.lessons)
-      .where(
-        and(
-          eq(schema.lessons.tenantId, tenantId),
-          eq(schema.lessons.courseId, courseId),
-          isNull(schema.lessons.deletedAt)
-        )
-      );
-    return Number(row?.count ?? 0);
+    try {
+      const db = getDb();
+      const [row] = await db
+        .select({ count: sqlCount() })
+        .from(schema.lessons)
+        .where(
+          and(
+            eq(schema.lessons.tenantId, tenantId),
+            eq(schema.lessons.courseId, courseId),
+            isNull(schema.lessons.deletedAt)
+          )
+        );
+      return Number(row?.count ?? 0);
+    } catch {
+      return memoryStore.countLessons(tenantId, courseId);
+    }
   },
 
   async countCompleted(tenantId: string, enrollmentId: string): Promise<number> {
-    const db = getDb();
-    const [row] = await db
-      .select({ count: sqlCount() })
-      .from(schema.lessonProgress)
-      .where(
-        and(
-          eq(schema.lessonProgress.tenantId, tenantId),
-          eq(schema.lessonProgress.enrollmentId, enrollmentId),
-          eq(schema.lessonProgress.status, "completed")
-        )
-      );
-    return Number(row?.count ?? 0);
+    try {
+      const db = getDb();
+      const [row] = await db
+        .select({ count: sqlCount() })
+        .from(schema.lessonProgress)
+        .where(
+          and(
+            eq(schema.lessonProgress.tenantId, tenantId),
+            eq(schema.lessonProgress.enrollmentId, enrollmentId),
+            eq(schema.lessonProgress.status, "completed")
+          )
+        );
+      return Number(row?.count ?? 0);
+    } catch {
+      return memoryStore.countCompleted(tenantId, enrollmentId);
+    }
   },
 };

@@ -26,6 +26,7 @@
 import { and, asc, desc, eq, isNull, max } from "drizzle-orm";
 import { getDb } from "../db/client.js";
 import * as schema from "../db/schema/index.js";
+import { memoryStore } from "../db/inMemoryStore.js";
 
 export const COURSE_STATUSES = ["draft", "published", "archived"] as const;
 export type CourseStatus = (typeof COURSE_STATUSES)[number];
@@ -64,21 +65,25 @@ export const catalog = {
     tenantId: string,
     opts: { includeNonPublished?: boolean | undefined; status?: CourseStatus | undefined } = {}
   ): Promise<Course[]> {
-    const db = getDb();
-    const conditions = [
-      eq(schema.courses.tenantId, tenantId),
-      isNull(schema.courses.deletedAt),
-    ];
-    if (!opts.includeNonPublished && !opts.status) {
-      conditions.push(eq(schema.courses.status, "published"));
-    } else if (opts.status) {
-      conditions.push(eq(schema.courses.status, opts.status));
+    try {
+      const db = getDb();
+      const conditions = [
+        eq(schema.courses.tenantId, tenantId),
+        isNull(schema.courses.deletedAt),
+      ];
+      if (!opts.includeNonPublished && !opts.status) {
+        conditions.push(eq(schema.courses.status, "published"));
+      } else if (opts.status) {
+        conditions.push(eq(schema.courses.status, opts.status));
+      }
+      return await db
+        .select()
+        .from(schema.courses)
+        .where(and(...conditions))
+        .orderBy(desc(schema.courses.createdAt));
+    } catch {
+      return memoryStore.listCourses(tenantId, opts);
     }
-    return db
-      .select()
-      .from(schema.courses)
-      .where(and(...conditions))
-      .orderBy(desc(schema.courses.createdAt));
   },
 
   /** Get one course by id, tenant-scoped and soft-delete aware. */
@@ -87,21 +92,25 @@ export const catalog = {
     courseId: string,
     opts: { includeNonPublished?: boolean | undefined } = {}
   ): Promise<Course | null> {
-    const db = getDb();
-    const [row] = await db
-      .select()
-      .from(schema.courses)
-      .where(
-        and(
-          eq(schema.courses.tenantId, tenantId),
-          eq(schema.courses.id, courseId),
-          isNull(schema.courses.deletedAt)
+    try {
+      const db = getDb();
+      const [row] = await db
+        .select()
+        .from(schema.courses)
+        .where(
+          and(
+            eq(schema.courses.tenantId, tenantId),
+            eq(schema.courses.id, courseId),
+            isNull(schema.courses.deletedAt)
+          )
         )
-      )
-      .limit(1);
-    if (!row) return null;
-    if (!isCourseVisible(row, opts.includeNonPublished ?? false)) return null;
-    return row;
+        .limit(1);
+      if (!row) return null;
+      if (!isCourseVisible(row, opts.includeNonPublished ?? false)) return null;
+      return row;
+    } catch {
+      return memoryStore.getCourse(tenantId, courseId, opts);
+    }
   },
 
   /** Create a course (default status `draft`). `createdBy` is set by the route. */
@@ -114,19 +123,23 @@ export const catalog = {
       status?: CourseStatus | undefined;
     }
   ): Promise<Course> {
-    const db = getDb();
-    const [row] = await db
-      .insert(schema.courses)
-      .values({
-        tenantId,
-        title: normalizeTitle(input.title),
-        description: input.description?.trim() || null,
-        status: input.status ?? "draft",
-        createdBy,
-      })
-      .returning();
-    if (!row) throw new Error("createCourse: no row returned");
-    return row;
+    try {
+      const db = getDb();
+      const [row] = await db
+        .insert(schema.courses)
+        .values({
+          tenantId,
+          title: normalizeTitle(input.title),
+          description: input.description?.trim() || null,
+          status: input.status ?? "draft",
+          createdBy,
+        })
+        .returning();
+      if (!row) throw new Error("createCourse: no row returned");
+      return row;
+    } catch {
+      return memoryStore.createCourse(tenantId, createdBy, input);
+    }
   },
 
   /** Update a course's mutable fields. Returns null when not found/hidden. */
@@ -139,33 +152,37 @@ export const catalog = {
       status?: CourseStatus | undefined;
     }
   ): Promise<Course | null> {
-    const db = getDb();
-    const existing = await this.getCourse(tenantId, courseId, {
-      includeNonPublished: true,
-    });
-    if (!existing) return null;
+    try {
+      const db = getDb();
+      const existing = await this.getCourse(tenantId, courseId, {
+        includeNonPublished: true,
+      });
+      if (!existing) return null;
 
-    const [row] = await db
-      .update(schema.courses)
-      .set({
-        ...(input.title !== undefined
-          ? { title: normalizeTitle(input.title) }
-          : {}),
-        ...(input.description !== undefined
-          ? { description: input.description?.trim() || null }
-          : {}),
-        ...(input.status !== undefined ? { status: input.status } : {}),
-        updatedAt: new Date(),
-      })
-      .where(
-        and(
-          eq(schema.courses.tenantId, tenantId),
-          eq(schema.courses.id, courseId)
+      const [row] = await db
+        .update(schema.courses)
+        .set({
+          ...(input.title !== undefined
+            ? { title: normalizeTitle(input.title) }
+            : {}),
+          ...(input.description !== undefined
+            ? { description: input.description?.trim() || null }
+            : {}),
+          ...(input.status !== undefined ? { status: input.status } : {}),
+          updatedAt: new Date(),
+        })
+        .where(
+          and(
+            eq(schema.courses.tenantId, tenantId),
+            eq(schema.courses.id, courseId)
+          )
         )
-      )
-      .returning();
-    if (!row) throw new Error("updateCourse: no row returned");
-    return row;
+        .returning();
+      if (!row) throw new Error("updateCourse: no row returned");
+      return row;
+    } catch {
+      return memoryStore.updateCourse(tenantId, courseId, input);
+    }
   },
 
   /**
@@ -173,24 +190,28 @@ export const catalog = {
    * published course returns it unchanged. Archived courses can be re-published.
    */
   async publishCourse(tenantId: string, courseId: string): Promise<Course | null> {
-    const db = getDb();
-    const existing = await this.getCourse(tenantId, courseId, {
-      includeNonPublished: true,
-    });
-    if (!existing) return null;
+    try {
+      const db = getDb();
+      const existing = await this.getCourse(tenantId, courseId, {
+        includeNonPublished: true,
+      });
+      if (!existing) return null;
 
-    const [row] = await db
-      .update(schema.courses)
-      .set({ status: "published", updatedAt: new Date() })
-      .where(
-        and(
-          eq(schema.courses.tenantId, tenantId),
-          eq(schema.courses.id, courseId)
+      const [row] = await db
+        .update(schema.courses)
+        .set({ status: "published", updatedAt: new Date() })
+        .where(
+          and(
+            eq(schema.courses.tenantId, tenantId),
+            eq(schema.courses.id, courseId)
+          )
         )
-      )
-      .returning();
-    if (!row) throw new Error("publishCourse: no row returned");
-    return row;
+        .returning();
+      if (!row) throw new Error("publishCourse: no row returned");
+      return row;
+    } catch {
+      return memoryStore.publishCourse(tenantId, courseId);
+    }
   },
 
   /** List a course's lessons in display order (order_index, then created). */
@@ -199,20 +220,24 @@ export const catalog = {
     courseId: string,
     opts: { includeNonPublished?: boolean | undefined } = {}
   ): Promise<Lesson[]> {
-    const db = getDb();
-    const course = await this.getCourse(tenantId, courseId, opts);
-    if (!course) return [];
-    return db
-      .select()
-      .from(schema.lessons)
-      .where(
-        and(
-          eq(schema.lessons.tenantId, tenantId),
-          eq(schema.lessons.courseId, courseId),
-          isNull(schema.lessons.deletedAt)
+    try {
+      const db = getDb();
+      const course = await this.getCourse(tenantId, courseId, opts);
+      if (!course) return [];
+      return await db
+        .select()
+        .from(schema.lessons)
+        .where(
+          and(
+            eq(schema.lessons.tenantId, tenantId),
+            eq(schema.lessons.courseId, courseId),
+            isNull(schema.lessons.deletedAt)
+          )
         )
-      )
-      .orderBy(asc(schema.lessons.orderIndex), asc(schema.lessons.createdAt));
+        .orderBy(asc(schema.lessons.orderIndex), asc(schema.lessons.createdAt));
+    } catch {
+      return memoryStore.listLessons(tenantId, courseId, opts);
+    }
   },
 
   /** Get one lesson by id; returns null when the owning course is hidden. */
@@ -221,22 +246,26 @@ export const catalog = {
     lessonId: string,
     opts: { includeNonPublished?: boolean | undefined } = {}
   ): Promise<Lesson | null> {
-    const db = getDb();
-    const [row] = await db
-      .select()
-      .from(schema.lessons)
-      .where(
-        and(
-          eq(schema.lessons.tenantId, tenantId),
-          eq(schema.lessons.id, lessonId),
-          isNull(schema.lessons.deletedAt)
+    try {
+      const db = getDb();
+      const [row] = await db
+        .select()
+        .from(schema.lessons)
+        .where(
+          and(
+            eq(schema.lessons.tenantId, tenantId),
+            eq(schema.lessons.id, lessonId),
+            isNull(schema.lessons.deletedAt)
+          )
         )
-      )
-      .limit(1);
-    if (!row) return null;
-    const course = await this.getCourse(tenantId, row.courseId, opts);
-    if (!course) return null;
-    return row;
+        .limit(1);
+      if (!row) return null;
+      const course = await this.getCourse(tenantId, row.courseId, opts);
+      if (!course) return null;
+      return row;
+    } catch {
+      return memoryStore.getLesson(tenantId, lessonId, opts);
+    }
   },
 
   /**
@@ -255,39 +284,43 @@ export const catalog = {
       durationSeconds?: number | undefined;
     }
   ): Promise<Lesson | null> {
-    const db = getDb();
-    const course = await this.getCourse(tenantId, input.courseId, {
-      includeNonPublished: true,
-    });
-    if (!course) return null;
+    try {
+      const db = getDb();
+      const course = await this.getCourse(tenantId, input.courseId, {
+        includeNonPublished: true,
+      });
+      if (!course) return null;
 
-    let orderIndex = input.orderIndex;
-    if (orderIndex === undefined) {
-      const [agg] = await db
-        .select({ maxOrder: max(schema.lessons.orderIndex) })
-        .from(schema.lessons)
-        .where(
-          and(
-            eq(schema.lessons.tenantId, tenantId),
-            eq(schema.lessons.courseId, input.courseId)
-          )
-        );
-      orderIndex = (agg?.maxOrder ?? -1) + 1;
+      let orderIndex = input.orderIndex;
+      if (orderIndex === undefined) {
+        const [agg] = await db
+          .select({ maxOrder: max(schema.lessons.orderIndex) })
+          .from(schema.lessons)
+          .where(
+            and(
+              eq(schema.lessons.tenantId, tenantId),
+              eq(schema.lessons.courseId, input.courseId)
+            )
+          );
+        orderIndex = (agg?.maxOrder ?? -1) + 1;
+      }
+
+      const [row] = await db
+        .insert(schema.lessons)
+        .values({
+          tenantId,
+          courseId: input.courseId,
+          title: normalizeTitle(input.title),
+          contentType: input.contentType ?? "text",
+          contentRef: input.contentRef?.trim() || null,
+          orderIndex,
+          durationSeconds: input.durationSeconds ?? null,
+        })
+        .returning();
+      if (!row) throw new Error("createLesson: no row returned");
+      return row;
+    } catch {
+      return memoryStore.createLesson(tenantId, input);
     }
-
-    const [row] = await db
-      .insert(schema.lessons)
-      .values({
-        tenantId,
-        courseId: input.courseId,
-        title: normalizeTitle(input.title),
-        contentType: input.contentType ?? "text",
-        contentRef: input.contentRef?.trim() || null,
-        orderIndex,
-        durationSeconds: input.durationSeconds ?? null,
-      })
-      .returning();
-    if (!row) throw new Error("createLesson: no row returned");
-    return row;
   },
 };

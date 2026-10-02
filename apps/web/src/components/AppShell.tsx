@@ -40,6 +40,11 @@ export default async function AppShell({
       label: dict.common.courses,
       icon: <Icon.BookOpen className="h-5 w-5" />,
     },
+    {
+      href: "/verify",
+      label: locale === "fa" ? "استعلام مدرک" : locale === "ar" ? "تحقق من الشهادة" : "Verify Certificate",
+      icon: <Icon.CheckCircle className="h-5 w-5" />,
+    },
   ];
 
   const adminItems = [

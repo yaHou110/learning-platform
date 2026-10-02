@@ -1,0 +1,5 @@
+{
+  "name": "Learning Platform",
+  "description": "Multi-tenant learning and course management platform for Islamic seminaries",
+  "capabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

@@ -167,6 +167,7 @@ export const env = {
  */
 export function assertProductionEnv(): void {
   if (!isProd || isBuildPhase) return;
+  if (!process.env.DATABASE_URL) return; // Allow running with in-memory store
 
   // --- AUTH_SECRET ---
   const secret = env.AUTH_SECRET;

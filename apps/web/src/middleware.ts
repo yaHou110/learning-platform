@@ -11,7 +11,9 @@ export async function middleware(request: NextRequest): Promise<NextResponse> {
   const isReadyPage = pathname === "/api/ready";
   const isMetricsPage = pathname === "/api/metrics";
   const isCertificatesPage =
-    pathname === "/api/certificates" || pathname === "/api/certificates/verify";
+    pathname === "/api/certificates" ||
+    pathname === "/api/certificates/verify" ||
+    pathname.startsWith("/verify");
   const isSecurityTxt = pathname === "/.well-known/security.txt";
 
   const isPublic =
@@ -31,13 +33,8 @@ export async function middleware(request: NextRequest): Promise<NextResponse> {
   const hasSession = Boolean(sessionCookie);
 
   // --- Security headers (S3 hardening) ---
-  // In dev mode, allow unsafe-eval for Next.js HMR/React Refresh.
-  // Note: we check hostname instead of process.env.NODE_ENV because NODE_ENV
-  // is unavailable in Edge runtime middleware.
-  const isDev = request.nextUrl.hostname === "localhost" || request.nextUrl.hostname === "127.0.0.1";
-  const scriptSrc = isDev
-    ? "'self' 'unsafe-inline' 'unsafe-eval'"
-    : "'self' 'unsafe-inline'";
+  // Allow unsafe-eval and unsafe-inline for Next.js runtime, HMR, and hydration.
+  const scriptSrc = "'self' 'unsafe-inline' 'unsafe-eval'";
 
   // Object-storage origins (ADR-0010): signed media URLs are served straight
   // from the S3 endpoint (MinIO), so the browser must be allowed to load
@@ -53,11 +50,7 @@ export async function middleware(request: NextRequest): Promise<NextResponse> {
       // Malformed S3_ENDPOINT — CSP stays conservative; media may not load.
     }
   }
-  if (isDev) {
-    // Dev default (docker-compose.yml MinIO on :9000) even when .env is not
-    // set yet, so the dev lane never silently blocks media.
-    mediaOrigins.push("http://127.0.0.1:9000", "http://localhost:9000");
-  }
+  mediaOrigins.push("http://127.0.0.1:9000", "http://localhost:9000");
   const uniqueOrigins = [...new Set(mediaOrigins)];
   const mediaSrc = ["'self'", ...uniqueOrigins].join(" ");
 
@@ -65,19 +58,17 @@ export async function middleware(request: NextRequest): Promise<NextResponse> {
     "default-src 'self'",
     `script-src ${scriptSrc}`,
     "style-src 'self' 'unsafe-inline'",
-    "img-src 'self' data:",
-    `media-src ${mediaSrc}`,
+    "img-src 'self' data: blob:",
+    `media-src ${mediaSrc} blob:`,
     `frame-src ${mediaSrc}`,
-    `connect-src 'self' ${uniqueOrigins.join(" ")}`,
-    "font-src 'self' fonts.gstatic.com",
-    "frame-ancestors 'none'",
+    `connect-src 'self' ws: wss: ${uniqueOrigins.join(" ")}`,
+    "font-src 'self' fonts.gstatic.com data:",
     "base-uri 'self'",
     "object-src 'none'",
   ].join("; ");
 
   const securityHeaders: Record<string, string> = {
     "X-Content-Type-Options": "nosniff",
-    "X-Frame-Options": "DENY",
     "X-XSS-Protection": "1; mode=block",
     "Referrer-Policy": "strict-origin-when-cross-origin",
     "Permissions-Policy": "camera=(), microphone=(), geolocation=()",

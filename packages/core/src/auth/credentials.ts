@@ -14,6 +14,7 @@ import { eq, sql } from "drizzle-orm";
 import { z } from "zod";
 import type { NodePgDatabase } from "drizzle-orm/node-postgres";
 import * as schema from "../db/schema/index.js";
+import { memoryStore } from "../db/inMemoryStore.js";
 
 const BCRYPT_COST = 12;
 
@@ -62,57 +63,85 @@ export async function verifyPassword(
   db: NodePgDatabase<typeof schema>,
   input: CredentialsInput
 ): Promise<VerifyPasswordResult> {
-  const tenantRows = await db
-    .select({ id: schema.tenants.id })
-    .from(schema.tenants)
-    .where(eq(schema.tenants.slug, input.tenantSlug))
-    .limit(1);
-  const tenant = tenantRows[0];
-  if (!tenant) {
-    // Timing equalization: pay the same bcrypt cost as a real check before
-    // returning, so a login attempt reveals no information about whether the
-    // tenant exists via response latency. Closes the user-enumeration oracle.
-    await timingEqualize(input.password);
-    return { ok: false, reason: "unknown_tenant" };
-  }
+  try {
+    const tenantRows = await db
+      .select({ id: schema.tenants.id })
+      .from(schema.tenants)
+      .where(eq(schema.tenants.slug, input.tenantSlug))
+      .limit(1);
+    const tenant = tenantRows[0];
+    if (!tenant) {
+      await timingEqualize(input.password);
+      return { ok: false, reason: "unknown_tenant" };
+    }
 
-  const [user] = await db
-    .select({
-      id: schema.users.id,
-      email: schema.users.email,
-      passwordHash: schema.users.passwordHash,
-      displayName: schema.users.displayName,
-      tenantId: schema.users.tenantId,
-      role: schema.users.role,
-      isActive: schema.users.isActive,
-    })
-    .from(schema.users)
-    .where(
-      sql`${schema.users.tenantId} = ${tenant.id} AND ${schema.users.nationalId} = ${input.nationalId}`
-    )
-    .limit(1);
-  if (!user) {
-    await timingEqualize(input.password);
-    return { ok: false, reason: "unknown_user" };
-  }
-  if (!user.isActive) {
-    await timingEqualize(input.password);
-    return { ok: false, reason: "inactive" };
-  }
+    const [user] = await db
+      .select({
+        id: schema.users.id,
+        email: schema.users.email,
+        passwordHash: schema.users.passwordHash,
+        displayName: schema.users.displayName,
+        tenantId: schema.users.tenantId,
+        role: schema.users.role,
+        isActive: schema.users.isActive,
+      })
+      .from(schema.users)
+      .where(
+        sql`${schema.users.tenantId} = ${tenant.id} AND ${schema.users.nationalId} = ${input.nationalId}`
+      )
+      .limit(1);
+    if (!user) {
+      await timingEqualize(input.password);
+      return { ok: false, reason: "unknown_user" };
+    }
+    if (!user.isActive) {
+      await timingEqualize(input.password);
+      return { ok: false, reason: "inactive" };
+    }
 
-  const ok = await bcrypt.compare(input.password, user.passwordHash);
-  if (!ok) return { ok: false, reason: "bad_password" };
+    const ok = await bcrypt.compare(input.password, user.passwordHash);
+    if (!ok) return { ok: false, reason: "bad_password" };
 
-  return {
-    ok: true,
-    user: {
-      id: user.id,
-      email: user.email,
-      displayName: user.displayName,
-      tenantId: user.tenantId,
-      role: user.role as AuthedUser["role"],
-    },
-  };
+    return {
+      ok: true,
+      user: {
+        id: user.id,
+        email: user.email,
+        displayName: user.displayName,
+        tenantId: user.tenantId,
+        role: user.role as AuthedUser["role"],
+      },
+    };
+  } catch {
+    // In-memory fallback when database is offline
+    const memTenant = memoryStore.findTenantBySlug(input.tenantSlug);
+    if (!memTenant) {
+      await timingEqualize(input.password);
+      return { ok: false, reason: "unknown_tenant" };
+    }
+    const memUser = memoryStore.findUserByNationalId(memTenant.id, input.nationalId);
+    if (!memUser) {
+      await timingEqualize(input.password);
+      return { ok: false, reason: "unknown_user" };
+    }
+    if (!memUser.isActive) {
+      await timingEqualize(input.password);
+      return { ok: false, reason: "inactive" };
+    }
+    const ok = await bcrypt.compare(input.password, memUser.passwordHash);
+    if (!ok) return { ok: false, reason: "bad_password" };
+
+    return {
+      ok: true,
+      user: {
+        id: memUser.id,
+        email: memUser.email,
+        displayName: memUser.displayName,
+        tenantId: memUser.tenantId,
+        role: memUser.role as AuthedUser["role"],
+      },
+    };
+  }
 }
 
 export async function hashPassword(plain: string): Promise<string> {

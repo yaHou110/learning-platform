@@ -21,7 +21,7 @@ const nextConfig = {
   // build-output mapping — Vercel builds its own serverless functions from the
   // standard `.next` output. Gate it on a build-time flag the Dockerfile sets
   // (NEXTJS_STANDALONE=1) so a cloud build gets the default `.next` layout.
-  ...(process.env.NEXTJS_STANDALONE === "1" ? { output: "standalone" } : {}),
+  output: "standalone",
   // Hide the X-Powered-By header (security best practice).
   poweredByHeader: false,
   // Security headers are set per-request in `middleware.ts` (S3 hardening)

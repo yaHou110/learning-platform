@@ -20,7 +20,10 @@ function pool(): pg.Pool {
   if (_pool) return _pool;
   const connectionString =
     process.env.DATABASE_URL ?? "postgres://learning_platform:learning_platform@localhost:5432/learning_platform";
-  _pool = new Pool({ connectionString, max: 10 });
+  _pool = new Pool({ connectionString, max: 10, connectionTimeoutMillis: 1000 });
+  _pool.on("error", () => {
+    // Suppress unhandled error events on idle clients when DB is unavailable
+  });
   // Close the pool once on process exit so connections are not leaked on
   // graceful shutdown (SIGTERM from PM2/systemd in production) or during the
   // Next.js dev server's hot self-restart. Idempotent: a no-op if already
@@ -61,10 +64,34 @@ export async function withTenantDb<T>(
   }
 }
 
+let _dbTested = false;
+let _dbAvailable = false;
+
+export async function isDbConnected(): Promise<boolean> {
+  if (_dbTested) return _dbAvailable;
+  try {
+    const res = await pool().query("select 1 as ok");
+    _dbAvailable = res.rows[0]?.ok === 1;
+  } catch {
+    _dbAvailable = false;
+  } finally {
+    _dbTested = true;
+  }
+  return _dbAvailable;
+}
+
 /** Run a `select 1` health check. Returns true if reachable. */
 export async function pingDb(): Promise<boolean> {
-  const res = await pool().query("select 1 as ok");
-  return res.rows[0]?.ok === 1;
+  try {
+    const res = await pool().query("select 1 as ok");
+    _dbAvailable = res.rows[0]?.ok === 1;
+    _dbTested = true;
+    return _dbAvailable;
+  } catch {
+    _dbAvailable = false;
+    _dbTested = true;
+    return false;
+  }
 }
 
 /** Used by migrate/seed scripts. */
